@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block title %}Preparation Hub — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 5rem;">
+    <div class="container">
+        <!-- Page Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.25rem; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Interview &amp; Skill Readiness</span>
+                <h1 style="font-size: 2.3rem; margin-bottom: 0.35rem;">Preparation Hub</h1>
+                <p style="color: var(--text-secondary); max-width: 600px;">
+                    Curated preparation resources, practice question banks, and company-specific interview intelligence.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="{{ url_for('main.assessments') }}" class="btn btn-terracotta">
+                    <span>Take Practice Assessment</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs for Preparation Categories -->
+        <div class="tabs-nav" id="prep-tabs">
+            <button class="tab-btn {% if active_category in ['all', 'aptitude'] and not selected_company %}active{% endif %}" onclick="switchPrepTab('aptitude', event)">
+                <span>🔢 Aptitude</span>
+            </button>
+            <button class="tab-btn {% if active_category == 'dsa' %}active{% endif %}" onclick="switchPrepTab('dsa', event)">
+                <span>💻 DSA &amp; Coding</span>
+            </button>
+            <button class="tab-btn {% if active_category in ['technical', 'verbal', 'logical'] and not selected_company %}active{% endif %}" onclick="switchPrepTab('technical', event)">
+                <span>⚙️ Core Technical</span>
+            </button>
+            <button class="tab-btn {% if active_category == 'domain' %}active{% endif %}" onclick="switchPrepTab('domain', event)">
+                <span>🎯 Domain Prep</span>
+            </button>
+            <button class="tab-btn {% if selected_company %}active{% endif %}" onclick="switchPrepTab('company', event)">
+                <span>🏢 Company Preparation</span>
+            </button>
+            <button class="tab-btn" onclick="switchPrepTab('hr', event)">
+                <span>🤝 HR &amp; Behavioral</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: APTITUDE PREPARATION -->
+        <div class="tab-pane {% if active_category in ['all', 'aptitude'] and not selected_company %}active{% endif %}" id="tab-pane-aptitude">
+            <div class="grid grid-cols-3" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+                {% for topic in aptitude_topics %}
+                <div class="prep-category-card">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                        <span class="badge badge-forest" style="font-size: 0.75rem;">{{ topic.category }}</span>
+                        <span class="difficulty-badge difficulty-{{ 'easy' if 'Easy' in topic.difficulty else 'medium' if 'Medium' in topic.difficulty else 'hard' }}">
+                            {{ topic.difficulty }}
+                        </span>
+                    </div>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--color-forest);">{{ topic.name }}</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.25rem; flex: 1;">
+                        Includes comprehensive formula guides, practice questions, and shortcuts for campus recruitment tests.
+                    </p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 0.85rem; font-size: 0.85rem;">
+                        <span style="color: var(--color-sage); font-weight: 600;">{{ topic.questions_count }}</span>
+                        <a href="{{ topic.ref_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+                            <span>Learn &amp; Practice</span>
+                            <span>&nearr;</span>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Database Aptitude & Logical Questions Section -->
+            <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--color-forest);">
+                    Verified Aptitude &amp; Logical Questions (From Company Archives)
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Actual questions compiled from top placement tests and verified hiring assessments.
+                </p>
+
+                {% set apt_questions = questions | selectattr('question_type', 'in', ['aptitude', 'logical', 'verbal']) | list %}
+                {% if apt_questions %}
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {% for q in apt_questions %}
+                        <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; background: var(--color-ivory-light);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <span class="badge badge-terracotta" style="font-size: 0.75rem;">{{ q.company.company_name if q.company else 'General' }}</span>
+                                    <span class="badge badge-forest" style="font-size: 0.75rem;">{{ q.question_type | upper }}</span>
+                                </div>
+                                <span class="difficulty-badge difficulty-{{ q.difficulty_level }}">{{ q.difficulty_level }}</span>
+                            </div>
+                            <div style="font-weight: 600; color: var(--color-dark-brown); font-size: 1rem; margin-bottom: 0.5rem;">
+                                {{ q.question }}
+                            </div>
+                            {% if q.answer %}
+                            <details style="font-size: 0.9rem; color: var(--color-forest); margin-top: 0.5rem; cursor: pointer;">
+                                <summary style="font-weight: 600;">View Verified Solution</summary>
+                                <div style="margin-top: 0.5rem; padding: 0.75rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--border-color); color: var(--text-primary);">
+                                    {{ q.answer }}
+                                </div>
+                            </details>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔢</div>
+                        <h3>No questions found for this specific filter</h3>
+                        <p>Try resetting filters to explore all available quantitative problem sets.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- TAB 2: DSA & CODING -->
+        <div class="tab-pane {% if active_category == 'dsa' %}active{% endif %}" id="tab-pane-dsa">
+            <div class="grid grid-cols-2" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+                {% for dsa in dsa_topics %}
+                <div class="prep-category-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                        <span class="badge badge-terracotta" style="font-size: 0.75rem;">{{ dsa.platform }}</span>
+                        <span class="difficulty-badge difficulty-{{ 'easy' if 'Easy' in dsa.difficulty else 'medium' if 'Medium' in dsa.difficulty else 'hard' }}">
+                            {{ dsa.difficulty }}
+                        </span>
+                    </div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--color-forest);">{{ dsa.name }}</h3>
+                    <p style="font-size: 0.875rem; color: var(--color-dark-brown-muted); margin-bottom: 1rem;">
+                        <strong>Key Problems:</strong> {{ dsa.problems }}
+                    </p>
+                    <div style="margin-top: auto; padding-top: 0.85rem; border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end;">
+                        <a href="{{ dsa.ref_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                            <span>Solve on LeetCode</span>
+                            <span>&nearr;</span>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- TAB 3: CORE TECHNICAL -->
+        <div class="tab-pane {% if active_category in ['technical', 'verbal', 'logical'] and not selected_company %}active{% endif %}" id="tab-pane-technical">
+            <div class="grid grid-cols-3" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+                {% for tech in technical_topics %}
+                <div class="prep-category-card">
+                    <span class="badge badge-forest" style="align-self: flex-start; margin-bottom: 0.75rem; font-size: 0.75rem;">Core CS Subject</span>
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; color: var(--color-forest);">{{ tech.name }}</h3>
+                    <ul style="font-size: 0.85rem; color: var(--text-secondary); margin-left: 1.25rem; margin-bottom: 1.25rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1;">
+                        {% for item in tech.concepts %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{{ tech.ref_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="justify-content: center;">
+                        <span>Study Guide &amp; Reference</span>
+                        <span>&nearr;</span>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Real Database Technical Questions -->
+            <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem; color: var(--color-forest);">
+                    Verified Technical Interview Questions
+                </h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Real questions asked during technical rounds at leading tech employers.
+                </p>
+                {% set tech_questions = questions | selectattr('question_type', 'equalto', 'technical') | list %}
+                {% if tech_questions %}
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {% for q in tech_questions %}
+                        <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; background: var(--color-ivory-light);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <span class="badge badge-forest" style="font-size: 0.75rem;">{{ q.company.company_name if q.company else 'Technical Round' }}</span>
+                                <span class="difficulty-badge difficulty-{{ q.difficulty_level }}">{{ q.difficulty_level }}</span>
+                            </div>
+                            <div style="font-weight: 600; color: var(--color-dark-brown); font-size: 1rem; margin-bottom: 0.5rem;">
+                                {{ q.question }}
+                            </div>
+                            {% if q.answer %}
+                            <details style="font-size: 0.9rem; color: var(--color-forest); margin-top: 0.5rem; cursor: pointer;">
+                                <summary style="font-weight: 600;">View Answer Explanation</summary>
+                                <div style="margin-top: 0.5rem; padding: 0.75rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--border-color); color: var(--text-primary);">
+                                    {{ q.answer }}
+                                </div>
+                            </details>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚙️</div>
+                        <h3>No technical questions in this filter</h3>
+                        <p>Select another filter to view technical questions from our question archive.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- TAB 4: DOMAIN PREPARATION -->
+        <div class="tab-pane {% if active_category == 'domain' %}active{% endif %}" id="tab-pane-domain">
+            <div class="grid grid-cols-2" style="gap: 1.75rem;">
+                <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                    <span class="badge badge-forest" style="margin-bottom: 0.75rem;">Domain 01</span>
+                    <h3 style="color: var(--color-forest); margin-bottom: 0.75rem;">Full Stack &amp; Web Engineering</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Prepare for full stack frontend &amp; backend roles. Focus on asynchronous programming, component lifecycles, database transactions, and secure RESTful design.
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <span class="topic-pill">JavaScript / ES6+</span>
+                        <span class="topic-pill">React &amp; Next.js</span>
+                        <span class="topic-pill">Node.js &amp; Python</span>
+                        <span class="topic-pill">SQL &amp; PostgreSQL</span>
+                        <span class="topic-pill">REST &amp; WebSockets</span>
+                    </div>
+                    <a href="{{ url_for('main.courses') }}?skill=React" class="btn btn-outline btn-sm">Explore Web Dev Courses &rarr;</a>
+                </div>
+
+                <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                    <span class="badge badge-terracotta" style="margin-bottom: 0.75rem;">Domain 02</span>
+                    <h3 style="color: var(--color-forest); margin-bottom: 0.75rem;">AI, ML &amp; Data Science</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Master statistics, classical machine learning algorithms, deep neural architectures, and model evaluation metrics for applied AI roles.
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <span class="topic-pill">Python &amp; NumPy</span>
+                        <span class="topic-pill">Scikit-Learn</span>
+                        <span class="topic-pill">PyTorch / TensorFlow</span>
+                        <span class="topic-pill">Data Pipelines</span>
+                        <span class="topic-pill">NLP &amp; LLMs</span>
+                    </div>
+                    <a href="{{ url_for('main.courses') }}?skill=Machine+Learning" class="btn btn-outline btn-sm">Explore AI/ML Courses &rarr;</a>
+                </div>
+
+                <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                    <span class="badge badge-forest" style="margin-bottom: 0.75rem;">Domain 03</span>
+                    <h3 style="color: var(--color-forest); margin-bottom: 0.75rem;">Cloud &amp; DevOps Engineering</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Understand containerization, cluster orchestration, Infrastructure as Code, CI/CD automation, and cloud cost optimization.
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <span class="topic-pill">Docker</span>
+                        <span class="topic-pill">Kubernetes</span>
+                        <span class="topic-pill">AWS / GCP Essentials</span>
+                        <span class="topic-pill">CI/CD Pipelines</span>
+                        <span class="topic-pill">Linux Shell</span>
+                    </div>
+                    <a href="{{ url_for('main.courses') }}?skill=Docker" class="btn btn-outline btn-sm">Explore DevOps Courses &rarr;</a>
+                </div>
+
+                <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                    <span class="badge badge-terracotta" style="margin-bottom: 0.75rem;">Domain 04</span>
+                    <h3 style="color: var(--color-forest); margin-bottom: 0.75rem;">Data Analyst &amp; BI</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Learn advanced SQL querying, data cleaning, statistical hypothesis testing, and business intelligence dashboards.
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                        <span class="topic-pill">Advanced SQL</span>
+                        <span class="topic-pill">Excel &amp; BI</span>
+                        <span class="topic-pill">Pandas / Python</span>
+                        <span class="topic-pill">Data Storytelling</span>
+                    </div>
+                    <a href="{{ url_for('main.courses') }}?skill=SQL" class="btn btn-outline btn-sm">Explore Data Courses &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: COMPANY PREPARATION -->
+        <div class="tab-pane {% if selected_company %}active{% endif %}" id="tab-pane-company">
+            <div style="margin-bottom: 2rem;">
+                <label style="font-size: 0.9rem; font-weight: 600; color: var(--color-forest); display: block; margin-bottom: 0.5rem;">Select Target Company:</label>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    {% for comp in companies %}
+                    <a href="{{ url_for('main.preparation') }}?company_id={{ comp.company_id }}" 
+                       class="btn {% if selected_company and selected_company.company_id == comp.company_id %}btn-primary{% else %}btn-outline{% endif %} btn-sm">
+                        {{ comp.company_name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if selected_company %}
+            <div class="card" style="background: #FFFFFF; padding: 2.25rem; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <span class="badge badge-terracotta" style="margin-bottom: 0.35rem;">Company Intel</span>
+                        <h2 style="color: var(--color-forest); font-size: 1.85rem;">{{ selected_company.company_name }}</h2>
+                        <p style="color: var(--text-secondary); max-width: 700px; margin-top: 0.25rem;">{{ selected_company.description }}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.85rem; color: var(--text-secondary);">Expected Package</span>
+                        <div style="font-size: 1.25rem; font-weight: 700; color: var(--color-terracotta);">{{ selected_company.salary or 'Competitive' }}</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2" style="gap: 1.5rem; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                    <div>
+                        <h4 style="color: var(--color-forest); margin-bottom: 0.5rem;">Eligibility Criteria</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">{{ selected_company.eligibility or 'Graduates with qualifying aggregate.' }}</p>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--color-forest); margin-bottom: 0.5rem;">Interview &amp; Selection Process</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">{{ selected_company.selection_process or 'Online Assessment followed by Technical and HR rounds.' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Questions for Selected Company -->
+            <h3 style="color: var(--color-forest); margin-bottom: 1rem;">
+                Past Interview Questions for {{ selected_company.company_name }}
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                {% for q in selected_company.questions %}
+                <div style="border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; background: #FFFFFF;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span class="badge badge-forest" style="font-size: 0.75rem;">{{ q.question_type | upper }}</span>
+                        <span class="difficulty-badge difficulty-{{ q.difficulty_level }}">{{ q.difficulty_level }}</span>
+                    </div>
+                    <div style="font-weight: 600; color: var(--color-dark-brown); font-size: 1rem; margin-bottom: 0.5rem;">
+                        {{ q.question }}
+                    </div>
+                    {% if q.answer %}
+                    <div style="margin-top: 0.5rem; padding: 0.75rem; background: var(--color-ivory-light); border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.875rem; color: var(--color-dark-brown);">
+                        <strong>Verified Answer:</strong> {{ q.answer }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🏢</div>
+                <h3>Select a company above to inspect its interview questions</h3>
+                <p>Review selection stages, eligibility parameters, and real past technical &amp; aptitude problems.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- TAB 6: HR & BEHAVIORAL -->
+        <div class="tab-pane" id="tab-pane-hr">
+            <div class="grid grid-cols-2" style="gap: 1.5rem;">
+                <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                    <h3 style="color: var(--color-forest); margin-bottom: 0.75rem;">The STAR Framework for Behavioral Interviews</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                        Structure your answers to behavioral questions with confidence and clarity using the standard four-step technique:
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+                        <div style="padding: 0.75rem; background: var(--color-ivory-light); border-radius: var(--radius-sm); border-left: 3px solid var(--color-forest);">
+                            <strong>S — Situation:</strong> Describe the context, timeline, and background of the challenge.
+                        </div>
+                        <div style="padding: 0.75rem; background: var(--color-ivory-light); border-radius: var(--radius-sm); border-left: 3px solid var(--color-forest);">
+                            <strong>T — Task:</strong> Outline your specific role, goal, and responsibility.
+                        </div>
+                        <div style="padding: 0.75rem; background: var(--color-ivory-light); border-radius: var(--radius-sm); border-left: 3px solid var(--color-terracotta);">
+                            <strong>A — Action:</strong> Explain the exact tools, methodologies, and decisions you executed.
+                        </div>
+                        <div style="padding: 0.75rem; background: var(--color-ivory-light); border-radius: var(--radius-sm); border-left: 3px solid var(--color-forest);">
+                            <strong>R — Result:</strong> Quantify the outcome, metrics improved, and key lessons learned.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                    <h3 style="color: var(--color-forest); margin-bottom: 0.75rem;">Essential HR Questions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.9rem;">
+                        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                            <strong>"Tell me about yourself."</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Focus 80% on recent technical achievements, projects, and target career alignment.</p>
+                        </div>
+                        <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
+                            <strong>"Why do you want to join our company?"</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Reference specific engineering products, culture, or technical challenges they are tackling.</p>
+                        </div>
+                        <div>
+                            <strong>"Describe a difficult technical bug or conflict you resolved."</strong>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Use STAR framework. Highlight collaboration, root-cause debugging, and tests added.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+function switchPrepTab(tabName, evt) {
+    document.querySelectorAll('#prep-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    
+    const targetPane = document.getElementById('tab-pane-' + tabName);
+    if (targetPane) {
+        targetPane.classList.add('active');
+    }
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
+}
+</script>
+{% endblock %}

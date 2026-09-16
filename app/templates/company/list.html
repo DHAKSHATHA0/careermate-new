@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Companies &amp; Hiring Tracks — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 4.5rem;">
+    <div class="container">
+        
+        <div style="margin-bottom: 2rem;">
+            <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Company Intelligence Database</span>
+            <h1 style="font-size: 2.3rem;">Explore Companies &amp; Selection Criteria</h1>
+            <p style="font-size: 1rem; color: var(--text-secondary); max-width: 680px;">
+                Review hiring eligibility, packages, selection rounds, and real practice questions from active technology recruiters.
+            </p>
+        </div>
+
+        {% if companies %}
+            <div class="grid grid-cols-3" style="gap: 1.75rem;">
+                {% for comp in companies %}
+                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                                <h3 style="font-size: 1.35rem; color: var(--color-forest);">{{ comp.company_name }}</h3>
+                                {% if comp.salary %}
+                                    <span class="badge badge-forest" style="font-weight: 700;">{{ comp.salary }}</span>
+                                {% endif %}
+                            </div>
+
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.55;">
+                                {{ comp.description or 'Technology engineering and consulting organization.' }}
+                            </p>
+
+                            {% if comp.eligibility %}
+                                <div style="font-size: 0.8rem; margin-bottom: 0.75rem; padding: 0.6rem 0.8rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm);">
+                                    <strong>Eligibility:</strong> {{ comp.eligibility }}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                            <span class="badge badge-ivory">{{ comp.questions|length }} Practice Questions</span>
+                            <a href="{{ url_for('company.detail', company_id=comp.company_id) }}" class="btn btn-terracotta btn-sm">
+                                <span>View Details &rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <p>No companies currently in database.</p>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

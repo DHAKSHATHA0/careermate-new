@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}CareerMate AI — Personal Career Intelligence Assistant{% endblock %}
+
+{% block extra_css %}
+<!-- Include marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2rem 0 4.5rem;">
+    <div class="container" style="max-width: 1060px;">
+        
+        <!-- Header -->
+        <div style="margin-bottom: 1.5rem; text-align: center;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                <span class="badge badge-terracotta" style="font-size: 0.85rem;">Intelligence Assistant</span>
+            </div>
+            <h1 style="font-size: 2.4rem; color: var(--color-forest); margin-bottom: 0.25rem;">CareerMate AI</h1>
+            <p style="font-size: 1.05rem; color: var(--text-secondary);">Your personal career intelligence assistant.</p>
+        </div>
+
+        <!-- Chat Workbench Container -->
+        <div class="chat-container">
+            
+            <!-- Chat Header -->
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="brand-badge" style="background: var(--color-terracotta); font-size: 0.95rem;">AI</span>
+                    <div>
+                        <div style="font-weight: 700; font-size: 1rem; color: var(--color-ivory);">CareerMate Intelligence Engine</div>
+                        <div style="font-size: 0.75rem; color: rgba(244, 239, 227, 0.75);">Grounded in real company data, NLP parsing, &amp; ATS criteria</div>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="btn btn-ghost btn-sm" style="color: var(--color-ivory); font-size: 0.8rem;" onclick="clearChat()">
+                        <span>Clear Chat</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Stream Area -->
+            <div class="chat-messages" id="chat-messages">
+                <!-- Welcome Assistant Message -->
+                <div class="chat-bubble chat-bubble-ai">
+                    <p style="font-weight: 600; color: var(--color-forest); margin-bottom: 0.5rem;">
+                        Hello {{ current_user.name.split()[0] if current_user.name else 'there' }}! 👋
+                    </p>
+                    <p style="font-size: 0.925rem; line-height: 1.6; color: var(--color-dark-brown);">
+                        I'm <strong>CareerMate AI</strong>, your personal career intelligence assistant. I can analyze your job readiness, explain your skill gaps, guide your resume optimization, and answer questions about top hiring companies like Google, TCS, and Infosys.
+                    </p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        Click any prompt below or type your question to get started.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Suggested Questions Prompt Bar -->
+            <div class="chat-prompts-bar">
+                <div class="chat-prompt-chip" onclick="sendPrompt('I want to become an ML Engineer. What should I do?')">
+                    🤖 Path to ML Engineer
+                </div>
+                <div class="chat-prompt-chip" onclick="sendPrompt('Why is my ATS score low and how can I improve it?')">
+                    📄 Why is my ATS score low?
+                </div>
+                <div class="chat-prompt-chip" onclick="sendPrompt('Which skills am I missing for Full Stack roles?')">
+                    🔍 Which skills am I missing?
+                </div>
+                <div class="chat-prompt-chip" onclick="sendPrompt('Am I ready for this job?')">
+                    🎯 Am I ready for this job?
+                </div>
+                <div class="chat-prompt-chip" onclick="sendPrompt('Which course should I take next?')">
+                    📚 Which course should I take?
+                </div>
+                <div class="chat-prompt-chip" onclick="sendPrompt('Prepare me for Google software engineer interview.')">
+                    🏢 Prepare me for Google
+                </div>
+                <div class="chat-prompt-chip" onclick="sendPrompt('What DSA topics should I study this week?')">
+                    💻 What DSA should I study?
+                </div>
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="chat-input-bar">
+                <input type="text" id="chat-input" class="form-control" placeholder="Ask about job readiness, company criteria, skill gaps, or resume advice..." onkeydown="handleKeyDown(event)">
+                <button type="button" class="btn btn-primary" id="chat-send-btn" onclick="sendMessage()">
+                    <span>Send</span>
+                    <span>&rarr;</span>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Load chat history on mount
+window.addEventListener('DOMContentLoaded', () => {
+    fetch('{{ url_for("chatbot.get_history") }}')
+        .then(res => res.json())
+        .then(history => {
+            if (history && history.length > 0) {
+                history.forEach(item => {
+                    appendMessage(item.message, 'user');
+                    appendMessage(item.response, 'ai');
+                });
+            }
+        })
+        .catch(err => console.log('No previous history loaded'));
+});
+
+function appendMessage(text, sender) {
+    const container = document.getElementById('chat-messages');
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble chat-bubble-${sender}`;
+    
+    if (sender === 'ai') {
+        try {
+            bubble.innerHTML = marked.parse(text);
+        } catch (e) {
+            bubble.innerText = text;
+        }
+    } else {
+        bubble.innerText = text;
+    }
+
+    container.appendChild(bubble);
+    container.scrollTop = container.scrollHeight;
+}
+
+function sendPrompt(promptText) {
+    document.getElementById('chat-input').value = promptText;
+    sendMessage();
+}
+
+function handleKeyDown(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendMessage(message, 'user');
+    input.value = '';
+
+    // Show loading typing indicator
+    const container = document.getElementById('chat-messages');
+    const typingBubble = document.createElement('div');
+    typingBubble.className = 'chat-bubble chat-bubble-ai';
+    typingBubble.id = 'typing-indicator';
+    typingBubble.innerText = 'Analyzing career intelligence...';
+    container.appendChild(typingBubble);
+    container.scrollTop = container.scrollHeight;
+
+    fetch('{{ url_for("chatbot.send_message") }}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: message })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const ind = document.getElementById('typing-indicator');
+        if (ind) ind.remove();
+
+        if (data.error) {
+            appendMessage(`Error: ${data.error}`, 'ai');
+        } else {
+            appendMessage(data.response, 'ai');
+        }
+    })
+    .catch(err => {
+        const ind = document.getElementById('typing-indicator');
+        if (ind) ind.remove();
+        appendMessage("Unable to reach assistant right now. Please verify your connection.", 'ai');
+    });
+}
+
+function clearChat() {
+    const container = document.getElementById('chat-messages');
+    container.innerHTML = `
+        <div class="chat-bubble chat-bubble-ai">
+            <p style="font-weight: 600; color: var(--color-forest); margin-bottom: 0.5rem;">Chat cleared.</p>
+            <p style="font-size: 0.925rem;">How can CareerMate assist your career journey today?</p>
+        </div>
+    `;
+}
+</script>
+{% endblock %}

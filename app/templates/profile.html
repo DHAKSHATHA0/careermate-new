@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% block title %}Career Profile — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 4.5rem;">
+    <div class="container" style="max-width: 1060px;">
+
+        <!-- Header -->
+        <div
+            style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Personal Career Profile</span>
+                <h1 style="font-size: 2.3rem;">Career Profile &amp; Preferences</h1>
+                <p style="font-size: 1rem; color: var(--text-secondary);">
+                    Manage your identity, educational credentials, verified technical skills, and uploaded resumes.
+                </p>
+            </div>
+
+            <!-- Profile Completeness Badge Card -->
+            <div class="card"
+                style="padding: 1rem 1.5rem; display: flex; align-items: center; gap: 1rem; background: var(--bg-surface-warm);">
+                <div class="score-circle" style="--score: {{ profile_pct }}; width: 60px; height: 60px;">
+                    <div class="score-circle-inner">
+                        <span class="score-value" style="font-size: 1.1rem;">{{ profile_pct }}%</span>
+                    </div>
+                </div>
+                <div>
+                    <div
+                        style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-secondary);">
+                        Completeness</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--color-forest);">
+                        {{ 'Fully Configured' if profile_pct >= 90 else 'Partially Filled' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" action="{{ url_for('main.profile') }}">
+            <div class="grid grid-cols-3" style="gap: 2rem;">
+
+                <!-- Left 2 Cols: Form Fields -->
+                <div style="grid-column: span 2; display: flex; flex-direction: column; gap: 1.75rem;">
+
+                    <!-- 1. Personal & Contact Info -->
+                    <div class="card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1.25rem;">Personal Information</h3>
+
+                        <div class="grid grid-cols-2" style="gap: 1.25rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="name">Full Name</label>
+                                <input type="text" id="name" name="name" class="form-control" value="{{ user.name }}"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="email">Email Address</label>
+                                <input type="email" id="email" class="form-control" value="{{ user.email }}" disabled
+                                    style="background: var(--color-ivory-light);">
+                                <div class="form-hint">Email is linked to your authentication account.</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2" style="gap: 1.25rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="phone">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" class="form-control"
+                                    value="{{ user.phone or '' }}" placeholder="e.g. +91 9876543210">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="user_type">Career Stage</label>
+                                <select id="user_type" name="user_type" class="form-control">
+                                    <option value="student" {% if user.user_type=='student' %}selected{% endif %}>
+                                        Student</option>
+                                    <option value="fresher" {% if user.user_type=='fresher' %}selected{% endif %}>
+                                        Fresher</option>
+                                    <option value="professional" {% if user.user_type=='professional' %}selected{% endif
+                                        %}>Working Professional</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Education & Background -->
+                    <div class="card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1.25rem;">Education &amp; Experience</h3>
+
+                        <div class="grid grid-cols-2" style="gap: 1.25rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="college_name">College / University</label>
+                                <input type="text" id="college_name" name="college_name" class="form-control"
+                                    value="{{ user.college_name or '' }}" placeholder="e.g. Anna University">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="degree">Degree &amp; Major</label>
+                                <input type="text" id="degree" name="degree" class="form-control"
+                                    value="{{ user.degree or '' }}" placeholder="e.g. B.E Computer Science">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2" style="gap: 1.25rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="graduation_year">Graduation Year</label>
+                                <input type="number" id="graduation_year" name="graduation_year" class="form-control"
+                                    value="{{ user.graduation_year or '' }}" placeholder="e.g. 2026">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="current_company">Current Organization (if
+                                    applicable)</label>
+                                <input type="text" id="current_company" name="current_company" class="form-control"
+                                    value="{{ user.current_company or '' }}"
+                                    placeholder="e.g. Acme Corp or Self-Employed">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Target Career & Domain Preferences -->
+                    <div class="card">
+                        <h3 style="font-size: 1.3rem; margin-bottom: 1.25rem;">Career Goals &amp; Domain Focus</h3>
+
+                        <div class="grid grid-cols-2" style="gap: 1.25rem;">
+                            <div class="form-group">
+                                <label class="form-label" for="domain">Target Domain</label>
+                                <select id="domain" name="domain" class="form-control">
+                                    <option value="">-- Select Domain --</option>
+                                    <option value="web_dev" {% if user.domain=='web_dev' %}selected{% endif %}>Web
+                                        Development (Full Stack)</option>
+                                    <option value="ml" {% if user.domain=='ml' %}selected{% endif %}>Machine Learning
+                                        &amp; AI</option>
+                                    <option value="data_science" {% if user.domain=='data_science' %}selected{% endif
+                                        %}>Data Science &amp; Analytics</option>
+                                    <option value="cloud" {% if user.domain=='cloud' %}selected{% endif %}>Cloud
+                                        Computing &amp; DevOps</option>
+                                    <option value="core" {% if user.domain=='core' %}selected{% endif %}>Core Software
+                                        Engineering</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="career_goal">Primary Objective</label>
+                                <select id="career_goal" name="career_goal" class="form-control">
+                                    <option value="">-- Select Objective --</option>
+                                    <option value="placement_prep" {% if user.career_goal=='placement_prep' %}selected{%
+                                        endif %}>Campus Placement Preparation</option>
+                                    <option value="job_switch" {% if user.career_goal=='job_switch' %}selected{% endif
+                                        %}>Job Switch / Lateral Entry</option>
+                                    <option value="upskilling" {% if user.career_goal=='upskilling' %}selected{% endif
+                                        %}>Skill Acquisition &amp; Projects</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Technical Skills Manager -->
+                    <div class="card">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                            <h3 style="font-size: 1.3rem;">Verified Skills Checklist</h3>
+                            <span class="badge badge-forest">{{ user.skills|length }} Selected</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                            Check the technical skills and programming languages you possess. CareerMate uses these to
+                            calculate job readiness.
+                        </p>
+
+                        <div
+                            style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; max-height: 280px; overflow-y: auto; padding: 1rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                            {% set user_skill_ids = user.skills | map(attribute='skill_id') | list %}
+                            {% for sk in all_skills %}
+                            <label
+                                style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; cursor: pointer;">
+                                <input type="checkbox" name="skills" value="{{ sk.skill_id }}" {% if sk.skill_id in
+                                    user_skill_ids %}checked{% endif %} style="accent-color: var(--color-forest);">
+                                <span>{{ sk.skill_name }}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg" style="width: 100%; justify-content: center;"
+                        id="save-profile-btn">
+                        <span>Save All Profile Changes</span>
+                        <span>&rarr;</span>
+                    </button>
+
+                </div>
+
+                <!-- Right 1 Col: Resume & Account Summary -->
+                <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+
+                    <!-- Resumes On File Card -->
+                    <div class="card card-warm">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                            <h4 style="margin-bottom: 0;">Uploaded Resumes</h4>
+                            <a href="{{ url_for('resume.analyzer') }}"
+                                style="font-size: 0.8rem; color: var(--color-terracotta); font-weight: 600;">+
+                                Upload</a>
+                        </div>
+
+                        {% if resumes %}
+                        <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+                            {% for r in resumes %}
+                            <div
+                                style="padding: 0.75rem; background: #FFFFFF; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.825rem;">
+                                <div style="font-weight: 600; color: var(--color-forest);">
+                                    {{ r.file_path.split('\\')[-1].split('/')[-1] }}
+                                </div>
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+                                    <span class="badge badge-sage" style="font-size: 0.7rem;">ATS: {{ r.ats_score or
+                                        '--' }}</span>
+                                    <a href="{{ url_for('resume.download_resume', resume_id=r.resume_id) }}"
+                                        style="color: var(--color-terracotta); text-decoration: underline;">Download</a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">No resume files on record.</p>
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta btn-sm"
+                            style="margin-top: 0.5rem; justify-content: center;">Upload First Resume</a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Career Directive Summary -->
+                    <div class="card card-forest" style="padding: 1.75rem;">
+                        <span class="badge"
+                            style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory); margin-bottom: 0.5rem;">CareerMate
+                            Identity</span>
+                        <h4 style="color: var(--color-ivory); margin-bottom: 0.5rem;">Your Career Journey</h4>
+                        <p style="color: rgba(244, 239, 227, 0.85); font-size: 0.85rem; line-height: 1.6;">
+                            Every update here instantly recalculates your <strong>Job Readiness</strong>, <strong>Skill
+                                Gaps</strong>, and <strong>Company Match Percentages</strong> across the entire
+                            platform.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+        </form>
+
+    </div>
+</section>
+{% endblock %}

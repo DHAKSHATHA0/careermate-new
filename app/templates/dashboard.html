@@ -1,0 +1,516 @@
+{% extends "base.html" %}
+
+{% block title %}Career Dashboard — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 5rem;">
+    <div class="container">
+        
+        <!-- 1. DYNAMIC CAREER HERO -->
+        <div class="card card-forest" style="margin-bottom: 2rem; padding: 2.25rem; border-radius: var(--radius-xl); position: relative; overflow: hidden;">
+            <div style="position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                <div>
+                    <span class="badge" style="background: rgba(244, 239, 227, 0.15); color: var(--color-ivory); margin-bottom: 0.6rem;">
+                        {{ user.user_type.title() if user.user_type else 'Student' }} &bull; {{ target_role }} Track
+                    </span>
+                    <h1 class="welcome-heading" style="color: var(--color-ivory); font-size: 2.2rem; margin-bottom: 0.5rem;">
+                        <span class="hero-word" style="--word-index: 0;">Welcome</span>
+                        <span class="hero-word" style="--word-index: 1;">back,</span>
+                        <span class="hero-word" style="--word-index: 2;">{{ user.name.split()[0] if user.name else 'Career Builder' }}.</span>
+                    </h1>
+                    <p style="color: rgba(244, 239, 227, 0.85); font-size: 1rem; max-width: 600px;">
+                        {% if hero_state == 1 %}
+                            Complete your career profile and upload your resume to activate full intelligence matching.
+                        {% elif hero_state == 2 %}
+                            Upload your resume to calculate your genuine ATS score and get closer to your dream job.
+                        {% elif hero_state == 3 %}
+                            Complete your career profile to unlock comprehensive role matching and personalized recommendations.
+                        {% else %}
+                            Your career command center is active. Review your real-time matches and learning steps below.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    {% if hero_state == 1 %}
+                        {# State 1: Profile incomplete + no resume #}
+                        <a href="{{ url_for('main.profile') }}" class="btn btn-outline" style="border-color: var(--color-ivory); color: var(--color-ivory);">
+                            <span>Complete Profile</span>
+                        </a>
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta">
+                            <span>Upload Resume</span>
+                        </a>
+                    {% elif hero_state == 2 %}
+                        {# State 2: Profile complete + no resume #}
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta">
+                            <span>Upload Resume</span>
+                        </a>
+                    {% elif hero_state == 3 %}
+                        {# State 3: Profile incomplete + resume exists #}
+                        <a href="{{ url_for('main.profile') }}" class="btn btn-outline" style="border-color: var(--color-ivory); color: var(--color-ivory);">
+                            <span>Complete Profile</span>
+                        </a>
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta">
+                            <span>Update Resume</span>
+                        </a>
+                    {% elif hero_state == 4 %}
+                        {# State 4: Profile complete + resume exists #}
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta">
+                            <span>Update Resume</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. LOCKED ANALYZE RESUME BOX ("Your Next Best Move") -->
+        <div class="card" style="background: #FFFFFF; border-left: 5px solid var(--color-terracotta); padding: 1.75rem 2rem; margin-bottom: 2rem; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span class="badge badge-terracotta" style="font-size: 0.75rem; margin-bottom: 0.35rem;">Your Next Best Move</span>
+                    <h3 style="color: var(--color-forest); font-size: 1.35rem; margin-bottom: 0.25rem;">{{ next_action.title }}</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); max-width: 700px;">{{ next_action.desc }}</p>
+                </div>
+                <div>
+                    <a href="{{ next_action.url }}" class="btn btn-primary">
+                        <span>{{ next_action.cta }}</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. TWO NEW BOXES: LATEST ATS RESUME SCORE & YOUR LEARNING -->
+        <div class="grid grid-cols-2" style="gap: 2rem; margin-bottom: 2.25rem;">
+            
+            <!-- Box A: LATEST ATS RESUME SCORE -->
+            <div class="intelligence-card">
+                <div>
+                    <div class="intelligence-header">
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.05em;">Resume Analysis</div>
+                            <h3 style="font-size: 1.25rem; color: var(--color-forest); margin-top: 0.15rem;">Latest ATS Resume Score</h3>
+                        </div>
+                        {% if ats_data.freshness %}
+                        <span class="freshness-badge">
+                            <span>🕒</span> {{ ats_data.freshness }}
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    {% if not ats_data.has_resume %}
+                        <!-- Empty State: No Resume Yet -->
+                        <div style="padding: 1.5rem 0; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📄</div>
+                            <h4 style="color: var(--color-forest); font-size: 1.1rem; margin-bottom: 0.35rem;">No Resume Yet</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">
+                                Upload your resume to generate your first ATS analysis and keyword compatibility insights.
+                            </p>
+                            <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta btn-sm">
+                                <span>Upload Resume</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
+                    {% elif ats_data.ats_score is none %}
+                        <!-- Empty State: Resume exists but not analyzed -->
+                        <div style="padding: 1.5rem 0; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">⏳</div>
+                            <h4 style="color: var(--color-forest); font-size: 1.1rem; margin-bottom: 0.35rem;">No ATS Score</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">
+                                Your resume is uploaded but hasn't been evaluated for ATS keyword compatibility yet.
+                            </p>
+                            <a href="{{ url_for('resume.analyzer') }}" class="btn btn-primary btn-sm">
+                                <span>Analyze Resume</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <!-- Active Real ATS Score -->
+                        <div style="display: flex; align-items: center; gap: 1.5rem; padding: 0.75rem 0 1.25rem;">
+                            <div class="score-circle" style="--score: {{ ats_data.ats_score }}; width: 84px; height: 84px; flex-shrink: 0;">
+                                <div class="score-circle-inner">
+                                    <span class="score-value" style="font-size: 1.5rem;">{{ ats_data.ats_score }}</span>
+                                    <span style="font-size: 0.7rem; color: var(--text-secondary); display: block;">/ 100</span>
+                                </div>
+                            </div>
+
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                                    <span class="badge {% if ats_data.ats_score >= 75 %}badge-forest{% elif ats_data.ats_score >= 50 %}badge-sage{% else %}badge-terracotta{% endif %}">
+                                        {{ 'Strong ATS Compatibility' if ats_data.ats_score >= 75 else 'Moderate ATS Compatibility' if ats_data.ats_score >= 50 else 'Needs Keyword Optimization' }}
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.875rem; color: var(--color-dark-brown); font-weight: 600;">
+                                    Evaluated for: {{ target_role }}
+                                </div>
+                                <div style="font-size: 0.775rem; color: var(--text-secondary); margin-top: 0.2rem;">
+                                    Analyzed on {{ ats_data.freshness }}
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if ats_data.has_resume and ats_data.ats_score is not none %}
+                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Verified from parsed document</span>
+                    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-outline btn-sm">
+                        <span>View Analysis</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Box B: YOUR LEARNING -->
+            <div class="intelligence-card">
+                <div>
+                    <div class="intelligence-header">
+                        <div>
+                            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.05em;">Active Progression</div>
+                            <h3 style="font-size: 1.25rem; color: var(--color-forest); margin-top: 0.15rem;">Your Learning</h3>
+                        </div>
+                        {% if enrolled_courses %}
+                        <span class="badge badge-forest">{{ enrolled_courses|length }} Enrolled</span>
+                        {% endif %}
+                    </div>
+
+                    {% if enrolled_courses %}
+                        <!-- Real Enrolled Courses -->
+                        <div style="display: flex; flex-direction: column; gap: 0.85rem; padding: 0.25rem 0;">
+                            {% for course in enrolled_courses[:2] %}
+                            <div style="padding: 0.85rem 1rem; background: var(--color-ivory-light); border: 1px solid var(--border-color); border-radius: var(--radius-md); display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                                <div style="flex: 1; min-width: 0;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+                                        <span class="badge badge-forest" style="font-size: 0.7rem;">{{ course.skill_name }}</span>
+                                        <span class="badge {% if course.status == 'completed' %}badge-forest{% elif course.status == 'in_progress' %}badge-terracotta{% else %}badge-ivory{% endif %}" style="font-size: 0.7rem;">
+                                            {{ 'Completed' if course.status == 'completed' else 'In Progress' if course.status == 'in_progress' else 'Not Started' }}
+                                        </span>
+                                    </div>
+                                    <div style="font-weight: 600; font-size: 0.9rem; color: var(--color-forest); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        {{ course.course_title }}
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                                        {{ course.provider }}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    {% if course.status == 'enrolled' or course.progress == 0 %}
+                                        <a href="{% if course.url %}{{ course.url }}{% else %}{{ url_for('main.courses', skill=course.skill_name) }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" data-course-id="{{ course.id }}" onclick="handleCourseStart(this)">
+                                            <span>Start</span>
+                                            <span>&rarr;</span>
+                                        </a>
+                                    {% elif course.status == 'in_progress' %}
+                                        <a href="{% if course.url %}{{ course.url }}{% else %}{{ url_for('main.courses', skill=course.skill_name) }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-terracotta btn-sm">
+                                            <span>Continue</span>
+                                            <span>&rarr;</span>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% if course.url %}{{ course.url }}{% else %}{{ url_for('main.courses', skill=course.skill_name) }}{% endif %}" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm">
+                                            <span>Completed ✓</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <!-- Clean Honest Empty State: No Enrolled Courses -->
+                        <div style="padding: 1.5rem 0; text-align: center;">
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📚</div>
+                            <h4 style="color: var(--color-forest); font-size: 1.1rem; margin-bottom: 0.35rem;">No Enrolled Courses Yet</h4>
+                            <p style="font-size: 0.875rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">
+                                You haven't enrolled in any learning paths yet. Explore verified resources to start building missing skills.
+                            </p>
+                            <a href="{{ url_for('main.courses') }}" class="btn btn-primary btn-sm">
+                                <span>Explore Courses</span>
+                                <span>&rarr;</span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                {% if enrolled_courses %}
+                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--text-secondary);">Official learning tracks</span>
+                    <a href="{{ url_for('main.courses') }}" class="btn btn-ghost btn-sm" style="color: var(--color-forest); font-weight: 600;">
+                        <span>View All Courses &rarr;</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <!-- 4. RECOMMENDED JOBS SECTION -->
+        <div class="card" style="background: #FFFFFF; padding: 2rem; border: 1px solid var(--border-color); margin-bottom: 2.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="color: var(--color-forest); font-size: 1.35rem; margin-bottom: 0.25rem;">RECOMMENDED JOBS</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary);">Opportunities matched to your profile, skills and resume.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    {% if recommendations.freshness %}
+                    <span class="freshness-badge">
+                        <span>⚡</span> {{ recommendations.freshness }}
+                    </span>
+                    {% endif %}
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-outline btn-sm">
+                        <span>Explore More</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Job List or States -->
+            {% if recommendations.has_matches and recommendations.recommendations %}
+                <div style="display: flex; flex-direction: column; gap: 1rem;" id="recommendations-container">
+                    {% for job in recommendations.recommendations %}
+                    <div class="job-recommendation-item" id="job-card-{{ job.company_id }}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+                                    <h4 style="font-size: 1.15rem; color: var(--color-forest); margin: 0;">{{ job.company_name }}</h4>
+                                    <span class="badge badge-forest" style="font-size: 0.75rem;">{{ job.target_role }}</span>
+                                    {% if job.salary %}
+                                    <span style="font-size: 0.825rem; color: var(--color-dark-brown-muted); font-weight: 500;">&bull; {{ job.salary }}</span>
+                                    {% endif %}
+                                </div>
+
+                                <!-- Explanation Box -->
+                                <div class="why-matches-box">
+                                    <strong style="color: var(--color-forest);">Why this matches you:</strong> {{ job.explanation }}
+                                </div>
+
+                                <!-- Matching Skills Tags -->
+                                {% if job.matching_skills %}
+                                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 600;">Matching Skills:</span>
+                                    {% for skill in job.matching_skills %}
+                                    <span class="badge badge-forest" style="font-size: 0.725rem;">{{ skill }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div style="display: flex; align-items: center; gap: 0.75rem; position: relative;">
+                                <span class="badge {% if job.match_score >= 70 %}badge-forest{% elif job.match_score >= 40 %}badge-sage{% else %}badge-terracotta{% endif %}" style="font-size: 0.85rem; font-weight: 700;">
+                                    {{ job.match_score }}% Match
+                                </span>
+                                
+                                <a href="{{ url_for('company.detail', company_id=job.company_id) }}" class="btn btn-terracotta btn-sm">
+                                    <span>Explore</span>
+                                    <span>&rarr;</span>
+                                </a>
+
+                                <!-- Feedback Menu -->
+                                <div style="position: relative;">
+                                    <button type="button" class="feedback-btn" data-company-id="{{ job.company_id }}" onclick="handleTogglePopover(this)" title="Hide or mark not relevant">
+                                        &times; Not relevant
+                                    </button>
+                                    <div class="feedback-popover" id="feedback-popover-{{ job.company_id }}">
+                                        <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-secondary); margin-bottom: 0.4rem;">Reason for hiding:</div>
+                                        <button type="button" class="feedback-option" data-company="{{ job.company_id }}" data-reason="Wrong role" onclick="handleFeedbackOption(this)">Wrong role</button>
+                                        <button type="button" class="feedback-option" data-company="{{ job.company_id }}" data-reason="Wrong location" onclick="handleFeedbackOption(this)">Wrong location</button>
+                                        <button type="button" class="feedback-option" data-company="{{ job.company_id }}" data-reason="Skills mismatch" onclick="handleFeedbackOption(this)">Skills do not match</button>
+                                        <button type="button" class="feedback-option" data-company="{{ job.company_id }}" data-reason="Not interested" onclick="handleFeedbackOption(this)">Not interested</button>
+                                        <button type="button" class="feedback-option" data-company="{{ job.company_id }}" data-reason="Other" onclick="handleFeedbackOption(this)">Other</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% elif recommendations.source == 'insufficient_data' %}
+                <!-- Empty State: Profile / Resume not provided -->
+                <div class="empty-state" style="padding: 2.5rem 1rem;">
+                    <div class="empty-state-icon">🎯</div>
+                    <h4 style="color: var(--color-forest); font-size: 1.2rem; margin-bottom: 0.35rem;">No Recommendations Yet</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.5rem;">
+                        Complete your career profile or upload your resume so CareerMate can find opportunities that match your background.
+                    </p>
+                    <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                        <a href="{{ url_for('main.profile') }}" class="btn btn-outline btn-sm">Complete Profile</a>
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta btn-sm">Upload Resume</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Empty State: Profile exists but no matches found -->
+                <div class="empty-state" style="padding: 2.5rem 1rem;">
+                    <div class="empty-state-icon">🔍</div>
+                    <h4 style="color: var(--color-forest); font-size: 1.2rem; margin-bottom: 0.35rem;">No Matching Jobs Yet</h4>
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 480px; margin: 0 auto 1.5rem;">
+                        We couldn't find opportunities that currently match your profile and resume closely enough.
+                    </p>
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-primary btn-sm">
+                        <span>Explore All Jobs</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 5. BUILD YOUR MISSING SKILLS SECTION -->
+        <div class="card" style="background: #FFFFFF; padding: 2rem; border: 1px solid var(--border-color); margin-bottom: 2.25rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="color: var(--color-forest); font-size: 1.35rem; margin-bottom: 0.25rem;">BUILD YOUR MISSING SKILLS</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary);">Turn the gaps in your target roles into skills you can actually build.</p>
+                </div>
+                {% if missing_skills_data.source_label and missing_skills_data.analysis_date %}
+                <span class="freshness-badge">
+                    <span>📋</span> {{ missing_skills_data.source_label }} &bull; {{ missing_skills_data.analysis_date }}
+                </span>
+                {% endif %}
+            </div>
+
+            {% if missing_skills_data.has_analysis and missing_skills_data.missing_skills %}
+                <div style="margin-bottom: 0.75rem;">
+                    <div style="font-size: 0.85rem; color: var(--color-dark-brown); margin-bottom: 0.5rem;">
+                        <strong style="color: var(--color-forest);">Identified Target Reference:</strong> {{ missing_skills_data.target_job }}
+                    </div>
+                    <div class="missing-skills-container">
+                        {% for skill in missing_skills_data.missing_skills %}
+                        <a href="{{ url_for('main.courses') }}?q={{ skill }}" class="missing-skill-chip" title="Explore courses for {{ skill }}">
+                            <span>{{ skill }}</span>
+                            <span class="chip-arrow">&rarr;</span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 1rem;">
+                        💡 Click any skill to find verified courses, official tutorials, and hands-on learning resources.
+                    </div>
+                </div>
+            {% elif missing_skills_data.has_analysis and not missing_skills_data.missing_skills %}
+                <div class="empty-state" style="padding: 1.75rem 1rem;">
+                    <div class="empty-state-icon">🎉</div>
+                    <h4 style="color: var(--color-forest); font-size: 1.1rem; margin-bottom: 0.25rem;">No Major Skill Gaps Identified</h4>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">No major skill gaps were identified for your latest job analysis.</p>
+                </div>
+            {% else %}
+                <div class="empty-state" style="padding: 2rem 1rem;">
+                    <div class="empty-state-icon">🎯</div>
+                    <h4 style="color: var(--color-forest); font-size: 1.1rem; margin-bottom: 0.35rem;">Discover Your Target Skill Gaps</h4>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); max-width: 440px; margin: 0 auto 1.25rem;">
+                        Analyze your resume against a job to discover the exact skills you need to build.
+                    </p>
+                    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta btn-sm">
+                        <span>Analyze Resume</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- 6. LOCKED CAREERMATE AI BOX -->
+        <div class="card" style="background: var(--color-ivory-light); border: 1.5px solid var(--color-forest-soft); padding: 1.75rem 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <div style="display: flex; align-items: center; gap: 1.25rem;">
+                <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-forest); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                    🤖
+                </div>
+                <div>
+                    <h4 style="color: var(--color-forest); margin-bottom: 0.2rem;">Have a question about your interview prep or resume?</h4>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">CareerMate AI provides context-aware guidance tailored to your verified profile.</p>
+                </div>
+            </div>
+            <a href="{{ url_for('main.assistant') }}" class="btn btn-primary">
+                <span>Ask CareerMate AI</span>
+                <span>&rarr;</span>
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<!-- Lightweight JavaScript for Interactive Feedback and Enrollment Progress -->
+<script>
+function handleTogglePopover(btn) {
+    const companyId = btn.getAttribute('data-company-id');
+    if (companyId) {
+        toggleFeedbackPopover(companyId);
+    }
+}
+
+function handleCourseStart(btn) {
+    const courseId = btn.getAttribute('data-course-id');
+    if (courseId) {
+        markCourseStarted(parseInt(courseId));
+    }
+}
+
+function toggleFeedbackPopover(companyId) {
+    const popover = document.getElementById('feedback-popover-' + companyId);
+    if (!popover) return;
+    const isCurrentlyActive = popover.classList.contains('active');
+    
+    // Close all other popovers
+    document.querySelectorAll('.feedback-popover').forEach(el => el.classList.remove('active'));
+    
+    if (!isCurrentlyActive) {
+        popover.classList.add('active');
+    }
+}
+
+// Close popovers on click outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.feedback-btn') && !e.target.closest('.feedback-popover')) {
+        document.querySelectorAll('.feedback-popover').forEach(el => el.classList.remove('active'));
+    }
+});
+
+function handleFeedbackOption(btn) {
+    const companyId = btn.getAttribute('data-company');
+    const reason = btn.getAttribute('data-reason');
+    if (companyId && reason) {
+        submitFeedback(parseInt(companyId), reason);
+    }
+}
+
+function submitFeedback(companyId, reason) {
+    fetch('/api/recommendations/feedback', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            company_id: companyId,
+            reason: reason
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        const card = document.getElementById('job-card-' + companyId);
+        if (card) {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                card.remove();
+                // If container is empty, show refreshed state
+                const container = document.getElementById('recommendations-container');
+                if (container && container.children.length === 0) {
+                    location.reload();
+                }
+            }, 300);
+        }
+    })
+    .catch(err => console.error('Feedback error:', err));
+}
+
+function markCourseStarted(enrollmentId) {
+    fetch('/api/courses/update-progress', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            enrollment_id: enrollmentId,
+            status: 'in_progress',
+            progress: 25
+        })
+    }).catch(err => console.error(err));
+}
+</script>
+{% endblock %}

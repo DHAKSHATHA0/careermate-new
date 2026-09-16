@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.company_name }} — Practice Questions &amp; Intelligence — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 4.5rem;">
+    <div class="container">
+        
+        <!-- Header Banner -->
+        <div class="card card-forest" style="padding: 2.25rem; border-radius: var(--radius-xl); margin-bottom: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
+                <div>
+                    <span class="badge" style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory); margin-bottom: 0.5rem;">
+                        Company Profile &amp; Assessments
+                    </span>
+                    <h1 style="color: var(--color-ivory); font-size: 2.3rem; margin-bottom: 0.5rem;">{{ company.company_name }}</h1>
+                    <p style="color: rgba(244, 239, 227, 0.85); font-size: 1rem; max-width: 650px;">
+                        {{ company.description or 'Technology leader recruitment and evaluation track.' }}
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem;">
+                    <a href="{{ url_for('main.job_fit', company_id=company.company_id) }}" class="btn btn-terracotta">
+                        <span>Analyze My Fit &rarr;</span>
+                    </a>
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-outline" style="border-color: var(--color-ivory); color: var(--color-ivory);">
+                        <span>Back to Jobs</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Highlights -->
+        <div class="grid grid-cols-4" style="gap: 1.5rem; margin-bottom: 2.5rem;">
+            {% if company.salary %}
+                <div class="card">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Salary Package</div>
+                    <div style="font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--color-forest); margin-top: 0.25rem;">
+                        {{ company.salary }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if company.eligibility %}
+                <div class="card" style="grid-column: span 2;">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Eligibility Criteria</div>
+                    <div style="font-size: 0.9rem; color: var(--color-dark-brown); margin-top: 0.25rem;">
+                        {{ company.eligibility }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="card">
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Practice Questions</div>
+                <div style="font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--color-terracotta); margin-top: 0.25rem;">
+                    {{ questions_by_type.values()|map('length')|sum }} Questions
+                </div>
+            </div>
+        </div>
+
+        {% if company.selection_process %}
+            <div class="card card-warm" style="margin-bottom: 2.5rem; padding: 1.5rem 2rem;">
+                <h3 style="font-size: 1.2rem; color: var(--color-forest); margin-bottom: 0.5rem;">Hiring &amp; Selection Process</h3>
+                <p style="font-size: 0.95rem; line-height: 1.6; color: var(--color-dark-brown);">
+                    {{ company.selection_process }}
+                </p>
+            </div>
+        {% endif %}
+
+        <!-- Practice Questions Categorized Accordion / List -->
+        <div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Sample Technical &amp; Aptitude Questions</h2>
+
+            {% if questions_by_type %}
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    {% for q_type, q_list in questions_by_type.items() %}
+                        <div class="card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                    <span class="badge badge-forest" style="text-transform: uppercase;">{{ q_type }}</span>
+                                    <h3 style="font-size: 1.25rem;">{{ q_type.title() }} Assessment Problems</h3>
+                                </div>
+                                <span class="badge badge-ivory">{{ q_list|length }} Problems</span>
+                            </div>
+
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                {% for q in q_list %}
+                                    <div style="padding: 1.25rem; background: var(--bg-surface-warm); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">
+                                            <div style="font-weight: 600; font-size: 0.95rem; color: var(--color-forest);">
+                                                Q{{ loop.index }}: {{ q.question }}
+                                            </div>
+                                            <span class="badge {% if q.difficulty_level == 'hard' %}badge-terracotta{% elif q.difficulty_level == 'medium' %}badge-sage{% else %}badge-ivory{% endif %}">
+                                                {{ q.difficulty_level.title() }}
+                                            </span>
+                                        </div>
+
+                                        {% if q.answer %}
+                                            <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--border-color); font-size: 0.875rem; color: var(--color-dark-brown);">
+                                                <strong style="color: var(--color-terracotta);">Solution / Key Concept:</strong><br>
+                                                {{ q.answer }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <p>No questions published for {{ company.company_name }} yet.</p>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+</section>
+{% endblock %}

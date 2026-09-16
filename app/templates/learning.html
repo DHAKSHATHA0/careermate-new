@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Learning Recommendations — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 4.5rem;">
+    <div class="container">
+        
+        <!-- Header -->
+        <div style="margin-bottom: 2rem;">
+            <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Curated Curriculum</span>
+            <h1 style="font-size: 2.3rem;">What should you learn next?</h1>
+            <p style="font-size: 1rem; color: var(--text-secondary); max-width: 680px;">
+                CareerMate connects your identified skill gaps directly to verified official documentation, tutorials, and milestone projects for {{ target_role }}.
+            </p>
+        </div>
+
+        <!-- Targeted Skill Gaps Summary Banner -->
+        <div class="card card-forest" style="padding: 1.75rem 2rem; border-radius: var(--radius-xl); margin-bottom: 2.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h3 style="color: var(--color-ivory); font-size: 1.4rem; margin-bottom: 0.25rem;">
+                        Identified Gaps for {{ target_role }}
+                    </h3>
+                    <p style="color: rgba(244, 239, 227, 0.85); font-size: 0.9rem;">
+                        {{ gap_skills|length }} missing competencies detected on your profile
+                    </p>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    {% for g in gap_skills %}
+                        <span class="badge" style="background: rgba(244, 239, 227, 0.18); color: var(--color-ivory); font-size: 0.8rem; padding: 0.35rem 0.75rem;">
+                            {{ g }}
+                        </span>
+                    {% endfor %}
+                    {% if not gap_skills %}
+                        <span class="badge badge-sage">All core skills acquired!</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Paths Grid -->
+        <h3 style="font-size: 1.4rem; margin-bottom: 1.25rem;">Direct Learning Tracks &amp; Resources</h3>
+        
+        {% if learning_paths %}
+            <div class="grid grid-cols-2" style="gap: 1.75rem; margin-bottom: 3rem;">
+                {% for item in learning_paths %}
+                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid var(--color-terracotta);">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                                <div>
+                                    <span class="badge badge-terracotta" style="margin-bottom: 0.35rem;">Skill Gap Bridge</span>
+                                    <h3 style="font-size: 1.3rem; color: var(--color-forest);">{{ item.skill }}</h3>
+                                </div>
+                                <span class="badge badge-ivory">{{ item.resource.difficulty }}</span>
+                            </div>
+
+                            <div style="font-size: 0.875rem; color: var(--color-dark-brown); margin-bottom: 1rem;">
+                                <strong>Resource:</strong> {{ item.resource.provider }} &bull; {{ item.resource.type }}
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding: 0.85rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm); font-size: 0.825rem; margin-bottom: 1.25rem;">
+                                <div>
+                                    <span style="color: var(--text-secondary);">Est. Duration:</span><br>
+                                    <strong style="color: var(--color-forest);">{{ item.resource.time }}</strong>
+                                </div>
+                                <div>
+                                    <span style="color: var(--text-secondary);">Career Impact:</span><br>
+                                    <strong style="color: var(--color-terracotta);">{{ item.resource.impact }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                            <span style="font-size: 0.8rem; color: var(--text-secondary);">Verified Official Source</span>
+                            <a href="{{ item.resource.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                                <span>Access Resource &rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state" style="margin-bottom: 3rem;">
+                <p>No active skill gaps identified for this role track. Review other domain tracks or explore reference libraries below.</p>
+            </div>
+        {% endif %}
+
+        <!-- Milestone Project Recommendations -->
+        <div class="card card-warm" style="padding: 2.25rem;">
+            <h3 style="font-size: 1.35rem; margin-bottom: 0.5rem;">Suggested Portfolio Milestone Projects</h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Building end-to-end practical projects is the highest-signal proof of technical mastery for tech recruiters.
+            </p>
+
+            <div class="grid grid-cols-3" style="gap: 1.5rem;">
+                <div class="card" style="background: #FFFFFF;">
+                    <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Full Stack</span>
+                    <h4 style="margin-bottom: 0.45rem;">Authentication &amp; API Service</h4>
+                    <p style="font-size: 0.85rem; line-height: 1.5;">
+                        Build a RESTful backend with Python/Node.js, PostgreSQL relational models, JWT session authentication, and automated tests.
+                    </p>
+                </div>
+
+                <div class="card" style="background: #FFFFFF;">
+                    <span class="badge badge-terracotta" style="margin-bottom: 0.5rem;">Cloud &amp; DevOps</span>
+                    <h4 style="margin-bottom: 0.45rem;">Containerized Deployment Pipeline</h4>
+                    <p style="font-size: 0.85rem; line-height: 1.5;">
+                        Dockerize a multi-tier web application, configure GitHub Actions CI/CD automation, and deploy to AWS EC2/ECS with SSL.
+                    </p>
+                </div>
+
+                <div class="card" style="background: #FFFFFF;">
+                    <span class="badge badge-sage" style="margin-bottom: 0.5rem;">Data &amp; AI</span>
+                    <h4 style="margin-bottom: 0.45rem;">Intelligent NLP Document Analyzer</h4>
+                    <p style="font-size: 0.85rem; line-height: 1.5;">
+                        Create a document parser using Python, spaCy, and Scikit-learn TF-IDF to categorize and extract key entities from unstructured text.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

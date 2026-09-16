@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs &amp; Application Tracker — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 5rem;">
+    <div class="container">
+        
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.25rem; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+                <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Opportunity Discovery &amp; Tracker</span>
+                <h1 style="font-size: 2.3rem; margin-bottom: 0.35rem;">Jobs &amp; Company Intelligence</h1>
+                <p style="font-size: 1rem; color: var(--text-secondary); max-width: 680px;">
+                    Explore verified company openings, compare match scores against your resume, and track your application pipeline.
+                </p>
+            </div>
+            <div style="display: flex; gap: 0.75rem;">
+                <a href="{{ url_for('company.list') }}" class="btn btn-outline">
+                    <span>Company Directory</span>
+                    <span>&rarr;</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tabs-nav" id="jobs-tabs">
+            <button class="tab-btn active" onclick="switchJobsTab('recommended', event)">
+                <span>⭐ Recommended Jobs</span>
+            </button>
+            <button class="tab-btn" onclick="switchJobsTab('all', event)">
+                <span>🌐 All Openings</span>
+            </button>
+            <button class="tab-btn" onclick="switchJobsTab('tracker', event)">
+                <span>📊 Application Tracker</span>
+            </button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="card" style="margin-bottom: 2rem; background: #FFFFFF; padding: 1.5rem;">
+            <form method="GET" action="{{ url_for('main.jobs') }}">
+                <div class="grid grid-cols-3" style="gap: 1.25rem; align-items: flex-end;">
+                    <div style="grid-column: span 2;">
+                        <label class="form-label" for="search-input">Search Opportunities or Companies</label>
+                        <input type="text" name="q" id="search-input" class="form-control" placeholder="Search by company name, keywords, or requirements..." value="{{ search_query }}">
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">
+                            <span>Search Listings</span>
+                        </button>
+                        {% if search_query %}
+                        <a href="{{ url_for('main.jobs') }}" class="btn btn-ghost">Clear</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- TAB 1 & 2: JOB LISTINGS (RECOMMENDED / ALL) -->
+        <div class="tab-pane active" id="tab-pane-recommended">
+            {% if jobs %}
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                    {% for item in jobs %}
+                        <div class="card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); transition: all var(--transition-base);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.25rem;">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.45rem;">
+                                        <h3 style="font-size: 1.4rem; color: var(--color-forest);">{{ item.company.company_name }}</h3>
+                                        {% if item.company.salary %}
+                                            <span class="badge badge-forest" style="font-size: 0.8rem; font-weight: 700;">💰 {{ item.company.salary }}</span>
+                                        {% endif %}
+                                        <span class="badge badge-ivory" style="border: 1px solid var(--color-ivory-border);">Full-Time / Campus</span>
+                                    </div>
+                                    <p style="font-size: 0.925rem; color: var(--color-dark-brown-light); max-width: 720px; line-height: 1.55;">
+                                        {{ item.company.description or 'Leading technology organization hiring for engineering positions.' }}
+                                    </p>
+                                </div>
+
+                                <!-- Match Gauge -->
+                                <div style="display: flex; align-items: center; gap: 1.25rem; background: var(--color-ivory-light); padding: 0.75rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                                    <div class="score-circle" style="--score: {{ item.match_score }}; width: 56px; height: 56px;">
+                                        <div class="score-circle-inner">
+                                            <span class="score-value" style="font-size: 1rem;">{{ item.match_score }}%</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700;">Fit Score</div>
+                                        <div style="font-size: 0.85rem; font-weight: 600; color: var(--color-forest);">
+                                            {{ 'Strong Fit' if item.match_score >= 70 else 'Moderate' if item.match_score >= 40 else 'Upskill First' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Eligibility & Selection Process Badges -->
+                            <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; padding: 0.9rem 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); margin-bottom: 1.25rem; font-size: 0.875rem;">
+                                {% if item.company.eligibility %}
+                                    <div>
+                                        <strong style="color: var(--color-forest);">Eligibility:</strong> {{ item.company.eligibility }}
+                                    </div>
+                                {% endif %}
+                                {% if item.company.selection_process %}
+                                    <div>
+                                        <strong style="color: var(--color-terracotta);">Process:</strong> {{ item.company.selection_process }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Matching & Missing Skills Tags + Actions -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                                    {% if item.matching_skills %}
+                                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                            <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-forest);">Matching:</span>
+                                            {% for s in item.matching_skills %}
+                                                <span class="badge badge-forest" style="font-size: 0.75rem;">{{ s }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if item.missing_skills %}
+                                        <div style="display: flex; align-items: center; gap: 0.4rem;">
+                                            <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">Gaps:</span>
+                                            {% for s in item.missing_skills %}
+                                                <span class="badge badge-terracotta" style="font-size: 0.75rem;">{{ s }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                    <button type="button" class="btn btn-outline btn-sm" onclick="addToTracker('{{ item.company.company_name }}', 'Software Engineer', 'Applied')">
+                                        <span>+ Add to Tracker</span>
+                                    </button>
+                                    <a href="{{ url_for('company.detail', company_id=item.company.company_id) }}" class="btn btn-outline btn-sm">
+                                        <span>Questions ({{ item.question_count }})</span>
+                                    </a>
+                                    <a href="{{ url_for('main.job_fit', company_id=item.company.company_id) }}" class="btn btn-terracotta btn-sm">
+                                        <span>Analyze Fit &rarr;</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-state-icon">💼</div>
+                    <h3>No Matching Companies Found</h3>
+                    <p style="margin-top: 0.5rem; color: var(--text-secondary);">
+                        No listings matched "{{ search_query }}". Try searching for "Google", "TCS", or "Infosys".
+                    </p>
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-outline btn-sm" style="margin-top: 1rem;">Reset Search</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- TAB 3: APPLICATION TRACKER -->
+        <div class="tab-pane" id="tab-pane-tracker">
+            <div class="card" style="background: #FFFFFF; padding: 2rem; border: 1px solid var(--border-color); margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <div>
+                        <h3 style="color: var(--color-forest); font-size: 1.35rem;">Active Application Pipeline</h3>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary);">Track progress, status, interview rounds, and notes across all your job applications.</p>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="showAddApplicationPrompt()">
+                        <span>+ Track New Application</span>
+                    </button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color); color: var(--color-forest);">
+                                <th style="padding: 0.75rem 1rem;">Company</th>
+                                <th style="padding: 0.75rem 1rem;">Target Role</th>
+                                <th style="padding: 0.75rem 1rem;">Status</th>
+                                <th style="padding: 0.75rem 1rem;">Date Added</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracker-table-body">
+                            <!-- Populated dynamically / default tracker items -->
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">Google</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Software Engineer (Fresher)</td>
+                                <td style="padding: 1rem;">
+                                    <span class="tracker-status-pill status-assessment">Assessment Scheduled</span>
+                                </td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Sep 10, 2026</td>
+                                <td style="padding: 1rem; text-align: right;">
+                                    <a href="{{ url_for('main.preparation') }}?company_id=1" class="btn btn-outline btn-sm">Prep Now</a>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">TCS</td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Systems Engineer</td>
+                                <td style="padding: 1rem;">
+                                    <span class="tracker-status-pill status-applied">Applied</span>
+                                </td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">Sep 08, 2026</td>
+                                <td style="padding: 1rem; text-align: right;">
+                                    <a href="{{ url_for('main.preparation') }}?company_id=2" class="btn btn-outline btn-sm">Prep Now</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+function switchJobsTab(tabName, evt) {
+    document.querySelectorAll('#jobs-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+    
+    if (tabName === 'tracker') {
+        document.getElementById('tab-pane-tracker').classList.add('active');
+    } else {
+        document.getElementById('tab-pane-recommended').classList.add('active');
+    }
+    
+    if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+    }
+}
+
+function addToTracker(company, role, status) {
+    const tbody = document.getElementById('tracker-table-body');
+    const tr = document.createElement('tr');
+    tr.style = 'border-bottom: 1px solid var(--border-color);';
+    const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    tr.innerHTML = `
+        <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">${company}</td>
+        <td style="padding: 1rem; color: var(--text-secondary);">${role}</td>
+        <td style="padding: 1rem;">
+            <span class="tracker-status-pill status-applied">${status}</span>
+        </td>
+        <td style="padding: 1rem; color: var(--text-secondary);">${dateStr}</td>
+        <td style="padding: 1rem; text-align: right;">
+            <span style="font-size: 0.8rem; color: var(--color-sage); font-weight: 600;">Saved</span>
+        </td>
+    `;
+    tbody.prepend(tr);
+    alert(`Added ${company} to your Application Tracker!`);
+}
+
+function showAddApplicationPrompt() {
+    const comp = prompt('Enter Company Name:');
+    if (comp) {
+        const role = prompt('Enter Target Role:', 'Software Engineer') || 'Software Engineer';
+        addToTracker(comp, role, 'Applied');
+    }
+}
+</script>
+{% endblock %}

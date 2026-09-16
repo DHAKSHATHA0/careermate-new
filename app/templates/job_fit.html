@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Job Fit Analysis — CareerMate{% endblock %}
+
+{% block content %}
+<section class="section" style="padding: 2.5rem 0 4.5rem;">
+    <div class="container">
+        
+        <!-- Header -->
+        <div style="margin-bottom: 2rem;">
+            <span class="badge badge-sage" style="margin-bottom: 0.5rem;">Alignment Intelligence</span>
+            <h1 style="font-size: 2.3rem;">How well do you fit this job?</h1>
+            <p style="font-size: 1rem; color: var(--text-secondary); max-width: 680px;">
+                Compare your parsed resume and verified skills against target companies or any custom job description to calculate genuine cosine similarity and keyword alignment.
+            </p>
+        </div>
+
+        <!-- Input & Target Selection Row -->
+        <div class="card" style="margin-bottom: 2.5rem; background: var(--bg-surface-warm);">
+            <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Select Job Target for Fit Evaluation</h3>
+            
+            <form method="GET" action="{{ url_for('main.job_fit') }}">
+                <div class="grid grid-cols-2" style="gap: 1.5rem; margin-bottom: 1.25rem;">
+                    <div>
+                        <label class="form-label" for="company-selector">Target Company (from Database)</label>
+                        <select class="form-control" id="company-selector" name="company_id" onchange="this.form.submit()">
+                            <option value="">-- Choose Company --</option>
+                            {% for comp in companies %}
+                                <option value="{{ comp.company_id }}" {% if selected_company and selected_company.company_id == comp.company_id %}selected{% endif %}>
+                                    {{ comp.company_name }} ({{ comp.salary or 'Campus / Engineering' }})
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Active Resume Profile</label>
+                        <div style="padding: 0.75rem 1rem; background: #FFFFFF; border: 1.5px solid var(--border-color); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--color-forest); display: flex; justify-content: space-between; align-items: center;">
+                            <span>
+                                {% if latest_resume %}
+                                    📄 {{ latest_resume.file_path.split('\\')[-1].split('/')[-1] }} (ATS: {{ latest_resume.ats_score }})
+                                {% else %}
+                                    👤 Using Database Profile Skills
+                                {% endif %}
+                            </span>
+                            <a href="{{ url_for('resume.analyzer') }}" style="font-size: 0.8rem; color: var(--color-terracotta); font-weight: 600;">Change</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="custom_jd">Or Paste Custom Job Description</label>
+                    <textarea class="form-control" name="jd" id="custom_jd" placeholder="Paste job title, responsibilities, and required qualifications here...">{{ custom_jd }}</textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="analyze-fit-btn">
+                    <span>Calculate Fit Alignment</span>
+                    <span>&rarr;</span>
+                </button>
+            </form>
+        </div>
+
+        {% if analysis %}
+            <!-- Results Section -->
+            <div style="margin-bottom: 2rem;">
+                
+                <!-- Match Score Banner -->
+                <div class="card card-forest" style="padding: 2rem; border-radius: var(--radius-xl); margin-bottom: 2rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+                        <div>
+                            <span class="badge" style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory); margin-bottom: 0.5rem;">
+                                {{ analysis.status_badge }}
+                            </span>
+                            <h2 style="color: var(--color-ivory); font-size: 2rem; margin-bottom: 0.35rem;">
+                                {% if selected_company %}{{ selected_company.company_name }} Match Evaluation{% else %}Custom Role Match Evaluation{% endif %}
+                            </h2>
+                            <p style="color: rgba(244, 239, 227, 0.85); font-size: 0.95rem; max-width: 620px;">
+                                {{ analysis.recommendation }}
+                            </p>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 1.5rem;">
+                            <div class="score-circle" style="--score: {{ analysis.overall_score }}; width: 100px; height: 100px; background: conic-gradient(var(--color-terracotta) calc(var(--score) * 1%), rgba(244, 239, 227, 0.2) 0);">
+                                <div class="score-circle-inner" style="background: var(--color-forest-dark); border-radius: 50%; width: 80px; height: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <span class="score-value" style="color: var(--color-ivory); font-size: 1.75rem;">{{ analysis.overall_score }}%</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.8rem; text-transform: uppercase; color: rgba(244, 239, 227, 0.7); letter-spacing: 0.05em;">Overall Fit</div>
+                                <div style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--color-ivory); font-weight: 700;">
+                                    {{ analysis.status_badge }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 Alignment Breakdown Gauges -->
+                <div class="grid grid-cols-4" style="gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card">
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Skills Match</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 700; color: var(--color-forest); margin: 0.25rem 0;">
+                            {{ analysis.skill_score }}%
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" style="width: {{ analysis.skill_score }}%;"></div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Keyword overlap</div>
+                    </div>
+
+                    <div class="card">
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Experience Match</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 700; color: var(--color-forest); margin: 0.25rem 0;">
+                            {{ analysis.exp_score }}%
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" style="width: {{ analysis.exp_score }}%;"></div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Career stage fit</div>
+                    </div>
+
+                    <div class="card">
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Education Fit</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 700; color: var(--color-forest); margin: 0.25rem 0;">
+                            {{ analysis.edu_score }}%
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" style="width: {{ analysis.edu_score }}%;"></div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Degree &amp; branch match</div>
+                    </div>
+
+                    <div class="card">
+                        <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Matched Terms</div>
+                        <div style="font-family: var(--font-serif); font-size: 1.85rem; font-weight: 700; color: var(--color-terracotta); margin: 0.25rem 0;">
+                            {{ analysis.matching_keywords|length }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Direct keywords</div>
+                    </div>
+                </div>
+
+                <!-- 4 Pillars: WHAT MATCHES, WHAT IS MISSING, WHY IT MATTERS, WHAT TO DO NEXT -->
+                <div class="grid grid-cols-2" style="gap: 1.75rem;">
+                    
+                    <!-- 1. WHAT MATCHES -->
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <span style="color: var(--color-forest); font-size: 1.25rem; font-weight: 700;">✓</span>
+                            <h3 style="font-size: 1.25rem;">What Matches (Strengths)</h3>
+                        </div>
+                        <p style="font-size: 0.875rem; margin-bottom: 1rem;">
+                            Keywords and qualifications present in your profile that directly satisfy job requirements:
+                        </p>
+                        {% if analysis.matching_keywords %}
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                                {% for kw in analysis.matching_keywords %}
+                                    <span class="badge badge-forest" style="font-size: 0.825rem; padding: 0.35rem 0.75rem;">{{ kw.title() }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                Minimal direct keyword overlap found. Consider updating technical tags in your resume.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 2. WHAT IS MISSING -->
+                    <div class="card">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <span style="color: var(--color-terracotta); font-size: 1.25rem; font-weight: 700;">✕</span>
+                            <h3 style="font-size: 1.25rem;">What is Missing (Gaps)</h3>
+                        </div>
+                        <p style="font-size: 0.875rem; margin-bottom: 1rem;">
+                            Keywords in the job specification not detected in your current profile:
+                        </p>
+                        {% if analysis.missing_keywords %}
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                                {% for kw in analysis.missing_keywords %}
+                                    <span class="badge badge-terracotta" style="font-size: 0.825rem; padding: 0.35rem 0.75rem;">{{ kw.title() }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div style="font-size: 0.85rem; color: var(--color-forest);">
+                                No significant keyword gaps identified.
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 3. WHY IT MATTERS -->
+                    <div class="card card-warm">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem;">Why It Matters</h3>
+                        <p style="font-size: 0.9rem; line-height: 1.6;">
+                            Hiring algorithms and technical recruiters filter candidates who demonstrate both foundational breadth and domain-specific keywords. Closing the top missing requirements increases your shortlist rate significantly.
+                        </p>
+                    </div>
+
+                    <!-- 4. WHAT TO DO NEXT -->
+                    <div class="card" style="border: 1.5px solid var(--color-terracotta);">
+                        <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; color: var(--color-terracotta);">What To Do Next</h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
+                            <div>1. <strong>Learn missing tools:</strong> Visit <a href="{{ url_for('main.learning') }}" style="color: var(--color-forest); text-decoration: underline; font-weight: 600;">Learning Paths</a> to build missing competencies.</div>
+                            <div>2. <strong>Demonstrate in projects:</strong> Add GitHub repositories showcasing end-to-end implementation.</div>
+                            <div>3. <strong>Update Resume:</strong> Re-upload your resume once you've integrated these keywords.</div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+{% endblock %}

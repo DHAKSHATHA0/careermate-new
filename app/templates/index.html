@@ -1,0 +1,780 @@
+{% extends "base.html" %}
+
+{% block title %}CareerMate — Your career. Your Dream. With careerMate{% endblock %}
+
+{% block content %}
+<!-- 1. HERO SECTION -->
+<section class="section-hero">
+    <div class="container">
+        <div class="grid grid-cols-2" style="align-items: center; gap: 3.5rem;">
+            <div>
+                <div style="margin-bottom: 1.25rem;">
+                    <span class="badge badge-forest" style="font-size: 0.85rem; padding: 0.35rem 0.85rem;">
+                        Complete Career &amp; Placement Platform
+                    </span>
+                </div>
+                <h1 style="margin-bottom: 1.25rem; line-height: 1.15; color: var(--color-forest); font-family: var(--font-serif); font-size: clamp(2.6rem, 4.5vw, 3.8rem);">
+                    YOUR CAREER.<br>
+                    <span style="color: var(--color-terracotta);">YOUR DREAM.</span><br>
+                    WITH CAREERMATE
+                </h1>
+                <p class="text-lead" style="margin-bottom: 2rem; max-width: 520px;">
+                    CareerMate is your complete personal career command center — helping you build your profile, analyze your resume, discover top jobs, prepare for technical &amp; aptitude interviews, take assessments, and reach your dream company.
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+                    <a href="{{ url_for('auth.register') if not current_user.is_authenticated else url_for('main.dashboard') }}" class="btn btn-terracotta btn-lg" id="hero-primary-cta">
+                        <span>Get Started Free</span>
+                        <span style="font-size: 1.1rem;">&rarr;</span>
+                    </a>
+                    <a href="#journey" class="btn btn-outline btn-lg" id="hero-secondary-cta">
+                        <span>Explore 7-Step Journey</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Photography Asset -->
+            <div style="position: relative;">
+                <div
+                    style="border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); border: 1.5px solid var(--border-color);">
+                    <img src="{{ url_for('static', filename='img/hero-career.jpg') }}"
+                        alt="Focused student and young professional working on career direction"
+                        style="width: 100%; height: 500px; object-fit: cover;">
+                </div>
+                <!-- Floating insight tag -->
+                <div class="card"
+                    style="position: absolute; bottom: -20px; left: -20px; max-width: 270px; padding: 1.25rem; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: var(--radius-md); box-shadow: var(--shadow-warm);">
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div
+                            style="width: 42px; height: 42px; border-radius: 50%; background: var(--color-forest); color: #F4EFE3; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                                <path d="M2.5 9C5.5 9 9.8 7 15.5 3.2M15.5 3.2L11 3M15.5 3.2L14.8 7.7" stroke="#F4EFE3" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                                <rect x="2" y="13" width="4.2" height="8" rx="2.1" fill="#F4EFE3"/>
+                                <rect x="8.5" y="9" width="4.2" height="12" rx="2.1" fill="#F4EFE3"/>
+                                <rect x="15" y="5" width="4.2" height="16" rx="2.1" fill="#F4EFE3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-forest);">I need to
+                                switch my career</div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Meet CareerMate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Proof points (Centered) -->
+        <style>
+            @keyframes proofFadeInUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(16px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .proof-item {
+                text-align: center;
+                opacity: 0;
+                animation: proofFadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            }
+            .proof-item:nth-child(1) { animation-delay: 0.2s; }
+            .proof-item:nth-child(2) { animation-delay: 0.55s; }
+            .proof-item:nth-child(3) { animation-delay: 0.9s; }
+        </style>
+        <div
+    style="display: flex; justify-content: center; align-items: flex-start; gap: 5rem; margin-top: 3.5rem; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; max-width: 900px; margin-left: auto; margin-right: auto;">
+
+    <!-- FIND -->
+    <div class="proof-item">
+        <div
+            style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-forest); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.85rem;">
+
+            <!-- Search Icon -->
+            <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#F4EFE3"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="16.5" y1="16.5" x2="21" y2="21"></line>
+            </svg>
+
+        </div>
+
+        <div
+            style="font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: var(--color-forest);">
+            Find
+        </div>
+
+        <div style="font-size: 0.825rem; color: var(--text-secondary);">
+            Find opportunities
+        </div>
+    </div>
+
+
+    <!-- BUILD -->
+    <div class="proof-item">
+        <div
+            style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-terracotta); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.85rem;">
+
+            <!-- Growth Chart Icon -->
+            <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#F4EFE3"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <line x1="4" y1="19" x2="4" y2="10"></line>
+                <line x1="10" y1="19" x2="10" y2="6"></line>
+                <line x1="16" y1="19" x2="16" y2="12"></line>
+                <line x1="22" y1="19" x2="22" y2="4"></line>
+                <polyline points="4,10 10,6 16,12 22,4"></polyline>
+            </svg>
+
+        </div>
+
+        <div
+            style="font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: var(--color-terracotta);">
+            Build
+        </div>
+
+        <div style="font-size: 0.825rem; color: var(--text-secondary);">
+            Build your skills
+        </div>
+    </div>
+
+
+    <!-- PREPARE -->
+    <div class="proof-item">
+        <div
+            style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-sage); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.85rem;">
+
+            <!-- People Icon -->
+            <svg
+                width="23"
+                height="23"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#F4EFE3"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round">
+                <circle cx="9" cy="8" r="3"></circle>
+                <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"></path>
+                <path d="M16 5.5c1.7 0 3 1.3 3 3"></path>
+                <path d="M18 14c1.8.7 3 2.4 3 4.5"></path>
+            </svg>
+
+        </div>
+
+        <div
+            style="font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; color: var(--color-sage);">
+            Prepare
+        </div>
+
+        <div style="font-size: 0.825rem; color: var(--text-secondary);">
+            Get interview-ready.
+        </div>
+    </div>
+
+</div>
+    </div>
+</section>
+
+<!-- 2. CAREER PROBLEM SECTION -->
+<style>
+    /* 4-Card Corner Entrance Animation */
+    .four-card-stage {
+        position: relative;
+        perspective: 1200px;
+    }
+
+    .center-stage-text {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+        pointer-events: none;
+        will-change: opacity, transform;
+    }
+
+    .fade-word {
+        display: inline-block;
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0px);
+        margin: 0 0.15em;
+        transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+                    filter 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+                    transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, filter, transform;
+    }
+
+    /* Initial hidden offscreen positions at the 4 outer corners */
+    .four-card-stage .problem-card {
+        opacity: 0;
+        pointer-events: none;
+        will-change: transform, opacity, box-shadow;
+    }
+
+    .four-card-stage .problem-card-1 {
+        transform: translate3d(-100vw, -80vh, 180px) rotate(-14deg) rotateX(12deg) rotateY(-10deg) scale(0.92);
+    }
+    .four-card-stage .problem-card-2 {
+        transform: translate3d(100vw, -80vh, 180px) rotate(14deg) rotateX(12deg) rotateY(10deg) scale(0.92);
+    }
+    .four-card-stage .problem-card-3 {
+        transform: translate3d(-100vw, 80vh, 180px) rotate(12deg) rotateX(-12deg) rotateY(-10deg) scale(0.92);
+    }
+    .four-card-stage .problem-card-4 {
+        transform: translate3d(100vw, 80vh, 180px) rotate(-12deg) rotateX(-12deg) rotateY(10deg) scale(0.92);
+    }
+
+    /* Word-by-word smooth fading from left to right after comfortable reading dwell time */
+    .four-card-stage.is-animating .fw-1 {
+        transition-delay: 2.3s;
+        opacity: 0;
+        filter: blur(7px);
+        transform: translateY(-4px) scale(0.96);
+    }
+    .four-card-stage.is-animating .fw-2 {
+        transition-delay: 2.6s;
+        opacity: 0;
+        filter: blur(7px);
+        transform: translateY(-4px) scale(0.96);
+    }
+    .four-card-stage.is-animating .fw-3 {
+        transition-delay: 2.9s;
+        opacity: 0;
+        filter: blur(7px);
+        transform: translateY(-4px) scale(0.96);
+    }
+    .four-card-stage.is-animating .fw-4 {
+        transition-delay: 3.2s;
+        opacity: 0;
+        filter: blur(7px);
+        transform: translateY(-4px) scale(0.96);
+    }
+    .four-card-stage.is-animating .fw-5 {
+        transition-delay: 3.5s;
+        opacity: 0;
+        filter: blur(7px);
+        transform: translateY(-4px) scale(0.96);
+    }
+    .four-card-stage.is-animating .fw-6 {
+        transition-delay: 3.8s;
+        opacity: 0;
+        filter: blur(7px);
+        transform: translateY(-4px) scale(0.96);
+    }
+
+    .four-card-stage.is-animating .problem-card {
+        animation-duration: 1.85s;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        animation-fill-mode: forwards;
+    }
+
+    /* Cards fly in gracefully from corners as the words finish dissolving */
+    .four-card-stage.is-animating .problem-card-1 {
+        animation-name: enterCardTopLeft;
+        animation-delay: 4.4s;
+    }
+
+    .four-card-stage.is-animating .problem-card-2 {
+        animation-name: enterCardTopRight;
+        animation-delay: 4.7s;
+    }
+
+    .four-card-stage.is-animating .problem-card-3 {
+        animation-name: enterCardBottomLeft;
+        animation-delay: 5.0s;
+    }
+
+    .four-card-stage.is-animating .problem-card-4 {
+        animation-name: enterCardBottomRight;
+        animation-delay: 5.3s;
+    }
+
+    @keyframes enterCardTopLeft {
+        0% {
+            opacity: 0;
+            transform: translate3d(-100vw, -80vh, 180px) rotate(-14deg) rotateX(12deg) rotateY(-10deg) scale(0.92);
+            box-shadow: 0 30px 60px rgba(38, 61, 50, 0.25);
+        }
+        25% {
+            opacity: 1;
+        }
+        80% {
+            transform: translate3d(0, 0, 10px) rotate(-1deg) rotateX(1deg) rotateY(-1deg) scale(1.02);
+            box-shadow: 0 16px 36px rgba(38, 61, 50, 0.12);
+        }
+        100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotate(0deg) rotateX(0deg) rotateY(0deg) scale(1);
+            box-shadow: var(--shadow-sm);
+            pointer-events: auto;
+        }
+    }
+
+    @keyframes enterCardTopRight {
+        0% {
+            opacity: 0;
+            transform: translate3d(100vw, -80vh, 180px) rotate(14deg) rotateX(12deg) rotateY(10deg) scale(0.92);
+            box-shadow: 0 30px 60px rgba(38, 61, 50, 0.25);
+        }
+        25% {
+            opacity: 1;
+        }
+        80% {
+            transform: translate3d(0, 0, 10px) rotate(1deg) rotateX(1deg) rotateY(1deg) scale(1.02);
+            box-shadow: 0 16px 36px rgba(38, 61, 50, 0.12);
+        }
+        100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotate(0deg) rotateX(0deg) rotateY(0deg) scale(1);
+            box-shadow: var(--shadow-sm);
+            pointer-events: auto;
+        }
+    }
+
+    @keyframes enterCardBottomLeft {
+        0% {
+            opacity: 0;
+            transform: translate3d(-100vw, 80vh, 180px) rotate(12deg) rotateX(-12deg) rotateY(-10deg) scale(0.92);
+            box-shadow: 0 30px 60px rgba(38, 61, 50, 0.25);
+        }
+        25% {
+            opacity: 1;
+        }
+        80% {
+            transform: translate3d(0, 0, 10px) rotate(1deg) rotateX(-1deg) rotateY(-1deg) scale(1.02);
+            box-shadow: 0 16px 36px rgba(38, 61, 50, 0.12);
+        }
+        100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotate(0deg) rotateX(0deg) rotateY(0deg) scale(1);
+            box-shadow: var(--shadow-sm);
+            pointer-events: auto;
+        }
+    }
+
+    @keyframes enterCardBottomRight {
+        0% {
+            opacity: 0;
+            transform: translate3d(100vw, 80vh, 180px) rotate(-12deg) rotateX(-12deg) rotateY(10deg) scale(0.92);
+            box-shadow: 0 30px 60px rgba(38, 61, 50, 0.25);
+        }
+        25% {
+            opacity: 1;
+        }
+        80% {
+            transform: translate3d(0, 0, 10px) rotate(-1deg) rotateX(-1deg) rotateY(1deg) scale(1.02);
+            box-shadow: 0 16px 36px rgba(38, 61, 50, 0.12);
+        }
+        100% {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) rotate(0deg) rotateX(0deg) rotateY(0deg) scale(1);
+            box-shadow: var(--shadow-sm);
+            pointer-events: auto;
+        }
+    }
+
+    /* Final Settled State */
+    .four-card-stage.is-completed .center-stage-text {
+        display: none !important;
+    }
+    .four-card-stage.is-completed .problem-card {
+        opacity: 1 !important;
+        transform: none !important;
+        animation: none !important;
+        pointer-events: auto !important;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .center-stage-text {
+            display: none !important;
+        }
+        .four-card-stage .problem-card {
+            opacity: 1 !important;
+            transform: none !important;
+            animation: none !important;
+            pointer-events: auto !important;
+        }
+    }
+</style>
+<section class="section"
+    style="background-color: var(--color-ivory-light); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); overflow: hidden; position: relative;">
+    <div class="container">
+        <div class="container-narrow" style="text-align: center; margin-bottom: 3.5rem;">
+            <span class="badge badge-terracotta" style="margin-bottom: 0.75rem;">The Career Dilemma</span>
+            <h2>Why Career Progression Feels Overwhelming</h2>
+            <p style="margin-top: 0.75rem;">
+                Students and job seekers face endless generic advice, vague job descriptions, and black-box ATS filters
+                with zero clarity on what truly matters.
+            </p>
+        </div>
+
+        <div class="four-card-stage" id="fourCardStage">
+            <!-- Central announcement statement with word-by-word fade -->
+            <div class="center-stage-text" id="centerStageText"
+                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; pointer-events: none; text-align: center; width: 90%; max-width: 600px;">
+                <div style="font-family: var(--font-serif); font-size: clamp(1.45rem, 2.8vw, 2.1rem); font-weight: 700; color: var(--color-forest); line-height: 1.35; letter-spacing: -0.01em;">
+                    <span class="fade-word fw-1">One</span>
+                    <span class="fade-word fw-2">platform</span>
+                    <span class="fade-word fw-3">Your</span>
+                    <span class="fade-word fw-4">entire</span>
+                    <span class="fade-word fw-5">placement</span>
+                    <span class="fade-word fw-6">journey</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2">
+                <div class="card problem-card problem-card-1">
+                    <div style="font-size: 1.75rem; color: var(--color-terracotta); margin-bottom: 0.85rem;">01</div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Why CareerMate</h3>
+                    <p style="font-size: 0.925rem;">
+                        Applying to dozens of companies without knowing whether your resume parses accurately or aligns with
+                        what hiring managers actually screen for.
+                    </p>
+                </div>
+                <div class="card problem-card problem-card-2">
+                    <div style="font-size: 1.75rem; color: var(--color-terracotta); margin-bottom: 0.85rem;">02</div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">How It Works</h3>
+                    <p style="font-size: 0.925rem;">
+                        Knowing you want to be a Full Stack or AI Engineer, but not knowing which exact libraries,
+                        architectures, or projects distinguish successful hires.
+                    </p>
+                </div>
+                <div class="card problem-card problem-card-3">
+                    <div style="font-size: 1.75rem; color: var(--color-terracotta); margin-bottom: 0.85rem;">03</div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">How CareerMate Helps You</h3>
+                    <p style="font-size: 0.925rem;">
+                        Watching random tutorials without a structured progression from foundational concepts to real-world
+                        deployment and interview readiness.
+                    </p>
+                </div>
+                <div class="card problem-card problem-card-4">
+                    <div style="font-size: 1.75rem; color: var(--color-terracotta); margin-bottom: 0.85rem;">04</div>
+                    <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Learn. Practice. Evolve.</h3>
+                    <p style="font-size: 0.925rem;">
+                        Watching random tutorials without a structured progression from foundational concepts to real-world
+                        deployment and interview readiness.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3. CAREERMATE SOLUTION & STORYTELLING SCROLL -->
+<section class="section" id="journey">
+    <div class="container">
+        <div class="container-narrow" style="text-align: center; margin-bottom: 4rem;">
+            <span class="badge badge-forest" style="margin-bottom: 0.75rem;">Careermate Journey</span>
+            <h2>Journey to reach your dream company</h2>
+            <p>
+               CareerMate is your personal career preparation platform — helping you discover your career path, prepare for your interviews, and land your dream job.
+            </p>
+        </div>
+
+        <!-- Sticky Visual Storytelling Experience -->
+        <div class="story-sticky-container">
+            <!-- Left: Fixed / Sticky Image Portfolio -->
+            <div class="story-sticky-visual">
+                <img id="story-visual-img" src="{{ url_for('static', filename='img/resume-story.jpg') }}"
+                    alt="Career review and portfolio building">
+                <div style="padding: 1.25rem 1.5rem; background: var(--color-forest); color: var(--color-ivory);">
+                    <div style="font-family: var(--font-serif); font-size: 1.15rem; font-weight: 600;">Authentic Career
+                        Progression</div>
+                    <div style="font-size: 0.8rem; color: var(--color-ivory-dark);">Continuous intelligence that evolves
+                        with every skill acquired.</div>
+                </div>
+            </div>
+
+            <!-- Right: Scrolling Narrative Milestones -->
+            <div>
+                <!-- Step 1: Resume -->
+                <div class="story-card-step">
+                    <div class="story-step-num">01</div>
+                    <span class="badge badge-terracotta" style="margin-bottom: 0.5rem;">Resume Intelligence</span>
+                    <h3 style="margin-bottom: 0.75rem;">CareerMate understands where you are.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Upload your PDF/DOCX resume. CareerMate's NLP engine extracts technical keywords, validates
+                        formatting, checks grammar patterns, and evaluates ATS compatibility without fabricated
+                        estimates.
+                    </p>
+                    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-outline btn-sm">Explore Resume Analyzer
+                        &rarr;</a>
+                </div>
+
+                <!-- Step 2: Profile -->
+                <div class="story-card-step">
+                    <div class="story-step-num">02</div>
+                    <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Unified Profile</span>
+                    <h3 style="margin-bottom: 0.75rem;">Map your goals, education &amp; skills.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Establish your baseline preferences: whether you're a student preparing for campus placements, a
+                        fresher entering tech, or a professional targeting senior roles.
+                    </p>
+                    <a href="{{ url_for('main.profile') }}" class="btn btn-outline btn-sm">Manage Career Profile
+                        &rarr;</a>
+                </div>
+
+                <!-- Step 3: Job Fit -->
+                <div class="story-card-step">
+                    <div class="story-step-num">03</div>
+                    <span class="badge badge-sage" style="margin-bottom: 0.5rem;">Job Fit Analysis</span>
+                    <h3 style="margin-bottom: 0.75rem;">CareerMate tells you where you fit.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Compare your profile against actual company descriptions using TF-IDF cosine similarity. See
+                        exactly which skills match, which are missing, and why it matters.
+                    </p>
+                    <a href="{{ url_for('main.job_fit') }}" class="btn btn-outline btn-sm">Test Job Fit &rarr;</a>
+                </div>
+
+                <!-- Step 4: Skill Gap -->
+                <div class="story-card-step">
+                    <div class="story-step-num">04</div>
+                    <span class="badge badge-terracotta" style="margin-bottom: 0.5rem;">Skill Gap Intelligence</span>
+                    <h3 style="margin-bottom: 0.75rem;">Identify what you're missing.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Select your target role (Full Stack, AI/ML, Cloud, Data Science) to generate a prioritized gap
+                        matrix distinguishing High, Medium, and Low urgency requirements.
+                    </p>
+                    <a href="{{ url_for('main.skill_gap') }}" class="btn btn-outline btn-sm">View Skill Gaps &rarr;</a>
+                </div>
+
+                <!-- Step 5: Learning -->
+                <div class="story-card-step">
+                    <div class="story-step-num">05</div>
+                    <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Learning Recommendations</span>
+                    <h3 style="margin-bottom: 0.75rem;">CareerMate tells you what to learn.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Get direct, vetted official documentation and course tracks mapped specifically to your missing
+                        competencies. No generic fluff.
+                    </p>
+                    <a href="{{ url_for('main.learning') }}" class="btn btn-outline btn-sm">Discover Learning Paths
+                        &rarr;</a>
+                </div>
+
+                <!-- Step 6: Career Roadmap -->
+                <div class="story-card-step">
+                    <div class="story-step-num">06</div>
+                    <span class="badge badge-sage" style="margin-bottom: 0.5rem;">Career Roadmap</span>
+                    <h3 style="margin-bottom: 0.75rem;">A step-by-step path forward.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Track your progress across 8 structured milestones: from core programming fundamentals and
+                        project deployment to mock interviews and job readiness.
+                    </p>
+                    <a href="{{ url_for('main.roadmap') }}" class="btn btn-outline btn-sm">View Roadmap &rarr;</a>
+                </div>
+
+                <!-- Step 7: Career Growth -->
+                <div class="story-card-step"
+                    style="border-color: var(--color-forest); background: var(--color-ivory-light);">
+                    <div class="story-step-num" style="color: var(--color-forest);">07</div>
+                    <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Career Readiness</span>
+                    <h3 style="margin-bottom: 0.75rem; color: var(--color-forest);">You become career ready.</h3>
+                    <p style="font-size: 0.95rem; margin-bottom: 1rem;">
+                        Confidently apply to top opportunities with an optimized profile, demonstrated portfolio, and
+                        verified technical readiness.
+                    </p>
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-primary btn-sm">Discover Matching Jobs
+                        &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. VISUAL SHOWCASE MOMENT (Interview & Mentoring) -->
+<section class="section" style="background-color: var(--color-forest); color: var(--color-ivory); position: relative;">
+    <div class="container">
+        <div class="grid grid-cols-2" style="align-items: center; gap: 3.5rem;">
+            <div>
+                <span class="badge"
+                    style="background: rgba(244, 239, 227, 0.15); color: var(--color-ivory); margin-bottom: 1rem;">
+                    Interview &amp; Company Intelligence
+                </span>
+                <h2 style="color: var(--color-ivory); margin-bottom: 1.25rem;">
+                    Real Company Criteria.<br>
+                    Real Selection Processes.
+                </h2>
+                <p style="color: rgba(244, 239, 227, 0.85); font-size: 1.05rem; margin-bottom: 1.75rem;">
+                    Prepare with company-specific intelligence from our database, including eligibility thresholds,
+                    package breakdowns, and categorized practice questions.
+                </p>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-terracotta btn-lg">Browse Companies &rarr;</a>
+                </div>
+            </div>
+            <div>
+                <div
+                    style="border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); border: 2px solid rgba(244, 239, 227, 0.2);">
+                    <img src="{{ url_for('static', filename='img/interview-mentor.jpg') }}"
+                        alt="Interview preparation and career mentorship"
+                        style="width: 100%; height: 420px; object-fit: cover;">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5. CAREERMATE AI SPOTLIGHT -->
+<section class="section" id="ai" style="background-color: var(--bg-surface-warm);">
+    <div class="container">
+        <div class="grid grid-cols-2" style="align-items: center; gap: 3.5rem;">
+            <div>
+                <div
+                    style="border-radius: var(--radius-xl); overflow: hidden; box-shadow: var(--shadow-lg); border: 1.5px solid var(--border-color);">
+                    <img src="{{ url_for('static', filename='img/roadmap-growth.jpg') }}"
+                        alt="Young engineer planning project roadmap and career growth"
+                        style="width: 100%; height: 450px; object-fit: cover;">
+                </div>
+            </div>
+            <div>
+                <span class="badge badge-terracotta" style="margin-bottom: 0.75rem;">Career Intelligence
+                    Assistant</span>
+                <h2>Meet CareerMate AI</h2>
+                <p class="text-lead" style="margin-bottom: 1.5rem;">
+                    Your personal career intelligence partner. Ask grounded questions about your readiness, resume
+                    improvements, and company expectations.
+                </p>
+
+                <div class="card" style="margin-bottom: 1.5rem; background: #FFFFFF;">
+                    <div
+                        style="font-size: 0.85rem; font-weight: 700; color: var(--color-forest); margin-bottom: 0.75rem;">
+                        SUGGESTED CONVERSATIONS:</div>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem;">
+                        <div
+                            style="padding: 0.5rem 0.85rem; background: var(--color-ivory); border-radius: var(--radius-sm); border-left: 3px solid var(--color-terracotta);">
+                            &ldquo;Am I ready for this job?&rdquo;
+                        </div>
+                        <div
+                            style="padding: 0.5rem 0.85rem; background: var(--color-ivory); border-radius: var(--radius-sm); border-left: 3px solid var(--color-forest);">
+                            &ldquo;What are my biggest skill gaps?&rdquo;
+                        </div>
+                        <div
+                            style="padding: 0.5rem 0.85rem; background: var(--color-ivory); border-radius: var(--radius-sm); border-left: 3px solid var(--color-sage);">
+                            &ldquo;How can I improve my resume for ATS filters?&rdquo;
+                        </div>
+                    </div>
+                </div>
+
+                <a href="{{ url_for('main.assistant') }}" class="btn btn-primary btn-lg" id="explore-ai-btn">
+                    <span>Chat with CareerMate AI</span>
+                    <span style="font-size: 1.1rem;">&rarr;</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6. FINAL CALL TO ACTION -->
+<section class="section"
+    style="text-align: center; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--color-ivory-dark) 100%);">
+    <div class="container-narrow">
+        <h2 style="font-size: clamp(2rem, 3.5vw, 2.8rem); margin-bottom: 1rem;">
+            Ready to Build Your Career with Direction?
+        </h2>
+        <p class="text-lead" style="margin-bottom: 2rem;">
+            CareerMate doesn't just tell you where you are. It helps you understand where you fit, what you're missing,
+            and what you should do next.
+        </p>
+        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <a href="{{ url_for('auth.register') }}" class="btn btn-terracotta btn-lg" id="footer-cta-register">
+                <span>Start Building for Free</span>
+                <span>&rarr;</span>
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline btn-lg" id="footer-cta-login">
+                <span>Log In to Your Account</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Ensure page stays at the top/hero section on refresh or initial load
+    if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+    }
+    window.addEventListener('load', function() {
+        if (window.location.hash) {
+            history.replaceState(null, null, window.location.pathname);
+        }
+        window.scrollTo(0, 0);
+    });
+
+    // Smooth scroll for in-page anchors without persisting the hash in the address bar
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId !== '#') {
+                const target = document.querySelector(targetId);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
+    });
+
+    // 4-Card Corner Entrance Animation with 5-Minute Cooldown
+    const cardStage = document.getElementById('fourCardStage');
+    if (cardStage) {
+        const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes (300,000 ms)
+        let isAnimationRunning = false;
+
+        function runCardSequence() {
+            if (isAnimationRunning) return;
+
+            const lastPlayed = parseInt(localStorage.getItem('cm_four_card_last_animated') || '0', 10);
+            const now = Date.now();
+
+            if (lastPlayed === 0 || (now - lastPlayed) >= COOLDOWN_MS) {
+                // Eligible to play: reset to initial state and trigger animation
+                isAnimationRunning = true;
+                cardStage.classList.remove('is-completed');
+                cardStage.classList.remove('is-animating');
+                void cardStage.offsetWidth; // force style reflow to restart keyframes
+                cardStage.classList.add('is-animating');
+                localStorage.setItem('cm_four_card_last_animated', now.toString());
+
+                // Total duration: word-by-word fade (2.3s-4.4s) + cards entrance (4.4s-7.2s) = ~7.5s
+                setTimeout(() => {
+                    cardStage.classList.remove('is-animating');
+                    cardStage.classList.add('is-completed');
+                    isAnimationRunning = false;
+                }, 7600);
+            } else {
+                // Within 5 minutes: stay directly in the clean settled state
+                cardStage.classList.remove('is-animating');
+                cardStage.classList.add('is-completed');
+            }
+        }
+
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        runCardSequence();
+                    }
+                });
+            }, { threshold: 0.25, rootMargin: "0px 0px -40px 0px" });
+            observer.observe(cardStage);
+        } else {
+            cardStage.classList.add('is-completed');
+        }
+    }
+</script>
+{% endblock %}
