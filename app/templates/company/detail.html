@@ -1,30 +1,42 @@
 {% extends "base.html" %}
 
-{% block title %}{{ company.company_name }} — Practice Questions &amp; Intelligence — CareerMate{% endblock %}
+{% block title %}{{ company.company_name }} — Career Hub &amp; Openings — CareerMate{% endblock %}
 
 {% block content %}
-<section class="section" style="padding: 2.5rem 0 4.5rem;">
+<section class="section" style="padding: 2.5rem 0 5rem;">
     <div class="container">
         
         <!-- Header Banner -->
-        <div class="card card-forest" style="padding: 2.25rem; border-radius: var(--radius-xl); margin-bottom: 2rem;">
+        <div class="card card-forest" style="padding: 2.5rem; border-radius: var(--radius-xl); margin-bottom: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem;">
                 <div>
-                    <span class="badge" style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory); margin-bottom: 0.5rem;">
-                        Company Profile &amp; Assessments
-                    </span>
-                    <h1 style="color: var(--color-ivory); font-size: 2.3rem; margin-bottom: 0.5rem;">{{ company.company_name }}</h1>
-                    <p style="color: rgba(244, 239, 227, 0.85); font-size: 1rem; max-width: 650px;">
-                        {{ company.description or 'Technology leader recruitment and evaluation track.' }}
+                    <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem; flex-wrap: wrap;">
+                        <span class="badge" style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory);">
+                            {{ company.industry or 'Technology Leader' }}
+                        </span>
+                        {% if company.headquarters %}
+                            <span class="badge" style="background: rgba(244, 239, 227, 0.15); color: var(--color-ivory);">
+                                📍 {{ company.headquarters }}
+                            </span>
+                        {% endif %}
+                    </div>
+                    <h1 style="color: var(--color-ivory); font-size: 2.5rem; font-family: var(--font-serif); margin-bottom: 0.5rem; line-height: 1.2;">
+                        {{ company.company_name }}
+                    </h1>
+                    <p style="color: rgba(244, 239, 227, 0.85); font-size: 1.05rem; max-width: 680px; line-height: 1.6;">
+                        {{ company.description or 'Verified employer with engineering tracks, talent assessments, and active hiring pipelines.' }}
                     </p>
                 </div>
 
-                <div style="display: flex; gap: 0.75rem;">
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    {% if company.official_careers_url %}
+                        <a href="{{ company.official_careers_url }}" target="_blank" rel="noopener noreferrer" 
+                           class="btn btn-outline" style="border-color: var(--color-ivory); color: var(--color-ivory);">
+                            <span>Official Careers Portal ↗</span>
+                        </a>
+                    {% endif %}
                     <a href="{{ url_for('main.job_fit', company_id=company.company_id) }}" class="btn btn-terracotta">
-                        <span>Analyze My Fit &rarr;</span>
-                    </a>
-                    <a href="{{ url_for('main.jobs') }}" class="btn btn-outline" style="border-color: var(--color-ivory); color: var(--color-ivory);">
-                        <span>Back to Jobs</span>
+                        <span>Analyze Fit &rarr;</span>
                     </a>
                 </div>
             </div>
@@ -33,33 +45,198 @@
         <!-- Info Highlights -->
         <div class="grid grid-cols-4" style="gap: 1.5rem; margin-bottom: 2.5rem;">
             {% if company.salary %}
-                <div class="card">
-                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Salary Package</div>
-                    <div style="font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--color-forest); margin-top: 0.25rem;">
+                <div class="card" style="background: #FFFFFF;">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Salary Benchmark</div>
+                    <div style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--color-forest); margin-top: 0.25rem;">
                         {{ company.salary }}
                     </div>
                 </div>
             {% endif %}
 
+            <div class="card" style="background: #FFFFFF;">
+                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Current Real Openings</div>
+                <div style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--color-forest); margin-top: 0.25rem;">
+                    {{ openings|length }} Roles
+                </div>
+            </div>
+
             {% if company.eligibility %}
-                <div class="card" style="grid-column: span 2;">
+                <div class="card" style="grid-column: span 2; background: #FFFFFF;">
                     <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Eligibility Criteria</div>
-                    <div style="font-size: 0.9rem; color: var(--color-dark-brown); margin-top: 0.25rem;">
+                    <div style="font-size: 0.875rem; color: var(--color-dark-brown); margin-top: 0.25rem; line-height: 1.45;">
                         {{ company.eligibility }}
                     </div>
                 </div>
+            {% else %}
+                <div class="card" style="grid-column: span 2; background: #FFFFFF;">
+                    <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Practice Questions</div>
+                    <div style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--color-terracotta); margin-top: 0.25rem;">
+                        {{ questions_by_type.values()|map('length')|sum }} Interview Problems
+                    </div>
+                </div>
             {% endif %}
+        </div>
 
-            <div class="card">
-                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Practice Questions</div>
-                <div style="font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; color: var(--color-terracotta); margin-top: 0.25rem;">
-                    {{ questions_by_type.values()|map('length')|sum }} Questions
+        <!-- SECTION: ROLES MATCHING YOUR PROFILE -->
+        <div style="margin-bottom: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <span class="badge badge-forest" style="margin-bottom: 0.4rem;">Candidate Intelligence</span>
+                    <h2 style="font-size: 1.6rem; color: var(--color-forest); font-family: var(--font-serif);">
+                        Roles That Match Your Profile
+                    </h2>
                 </div>
             </div>
+
+            {% if has_profile_or_resume and personalized_matches %}
+                <div class="grid grid-cols-3" style="gap: 1.5rem;">
+                    {% for item in personalized_matches %}
+                        <div class="card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.6rem;">
+                                    <h4 style="font-size: 1.15rem; color: var(--color-forest); margin: 0;">
+                                        {{ item.job.title }}
+                                    </h4>
+                                    <span class="badge badge-forest" style="font-size: 0.8rem; font-weight: 700;">
+                                        {{ item.score }}% Match
+                                    </span>
+                                </div>
+                                <div style="font-size: 0.825rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+                                    📍 {{ item.job.location }} &bull; {{ item.job.employment_type }}
+                                </div>
+                                {% if item.matching_skills %}
+                                    <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 1rem;">
+                                        {% for s in item.matching_skills %}
+                                            <span class="badge badge-ivory" style="font-size: 0.725rem; border: 1px solid var(--color-ivory-border);">{{ s }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                                <a href="{{ url_for('main.job_fit', job_id=item.job.id) }}" style="font-size: 0.85rem; color: var(--text-secondary); text-decoration: underline;">
+                                    Fit Breakdown
+                                </a>
+                                <a href="{{ url_for('main.job_detail', job_id=item.job.id) }}" class="btn btn-terracotta btn-sm">
+                                    <span>Explore Role &rarr;</span>
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% elif has_profile_or_resume and not openings %}
+                <div class="card" style="background: var(--bg-surface-warm); padding: 1.5rem 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <p style="color: var(--color-dark-brown); font-size: 0.95rem; margin: 0;">
+                        No individual role feeds currently active for {{ company.company_name }}. Explore official listings directly via the 
+                        <a href="{{ company.official_careers_url or '#' }}" target="_blank" rel="noopener noreferrer" style="color: var(--color-forest); font-weight: 600;">
+                            Official Career Portal ↗
+                        </a>.
+                    </p>
+                </div>
+            {% else %}
+                <div class="card" style="background: var(--bg-surface-warm); padding: 1.75rem 2rem; border-radius: var(--radius-lg); border: 1px dashed var(--color-forest-soft); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h4 style="color: var(--color-forest); margin-bottom: 0.25rem;">Complete your career profile to unlock personalized role matches</h4>
+                        <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">Upload your resume or add your skills to compare your background against {{ company.company_name }} requirements.</p>
+                    </div>
+                    <div style="display: flex; gap: 0.6rem;">
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-primary btn-sm">Upload Resume</a>
+                        <a href="{{ url_for('main.profile') }}" class="btn btn-outline btn-sm">Complete Profile</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- SECTION: DYNAMIC CAREER AREAS -->
+        {% if career_areas %}
+        <div style="margin-bottom: 3rem;">
+            <h2 style="font-size: 1.6rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 1rem;">
+                Career Areas &amp; Functions at {{ company.company_name }}
+            </h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                <a href="{{ url_for('company.detail', company_id=company.slug or company.company_id) }}" 
+                   class="btn {% if not selected_category %}btn-primary{% else %}btn-outline{% endif %} btn-sm">
+                    All Areas ({{ openings|length }})
+                </a>
+                {% for area, count in career_areas.items() %}
+                    <a href="{{ url_for('company.detail', company_id=company.slug or company.company_id, category=area) }}" 
+                       class="btn {% if selected_category == area %}btn-primary{% else %}btn-outline{% endif %} btn-sm">
+                        {{ area }} ({{ count }})
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- SECTION: CURRENT REAL OPENINGS -->
+        <div style="margin-bottom: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <h2 style="font-size: 1.6rem; color: var(--color-forest); font-family: var(--font-serif);">
+                    Current Job Openings {% if selected_category %}&mdash; {{ selected_category }}{% endif %}
+                </h2>
+                <span style="font-size: 0.875rem; color: var(--text-secondary);">{{ openings|length }} Active Verified Roles</span>
+            </div>
+
+            {% if openings %}
+                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                    {% for job in openings %}
+                        <div class="card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg);">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 0.75rem;">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem; flex-wrap: wrap;">
+                                        <h3 style="font-size: 1.3rem; color: var(--color-forest); margin: 0;">
+                                            <a href="{{ url_for('main.job_detail', job_id=job.id) }}" style="color: inherit; text-decoration: none;">
+                                                {{ job.title }}
+                                            </a>
+                                        </h3>
+                                        <span class="badge badge-ivory" style="border: 1px solid var(--color-ivory-border); font-size: 0.75rem;">
+                                            {{ job.career_area or 'Engineering' }}
+                                        </span>
+                                        <span class="badge badge-forest" style="font-size: 0.75rem;">{{ job.work_mode }}</span>
+                                    </div>
+                                    <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                                        📍 {{ job.location }} &bull; ⏳ {{ job.experience_display }} &bull; Verified {{ job.freshness_label }}
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.6rem; align-items: center;">
+                                    <a href="{{ url_for('main.job_fit', job_id=job.id) }}" class="btn btn-outline btn-sm">
+                                        <span>Analyze Fit</span>
+                                    </a>
+                                    <a href="{{ url_for('main.job_detail', job_id=job.id) }}" class="btn btn-terracotta btn-sm">
+                                        <span>Explore Role &rarr;</span>
+                                    </a>
+                                    <a href="{{ job.application_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                                        <span>Apply ↗</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            {% if job.skills %}
+                                <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); margin-top: 0.5rem;">
+                                    {% for s in job.skills[:6] %}
+                                        <span class="badge badge-ivory" style="font-size: 0.725rem; border: 1px solid var(--color-ivory-border);">{{ s }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="card" style="background: var(--bg-surface-warm); padding: 2rem; border-radius: var(--radius-lg); text-align: center;">
+                    <h4 style="color: var(--color-forest); margin-bottom: 0.5rem;">No direct opening records found for this category</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 500px; margin: 0 auto 1.25rem;">
+                        Visit {{ company.company_name }}'s official recruitment portal for verified listings across all international locations.
+                    </p>
+                    {% if company.official_careers_url %}
+                        <a href="{{ company.official_careers_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm">
+                            <span>View Official Careers &rarr;</span>
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
 
         {% if company.selection_process %}
-            <div class="card card-warm" style="margin-bottom: 2.5rem; padding: 1.5rem 2rem;">
+            <div class="card card-warm" style="margin-bottom: 2.5rem; padding: 1.75rem 2rem; border-radius: var(--radius-lg);">
                 <h3 style="font-size: 1.2rem; color: var(--color-forest); margin-bottom: 0.5rem;">Hiring &amp; Selection Process</h3>
                 <p style="font-size: 0.95rem; line-height: 1.6; color: var(--color-dark-brown);">
                     {{ company.selection_process }}
@@ -69,21 +246,23 @@
 
         <!-- Practice Questions Categorized Accordion / List -->
         <div>
-            <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem;">Sample Technical &amp; Aptitude Questions</h2>
+            <h2 style="font-size: 1.6rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 1.25rem;">
+                Sample Technical &amp; Aptitude Questions
+            </h2>
 
             {% if questions_by_type %}
-                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                     {% for q_type, q_list in questions_by_type.items() %}
-                        <div class="card">
+                        <div class="card" style="background: #FFFFFF; border-radius: var(--radius-lg); padding: 1.75rem;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                                 <div style="display: flex; align-items: center; gap: 0.6rem;">
                                     <span class="badge badge-forest" style="text-transform: uppercase;">{{ q_type }}</span>
-                                    <h3 style="font-size: 1.25rem;">{{ q_type.title() }} Assessment Problems</h3>
+                                    <h3 style="font-size: 1.2rem; margin: 0;">{{ q_type.title() }} Assessment Problems</h3>
                                 </div>
                                 <span class="badge badge-ivory">{{ q_list|length }} Problems</span>
                             </div>
 
-                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div style="display: flex; flex-direction: column; gap: 0.85rem;">
                                 {% for q in q_list %}
                                     <div style="padding: 1.25rem; background: var(--bg-surface-warm); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
                                         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.5rem;">

@@ -8,5 +8,25 @@ from app.models.user_skill import UserSkill
 from app.models.enrollment import CourseEnrollment
 from app.models.job_feedback import JobFeedback
 from app.models.job_analysis import JobAnalysis
+from app.models.job import Job
+from app.models.job_source import JobSource
+from app.models.saved_job import SavedJob
+from app.models.job_application import JobApplication, APPLICATION_STATUSES
 
-__all__ = ['User', 'Resume', 'Company', 'Question', 'ChatHistory', 'Skill', 'UserSkill', 'CourseEnrollment', 'JobFeedback', 'JobAnalysis']
+__all__ = [
+    'User',
+    'Resume',
+    'Company',
+    'Question',
+    'ChatHistory',
+    'Skill',
+    'UserSkill',
+    'CourseEnrollment',
+    'JobFeedback',
+    'JobAnalysis',
+    'Job',
+    'JobSource',
+    'SavedJob',
+    'JobApplication',
+    'APPLICATION_STATUSES'
+]

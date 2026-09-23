@@ -7,6 +7,7 @@ class JobAnalysis(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('jobs.id'), nullable=True, index=True)
     resume_id = db.Column(db.Integer, db.ForeignKey('resumes.resume_id'), nullable=True)
     company_id = db.Column(db.Integer, db.ForeignKey('companies.company_id'), nullable=True)
     company_name = db.Column(db.String(150), nullable=False)

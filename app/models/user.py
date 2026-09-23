@@ -27,6 +27,8 @@ class User(UserMixin, db.Model):
     enrollments = db.relationship('CourseEnrollment', backref='user', lazy=True, cascade='all, delete-orphan')
     job_feedback = db.relationship('JobFeedback', backref='user', lazy=True, cascade='all, delete-orphan')
     job_analyses = db.relationship('JobAnalysis', backref='user', lazy=True, cascade='all, delete-orphan')
+    saved_jobs = db.relationship('SavedJob', backref='user', lazy=True, cascade='all, delete-orphan')
+    applications = db.relationship('JobApplication', backref='user', lazy=True, cascade='all, delete-orphan')
     
     def set_password(self, password):
         """Hash and set password"""
