@@ -15,10 +15,11 @@ def register():
     
     form = RegisterForm()
     if form.validate_on_submit():
+        normalized_email = (form.email.data or '').strip().lower()
         user = User(
-            name=form.name.data,
-            email=form.email.data,
-            phone=form.phone.data,
+            name=form.name.data.strip() if form.name.data else '',
+            email=normalized_email,
+            phone=form.phone.data.strip() if form.phone.data else None,
             user_type=form.user_type.data
         )
         user.set_password(form.password.data)
@@ -37,9 +38,10 @@ def complete_profile():
     """Step 2: Profile Completion (optional, can skip)"""
     form = ProfileCompletionForm()
     if form.validate_on_submit():
-        current_user.college_name = form.college_name.data
-        current_user.degree = form.degree.data
-        current_user.graduation_year = form.graduation_year.data
+        current_user.college_name = form.college_name.data.strip() if form.college_name.data else None
+        current_user.degree = form.degree.data.strip() if form.degree.data else None
+        current_user.graduation_start_year = form.graduation_start_year.data if form.graduation_start_year.data else None
+        current_user.graduation_year = form.graduation_year.data if form.graduation_year.data else None
         current_user.domain = form.domain.data or None
         current_user.career_goal = form.career_goal.data or None
         
@@ -68,7 +70,8 @@ def login():
     
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        normalized_email = (form.email.data or '').strip().lower()
+        user = User.query.filter_by(email=normalized_email).first()
         if user and user.check_password(form.password.data):
             login_user(user)
             next_page = request.args.get('next')

@@ -1162,8 +1162,26 @@ def profile():
         user.user_type = request.form.get('user_type', user.user_type)
         user.college_name = request.form.get('college_name', user.college_name).strip()
         user.degree = request.form.get('degree', user.degree).strip()
-        grad_year = request.form.get('graduation_year')
-        user.graduation_year = int(grad_year) if grad_year and grad_year.isdigit() else user.graduation_year
+        
+        def _extract_year(raw_val):
+            if not raw_val:
+                return None
+            s = str(raw_val).strip()
+            if '-' in s:
+                parts = s.split('-')
+                if parts[0].isdigit() and len(parts[0]) == 4:
+                    return int(parts[0])
+            digits = ''.join(c for c in s if c.isdigit())
+            if len(digits) >= 4:
+                return int(digits[:4])
+            return int(digits) if digits else None
+
+        raw_start = request.form.get('graduation_start_year')
+        user.graduation_start_year = _extract_year(raw_start) if raw_start is not None else user.graduation_start_year
+        
+        raw_end = request.form.get('graduation_year')
+        user.graduation_year = _extract_year(raw_end) if raw_end is not None else user.graduation_year
+        
         user.current_company = request.form.get('current_company', user.current_company).strip() or None
         user.domain = request.form.get('domain', user.domain)
         user.career_goal = request.form.get('career_goal', user.career_goal)

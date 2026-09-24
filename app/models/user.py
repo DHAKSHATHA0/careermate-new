@@ -2,6 +2,7 @@ from app.extensions import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+from sqlalchemy.orm import validates
 
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
@@ -15,6 +16,7 @@ class User(UserMixin, db.Model):
     domain = db.Column(db.String(100))
     college_name = db.Column(db.String(150))
     degree = db.Column(db.String(100))
+    graduation_start_year = db.Column(db.Integer)
     graduation_year = db.Column(db.Integer)
     current_company = db.Column(db.String(150))
     career_goal = db.Column(db.Enum('placement_prep', 'job_switch', 'upskilling', ''), nullable=True)
@@ -29,6 +31,14 @@ class User(UserMixin, db.Model):
     job_analyses = db.relationship('JobAnalysis', backref='user', lazy=True, cascade='all, delete-orphan')
     saved_jobs = db.relationship('SavedJob', backref='user', lazy=True, cascade='all, delete-orphan')
     applications = db.relationship('JobApplication', backref='user', lazy=True, cascade='all, delete-orphan')
+    conversations = db.relationship('Conversation', backref='user', lazy=True, cascade='all, delete-orphan', order_by='Conversation.last_message_at.desc()')
+    
+    @validates('email')
+    def validate_email(self, key, address):
+        """Ensure email is consistently trimmed and lowercased"""
+        if address:
+            return address.strip().lower()
+        return address
     
     def set_password(self, password):
         """Hash and set password"""
@@ -37,6 +47,17 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         """Verify password against hash"""
         return check_password_hash(self.password_hash, password)
+    
+    @property
+    def education_period(self):
+        """Return formatted education duration string e.g. 2024 - 2028"""
+        if self.graduation_start_year and self.graduation_year:
+            return f"{self.graduation_start_year} - {self.graduation_year}"
+        elif self.graduation_year:
+            return f"Class of {self.graduation_year}"
+        elif self.graduation_start_year:
+            return f"Since {self.graduation_start_year}"
+        return "Not specified"
     
     def __repr__(self):
         return f'<User {self.email}>'

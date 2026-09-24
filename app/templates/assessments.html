@@ -6,12 +6,14 @@
 <section class="section" style="padding: 2.5rem 0 5rem;">
     <div class="container">
         <!-- Page Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.25rem; flex-wrap: wrap; gap: 1.5rem;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.25rem; flex-wrap: wrap; gap: 1.5rem;">
             <div>
                 <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Skill Validation &amp; Mock Tests</span>
                 <h1 style="font-size: 2.3rem; margin-bottom: 0.35rem;">Customized Assessments</h1>
                 <p style="color: var(--text-secondary); max-width: 600px;">
-                    Take timed evaluations configured for specific companies, domains, and difficulty levels using real verified question archives.
+                    Take timed evaluations configured for specific companies, domains, and difficulty levels using real
+                    verified question archives.
                 </p>
             </div>
             <div style="display: flex; gap: 0.75rem;">
@@ -23,13 +25,18 @@
         </div>
 
         <!-- 1. ASSESSMENT CONFIGURATION & LAUNCH CARD -->
-        <div id="assessment-setup-card" class="card" style="background: #FFFFFF; padding: 2.5rem; margin-bottom: 2.5rem; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+        <div id="assessment-setup-card" class="card"
+            style="background: #FFFFFF; padding: 2.5rem; margin-bottom: 2.5rem; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-sm);">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
                 <div>
-                    <h3 style="color: var(--color-forest); font-size: 1.35rem; margin-bottom: 0.25rem;">Start a Skill Assessment</h3>
-                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Select your parameters to test your readiness under real exam conditions.</p>
+                    <h3 style="color: var(--color-forest); font-size: 1.35rem; margin-bottom: 0.25rem;">Start a Skill
+                        Assessment</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Select your parameters to test your
+                        readiness under real exam conditions.</p>
                 </div>
-                <span class="badge badge-terracotta" style="font-size: 0.8rem;">{{ total_questions }} Questions in Database</span>
+                <span class="badge badge-terracotta" style="font-size: 0.8rem;">{{ total_questions }} Questions in
+                    Database</span>
             </div>
 
             <form id="assessment-config-form" onsubmit="startAssessment(event)">
@@ -39,7 +46,8 @@
                         <select id="assess-company" class="form-control">
                             <option value="">-- Any / General Tech --</option>
                             {% for comp in companies %}
-                            <option value="{{ comp.company_id }}">{{ comp.company_name }} ({{ comp.questions|length }} questions)</option>
+                            <option value="{{ comp.company_id }}">{{ comp.company_name }} ({{ comp.questions|length }}
+                                questions)</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -77,7 +85,8 @@
                     </div>
 
                     <div style="display: flex; flex-direction: column; justify-content: flex-end;">
-                        <button type="submit" class="btn btn-terracotta btn-lg" style="width: 100%; justify-content: center;" id="btn-start-test">
+                        <button type="submit" class="btn btn-terracotta btn-lg"
+                            style="width: 100%; justify-content: center;" id="btn-start-test">
                             <span>Launch Live Assessment</span>
                             <span>&rarr;</span>
                         </button>
@@ -90,44 +99,56 @@
         <div id="assessment-runner" class="quiz-runner-container" style="display: none; margin-bottom: 2.5rem;">
             <div class="quiz-runner-header">
                 <div>
-                    <span style="font-size: 0.8rem; color: var(--color-ivory-dark); text-transform: uppercase; letter-spacing: 0.05em;" id="runner-company-tag">ASSESSMENT IN PROGRESS</span>
-                    <h3 style="color: var(--color-ivory); font-size: 1.25rem; margin-top: 0.15rem;" id="runner-title">Live Test</h3>
+                    <span
+                        style="font-size: 0.8rem; color: var(--color-ivory-dark); text-transform: uppercase; letter-spacing: 0.05em;"
+                        id="runner-company-tag">ASSESSMENT IN PROGRESS</span>
+                    <h3 style="color: var(--color-ivory); font-size: 1.25rem; margin-top: 0.15rem;" id="runner-title">
+                        Live Test</h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div class="timer-badge">
                         <span>⏱️</span>
                         <span id="timer-display">15:00</span>
                     </div>
-                    <button type="button" class="btn btn-sm" style="background: rgba(255,255,255,0.2); color: #fff; border: none;" onclick="confirmExitTest()">Quit Test</button>
+                    <button type="button" class="btn btn-sm"
+                        style="background: rgba(255,255,255,0.2); color: #fff; border: none;"
+                        onclick="confirmExitTest()">Quit Test</button>
                 </div>
             </div>
 
             <!-- Progress Bar -->
             <div style="height: 4px; background: rgba(38, 61, 50, 0.1); width: 100%;">
-                <div id="quiz-progress-fill" style="height: 100%; background: var(--color-terracotta); width: 10%; transition: width 0.3s ease;"></div>
+                <div id="quiz-progress-fill"
+                    style="height: 100%; background: var(--color-terracotta); width: 10%; transition: width 0.3s ease;">
+                </div>
             </div>
 
             <div class="quiz-question-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                     <span class="badge badge-forest" id="question-index-badge">Question 1 of 5</span>
                     <span class="difficulty-badge difficulty-medium" id="question-diff-badge">Medium</span>
                 </div>
 
-                <h2 style="font-size: 1.35rem; color: var(--color-dark-brown); margin-bottom: 1.5rem; line-height: 1.5;" id="question-text">
+                <h2 style="font-size: 1.35rem; color: var(--color-dark-brown); margin-bottom: 1.5rem; line-height: 1.5;"
+                    id="question-text">
                     Loading question...
                 </h2>
 
                 <!-- Candidate Answer Input -->
                 <div style="margin-bottom: 2rem;">
-                    <label class="form-label" style="font-weight: 600; color: var(--color-forest);">Your Detailed Solution / Response:</label>
-                    <textarea id="user-answer-input" class="form-control" rows="4" placeholder="Write your solution approach, code, or explanation here..."></textarea>
+                    <label class="form-label" style="font-weight: 600; color: var(--color-forest);">Your Detailed
+                        Solution / Response:</label>
+                    <textarea id="user-answer-input" class="form-control" rows="4"
+                        placeholder="Write your solution approach, code, or explanation here..."></textarea>
                     <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.4rem;">
                         Carefully outline key logic, time complexity, formulas, or syntax used.
                     </div>
                 </div>
 
                 <!-- Navigation Controls -->
-                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
                     <button type="button" class="btn btn-outline" id="btn-prev-q" onclick="navigateQuestion(-1)">
                         <span>&larr; Previous</span>
                     </button>
@@ -135,7 +156,8 @@
                         <button type="button" class="btn btn-primary" id="btn-next-q" onclick="navigateQuestion(1)">
                             <span>Next Question &rarr;</span>
                         </button>
-                        <button type="button" class="btn btn-terracotta" id="btn-submit-test" style="display: none;" onclick="submitAssessment()">
+                        <button type="button" class="btn btn-terracotta" id="btn-submit-test" style="display: none;"
+                            onclick="submitAssessment()">
                             <span>Submit Assessment</span>
                             <span>&check;</span>
                         </button>
@@ -145,7 +167,8 @@
         </div>
 
         <!-- 3. ASSESSMENT RESULTS VIEW (Initially Hidden) -->
-        <div id="assessment-result-card" class="card" style="display: none; background: #FFFFFF; padding: 2.5rem; margin-bottom: 2.5rem; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-lg);">
+        <div id="assessment-result-card" class="card"
+            style="display: none; background: #FFFFFF; padding: 2.5rem; margin-bottom: 2.5rem; border: 1.5px solid var(--border-color); box-shadow: var(--shadow-lg);">
             <div style="text-align: center; margin-bottom: 2rem;">
                 <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Evaluation Complete</span>
                 <h2 style="color: var(--color-forest); font-size: 2rem;">Assessment Performance Report</h2>
@@ -155,28 +178,39 @@
             </div>
 
             <div class="grid grid-cols-3" style="gap: 1.5rem; margin-bottom: 2.5rem; text-align: center;">
-                <div style="padding: 1.5rem; background: var(--color-ivory-light); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Completion Rate</div>
-                    <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-forest);" id="res-score">100%</div>
-                    <div style="font-size: 0.8rem; color: var(--color-sage); font-weight: 600;">All prompts answered</div>
+                <div
+                    style="padding: 1.5rem; background: var(--color-ivory-light); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Completion
+                        Rate</div>
+                    <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-forest);" id="res-score">100%
+                    </div>
+                    <div style="font-size: 0.8rem; color: var(--color-sage); font-weight: 600;">All prompts answered
+                    </div>
                 </div>
 
-                <div style="padding: 1.5rem; background: var(--color-ivory-light); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Questions Evaluated</div>
-                    <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-terracotta);" id="res-total">5</div>
+                <div
+                    style="padding: 1.5rem; background: var(--color-ivory-light); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Questions
+                        Evaluated</div>
+                    <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-terracotta);" id="res-total">5
+                    </div>
                     <div style="font-size: 0.8rem; color: var(--text-secondary);">Verified archive items</div>
                 </div>
 
-                <div style="padding: 1.5rem; background: var(--color-ivory-light); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
-                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Readiness Indicator</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--color-forest); margin-top: 0.5rem;" id="res-status">Strong Alignment</div>
+                <div
+                    style="padding: 1.5rem; background: var(--color-ivory-light); border-radius: var(--radius-lg); border: 1px solid var(--border-color);">
+                    <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.35rem;">Readiness
+                        Indicator</div>
+                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--color-forest); margin-top: 0.5rem;"
+                        id="res-status">Strong Alignment</div>
                     <div style="font-size: 0.8rem; color: var(--text-secondary);">Benchmark comparison</div>
                 </div>
             </div>
 
             <!-- Detailed Question-by-Question Solution Comparison -->
             <h3 style="color: var(--color-forest); margin-bottom: 1.25rem;">Question &amp; Verified Solution Review</h3>
-            <div id="results-breakdown-list" style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem;">
+            <div id="results-breakdown-list"
+                style="display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem;">
                 <!-- Populated dynamically by JS -->
             </div>
 
@@ -195,14 +229,19 @@
         <div class="card" style="background: #FFFFFF; padding: 2rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
                 <h3 style="color: var(--color-forest); font-size: 1.25rem;">Verified Database Question Bank Samples</h3>
-                <a href="{{ url_for('main.preparation') }}" class="btn btn-outline btn-sm">Explore Preparation Hub &rarr;</a>
+                <a href="{{ url_for('main.preparation') }}" class="btn btn-outline btn-sm">Explore Preparation Hub
+                    &rarr;</a>
             </div>
             <div class="grid grid-cols-2" style="gap: 1rem;">
                 {% for q in questions %}
-                <div style="padding: 1rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--color-ivory-light);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
-                        <span class="badge badge-forest" style="font-size: 0.75rem;">{{ q.company.company_name if q.company else 'General' }} &bull; {{ q.question_type }}</span>
-                        <span class="difficulty-badge difficulty-{{ q.difficulty_level }}">{{ q.difficulty_level }}</span>
+                <div
+                    style="padding: 1rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color); background: var(--color-ivory-light);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                        <span class="badge badge-forest" style="font-size: 0.75rem;">{{ q.company.company_name if
+                            q.company else 'General' }} &bull; {{ q.question_type }}</span>
+                        <span class="difficulty-badge difficulty-{{ q.difficulty_level }}">{{ q.difficulty_level
+                            }}</span>
                     </div>
                     <div style="font-size: 0.925rem; font-weight: 600; color: var(--color-dark-brown);">
                         {{ q.question }}
@@ -215,157 +254,157 @@
 </section>
 
 <script>
-let currentQuestions = [];
-let currentQuestionIndex = 0;
-let userAnswers = {};
-let timerInterval = null;
-let secondsRemaining = 600;
+    let currentQuestions = [];
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+    let timerInterval = null;
+    let secondsRemaining = 600;
 
-function showConfigModal() {
-    document.getElementById('assessment-setup-card').scrollIntoView({ behavior: 'smooth' });
-}
+    function showConfigModal() {
+        document.getElementById('assessment-setup-card').scrollIntoView({ behavior: 'smooth' });
+    }
 
-async function startAssessment(e) {
-    e.preventDefault();
-    const companyId = document.getElementById('assess-company').value;
-    const qType = document.getElementById('assess-type').value;
-    const difficulty = document.getElementById('assess-difficulty').value;
-    const count = parseInt(document.getElementById('assess-count').value);
+    async function startAssessment(e) {
+        e.preventDefault();
+        const companyId = document.getElementById('assess-company').value;
+        const qType = document.getElementById('assess-type').value;
+        const difficulty = document.getElementById('assess-difficulty').value;
+        const count = parseInt(document.getElementById('assess-count').value);
 
-    const btn = document.getElementById('btn-start-test');
-    btn.disabled = true;
-    btn.innerText = 'Loading Questions...';
+        const btn = document.getElementById('btn-start-test');
+        btn.disabled = true;
+        btn.innerText = 'Loading Questions...';
 
-    try {
-        const response = await fetch('/api/assessments/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                company_id: companyId,
-                question_type: qType,
-                difficulty: difficulty,
-                count: count
-            })
-        });
+        try {
+            const response = await fetch('/api/assessments/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    company_id: companyId,
+                    question_type: qType,
+                    difficulty: difficulty,
+                    count: count
+                })
+            });
 
-        const data = await response.json();
-        if (data.success && data.questions.length > 0) {
-            currentQuestions = data.questions;
-            currentQuestionIndex = 0;
-            userAnswers = {};
-            
-            // Hide setup, show runner
-            document.getElementById('assessment-setup-card').style.display = 'none';
-            document.getElementById('assessment-result-card').style.display = 'none';
-            document.getElementById('assessment-runner').style.display = 'block';
-            
-            // Start timer (2 mins per question)
-            secondsRemaining = currentQuestions.length * 120;
-            startTimer();
-            
-            renderCurrentQuestion();
-            document.getElementById('assessment-runner').scrollIntoView({ behavior: 'smooth' });
-        } else {
-            alert('No questions found for the selected criteria. Please choose another combination.');
+            const data = await response.json();
+            if (data.success && data.questions.length > 0) {
+                currentQuestions = data.questions;
+                currentQuestionIndex = 0;
+                userAnswers = {};
+
+                // Hide setup, show runner
+                document.getElementById('assessment-setup-card').style.display = 'none';
+                document.getElementById('assessment-result-card').style.display = 'none';
+                document.getElementById('assessment-runner').style.display = 'block';
+
+                // Start timer (2 mins per question)
+                secondsRemaining = currentQuestions.length * 120;
+                startTimer();
+
+                renderCurrentQuestion();
+                document.getElementById('assessment-runner').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('No questions found for the selected criteria. Please choose another combination.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Failed to initialize assessment. Please check your connection.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<span>Launch Live Assessment</span> <span>&rarr;</span>';
         }
-    } catch (err) {
-        console.error(err);
-        alert('Failed to initialize assessment. Please check your connection.');
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<span>Launch Live Assessment</span> <span>&rarr;</span>';
     }
-}
 
-function startTimer() {
-    clearInterval(timerInterval);
-    updateTimerDisplay();
-    timerInterval = setInterval(() => {
-        secondsRemaining--;
-        updateTimerDisplay();
-        if (secondsRemaining <= 0) {
-            clearInterval(timerInterval);
-            alert('Time is up! Submitting your answers now.');
-            submitAssessment();
-        }
-    }, 1000);
-}
-
-function updateTimerDisplay() {
-    const mins = Math.floor(secondsRemaining / 60);
-    const secs = secondsRemaining % 60;
-    document.getElementById('timer-display').innerText = 
-        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-}
-
-function renderCurrentQuestion() {
-    const q = currentQuestions[currentQuestionIndex];
-    document.getElementById('question-index-badge').innerText = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
-    document.getElementById('question-diff-badge').innerText = q.difficulty.toUpperCase();
-    document.getElementById('question-diff-badge').className = `difficulty-badge difficulty-${q.difficulty}`;
-    document.getElementById('question-text').innerText = q.question;
-    document.getElementById('runner-company-tag').innerText = `${q.company.toUpperCase()} ASSESSMENT`;
-
-    // Restore previously typed answer
-    document.getElementById('user-answer-input').value = userAnswers[currentQuestionIndex] || '';
-
-    // Update progress bar
-    const pct = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
-    document.getElementById('quiz-progress-fill').style.width = pct + '%';
-
-    // Update buttons
-    document.getElementById('btn-prev-q').style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
-    
-    if (currentQuestionIndex === currentQuestions.length - 1) {
-        document.getElementById('btn-next-q').style.display = 'none';
-        document.getElementById('btn-submit-test').style.display = 'inline-flex';
-    } else {
-        document.getElementById('btn-next-q').style.display = 'inline-flex';
-        document.getElementById('btn-submit-test').style.display = 'none';
-    }
-}
-
-function saveCurrentAnswer() {
-    const ans = document.getElementById('user-answer-input').value.trim();
-    if (ans) {
-        userAnswers[currentQuestionIndex] = ans;
-    }
-}
-
-function navigateQuestion(direction) {
-    saveCurrentAnswer();
-    currentQuestionIndex += direction;
-    renderCurrentQuestion();
-}
-
-function confirmExitTest() {
-    if (confirm('Are you sure you want to exit the current assessment? Your progress will not be saved.')) {
+    function startTimer() {
         clearInterval(timerInterval);
-        resetAssessmentView();
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            secondsRemaining--;
+            updateTimerDisplay();
+            if (secondsRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert('Time is up! Submitting your answers now.');
+                submitAssessment();
+            }
+        }, 1000);
     }
-}
 
-function submitAssessment() {
-    saveCurrentAnswer();
-    clearInterval(timerInterval);
+    function updateTimerDisplay() {
+        const mins = Math.floor(secondsRemaining / 60);
+        const secs = secondsRemaining % 60;
+        document.getElementById('timer-display').innerText =
+            `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
 
-    const total = currentQuestions.length;
-    const answeredCount = Object.keys(userAnswers).length;
-    const pct = Math.round((answeredCount / total) * 100);
+    function renderCurrentQuestion() {
+        const q = currentQuestions[currentQuestionIndex];
+        document.getElementById('question-index-badge').innerText = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+        document.getElementById('question-diff-badge').innerText = q.difficulty.toUpperCase();
+        document.getElementById('question-diff-badge').className = `difficulty-badge difficulty-${q.difficulty}`;
+        document.getElementById('question-text').innerText = q.question;
+        document.getElementById('runner-company-tag').innerText = `${q.company.toUpperCase()} ASSESSMENT`;
 
-    document.getElementById('res-score').innerText = pct + '%';
-    document.getElementById('res-total').innerText = total;
-    document.getElementById('res-status').innerText = pct >= 80 ? 'Placement Ready' : pct >= 50 ? 'Moderate Readiness' : 'Needs Practice';
+        // Restore previously typed answer
+        document.getElementById('user-answer-input').value = userAnswers[currentQuestionIndex] || '';
 
-    // Populate comparison breakdown
-    const list = document.getElementById('results-breakdown-list');
-    list.innerHTML = '';
+        // Update progress bar
+        const pct = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+        document.getElementById('quiz-progress-fill').style.width = pct + '%';
 
-    currentQuestions.forEach((q, idx) => {
-        const userAns = userAnswers[idx] || '(No answer provided)';
-        const card = document.createElement('div');
-        card.style = 'border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; background: var(--color-ivory-light);';
-        card.innerHTML = `
+        // Update buttons
+        document.getElementById('btn-prev-q').style.visibility = currentQuestionIndex === 0 ? 'hidden' : 'visible';
+
+        if (currentQuestionIndex === currentQuestions.length - 1) {
+            document.getElementById('btn-next-q').style.display = 'none';
+            document.getElementById('btn-submit-test').style.display = 'inline-flex';
+        } else {
+            document.getElementById('btn-next-q').style.display = 'inline-flex';
+            document.getElementById('btn-submit-test').style.display = 'none';
+        }
+    }
+
+    function saveCurrentAnswer() {
+        const ans = document.getElementById('user-answer-input').value.trim();
+        if (ans) {
+            userAnswers[currentQuestionIndex] = ans;
+        }
+    }
+
+    function navigateQuestion(direction) {
+        saveCurrentAnswer();
+        currentQuestionIndex += direction;
+        renderCurrentQuestion();
+    }
+
+    function confirmExitTest() {
+        if (confirm('Are you sure you want to exit the current assessment? Your progress will not be saved.')) {
+            clearInterval(timerInterval);
+            resetAssessmentView();
+        }
+    }
+
+    function submitAssessment() {
+        saveCurrentAnswer();
+        clearInterval(timerInterval);
+
+        const total = currentQuestions.length;
+        const answeredCount = Object.keys(userAnswers).length;
+        const pct = Math.round((answeredCount / total) * 100);
+
+        document.getElementById('res-score').innerText = pct + '%';
+        document.getElementById('res-total').innerText = total;
+        document.getElementById('res-status').innerText = pct >= 80 ? 'Placement Ready' : pct >= 50 ? 'Moderate Readiness' : 'Needs Practice';
+
+        // Populate comparison breakdown
+        const list = document.getElementById('results-breakdown-list');
+        list.innerHTML = '';
+
+        currentQuestions.forEach((q, idx) => {
+            const userAns = userAnswers[idx] || '(No answer provided)';
+            const card = document.createElement('div');
+            card.style = 'border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; background: var(--color-ivory-light);';
+            card.innerHTML = `
             <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                 <span class="badge badge-forest" style="font-size: 0.75rem;">Q${idx + 1} &bull; ${q.type.toUpperCase()}</span>
                 <span class="difficulty-badge difficulty-${q.difficulty}">${q.difficulty}</span>
@@ -380,19 +419,19 @@ function submitAssessment() {
                 <p style="font-size: 0.9rem; color: var(--color-dark-brown); margin-top: 0.25rem;">Check algorithmic complexity, edge cases, and formula derivation.</p>
             </div>
         `;
-        list.appendChild(card);
-    });
+            list.appendChild(card);
+        });
 
-    document.getElementById('assessment-runner').style.display = 'none';
-    document.getElementById('assessment-result-card').style.display = 'block';
-    document.getElementById('assessment-result-card').scrollIntoView({ behavior: 'smooth' });
-}
+        document.getElementById('assessment-runner').style.display = 'none';
+        document.getElementById('assessment-result-card').style.display = 'block';
+        document.getElementById('assessment-result-card').scrollIntoView({ behavior: 'smooth' });
+    }
 
-function resetAssessmentView() {
-    document.getElementById('assessment-runner').style.display = 'none';
-    document.getElementById('assessment-result-card').style.display = 'none';
-    document.getElementById('assessment-setup-card').style.display = 'block';
-    document.getElementById('assessment-setup-card').scrollIntoView({ behavior: 'smooth' });
-}
+    function resetAssessmentView() {
+        document.getElementById('assessment-runner').style.display = 'none';
+        document.getElementById('assessment-result-card').style.display = 'none';
+        document.getElementById('assessment-setup-card').style.display = 'block';
+        document.getElementById('assessment-setup-card').scrollIntoView({ behavior: 'smooth' });
+    }
 </script>
 {% endblock %}

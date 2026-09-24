@@ -5,21 +5,24 @@
 {% block content %}
 <section class="section" style="padding: 2.5rem 0 4.5rem;">
     <div class="container">
-        
+
         <!-- Header -->
         <div style="margin-bottom: 2rem;">
             <span class="badge badge-sage" style="margin-bottom: 0.5rem;">8-Stage Progression Framework</span>
             <h1 style="font-size: 2.3rem;">Where should you go from here?</h1>
             <p style="font-size: 1rem; color: var(--text-secondary); max-width: 680px;">
-                Your end-to-end career progression from establishing your profile to reaching your target career as a <strong>{{ target_role }}</strong>.
+                Your end-to-end career progression from establishing your profile to reaching your target career as a
+                <strong>{{ target_role }}</strong>.
             </p>
         </div>
 
         <!-- Overall Progress Card -->
         <div class="card card-forest" style="padding: 2rem; border-radius: var(--radius-xl); margin-bottom: 3rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
                 <div>
-                    <span class="badge" style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory); margin-bottom: 0.5rem;">
+                    <span class="badge"
+                        style="background: rgba(244, 239, 227, 0.2); color: var(--color-ivory); margin-bottom: 0.5rem;">
                         Target Career: {{ target_role }}
                     </span>
                     <h2 style="color: var(--color-ivory); font-size: 1.85rem; margin-bottom: 0.25rem;">
@@ -31,13 +34,18 @@
                 </div>
 
                 <div style="display: flex; align-items: center; gap: 1.25rem;">
-                    <div class="score-circle" style="--score: {{ overall_progress }}; width: 88px; height: 88px; background: conic-gradient(var(--color-terracotta) calc(var(--score) * 1%), rgba(244, 239, 227, 0.2) 0);">
-                        <div class="score-circle-inner" style="background: var(--color-forest-dark); border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
-                            <span class="score-value" style="color: var(--color-ivory); font-size: 1.4rem;">{{ overall_progress }}%</span>
+                    <div class="score-circle"
+                        style="--score: {{ overall_progress }}; width: 88px; height: 88px; background: conic-gradient(var(--color-terracotta) calc(var(--score) * 1%), rgba(244, 239, 227, 0.2) 0);">
+                        <div class="score-circle-inner"
+                            style="background: var(--color-forest-dark); border-radius: 50%; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center;">
+                            <span class="score-value" style="color: var(--color-ivory); font-size: 1.4rem;">{{
+                                overall_progress }}%</span>
                         </div>
                     </div>
                     <div>
-                        <div style="font-size: 0.75rem; text-transform: uppercase; color: rgba(244, 239, 227, 0.7); font-weight: 700;">Progress</div>
+                        <div
+                            style="font-size: 0.75rem; text-transform: uppercase; color: rgba(244, 239, 227, 0.7); font-weight: 700;">
+                            Progress</div>
                         <div style="font-size: 0.95rem; font-weight: 600; color: var(--color-ivory);">
                             {{ overall_progress }}% Milestones Achieved
                         </div>
@@ -48,55 +56,62 @@
 
         <!-- 8-Stage Interactive Timeline Progression -->
         <div class="grid grid-cols-3" style="gap: 2.5rem;">
-            
+
             <!-- Left 2 Cols: The Timeline Steps -->
             <div style="grid-column: span 2;">
                 <div class="roadmap-timeline">
                     {% for st in stages %}
-                        <div class="roadmap-step {% if st.status == 'completed' %}completed{% elif st.status == 'active' %}active{% endif %}">
-                            <div class="roadmap-dot">
-                                {% if st.status == 'completed' %}✓{% else %}{{ st.step }}{% endif %}
+                    <div
+                        class="roadmap-step {% if st.status == 'completed' %}completed{% elif st.status == 'active' %}active{% endif %}">
+                        <div class="roadmap-dot">
+                            {% if st.status == 'completed' %}✓{% else %}{{ st.step }}{% endif %}
+                        </div>
+
+                        <div class="card"
+                            style="padding: 1.75rem; border-left: {% if st.status == 'completed' %}4px solid var(--color-forest){% elif st.status == 'active' %}4px solid var(--color-terracotta){% else %}4px solid var(--border-color){% endif %};">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span
+                                        class="badge {% if st.status == 'completed' %}badge-forest{% elif st.status == 'active' %}badge-terracotta{% else %}badge-ivory{% endif %}">
+                                        Stage {{ st.step }} &bull; {{ st.status.title() }}
+                                    </span>
+                                </div>
                             </div>
 
-                            <div class="card" style="padding: 1.75rem; border-left: {% if st.status == 'completed' %}4px solid var(--color-forest){% elif st.status == 'active' %}4px solid var(--color-terracotta){% else %}4px solid var(--border-color){% endif %};">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                        <span class="badge {% if st.status == 'completed' %}badge-forest{% elif st.status == 'active' %}badge-terracotta{% else %}badge-ivory{% endif %}">
-                                            Stage {{ st.step }} &bull; {{ st.status.title() }}
-                                        </span>
-                                    </div>
-                                </div>
+                            <h3 style="font-size: 1.3rem; color: var(--color-forest); margin-bottom: 0.35rem;">
+                                {{ st.title }}
+                            </h3>
+                            <p style="font-size: 0.9rem; color: var(--color-dark-brown-light); margin-bottom: 1rem;">
+                                {{ st.desc }}
+                            </p>
 
-                                <h3 style="font-size: 1.3rem; color: var(--color-forest); margin-bottom: 0.35rem;">
-                                    {{ st.title }}
-                                </h3>
-                                <p style="font-size: 0.9rem; color: var(--color-dark-brown-light); margin-bottom: 1rem;">
-                                    {{ st.desc }}
-                                </p>
-
-                                <div style="display: flex; flex-direction: column; gap: 0.4rem; padding: 0.85rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm); font-size: 0.85rem;">
-                                    {% for item in st.milestones %}
-                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                            <span style="color: {% if st.status == 'completed' %}var(--color-forest){% else %}var(--text-secondary){% endif %}; font-weight: 700;">
-                                                {% if st.status == 'completed' %}✓{% else %}•{% endif %}
-                                            </span>
-                                            <span>{{ item }}</span>
-                                        </div>
-                                    {% endfor %}
+                            <div
+                                style="display: flex; flex-direction: column; gap: 0.4rem; padding: 0.85rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm); font-size: 0.85rem;">
+                                {% for item in st.milestones %}
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <span
+                                        style="color: {% if st.status == 'completed' %}var(--color-forest){% else %}var(--text-secondary){% endif %}; font-weight: 700;">
+                                        {% if st.status == 'completed' %}✓{% else %}•{% endif %}
+                                    </span>
+                                    <span>{{ item }}</span>
                                 </div>
+                                {% endfor %}
                             </div>
                         </div>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
 
             <!-- Right 1 Col: Quick Guidance & Strategic Pillars -->
             <div style="display: flex; flex-direction: column; gap: 1.75rem;">
-                
+
                 <div class="card card-warm">
                     <h4 style="margin-bottom: 0.75rem;">Progression Principles</h4>
                     <p style="font-size: 0.85rem; line-height: 1.6; margin-bottom: 1rem;">
-                        Career progression is non-linear. Strengthening core algorithms and shipping 2 verifiable full-stack systems with databases moves you directly into Stage 6 (Interview Prep).
+                        Career progression is non-linear. Strengthening core algorithms and shipping 2 verifiable
+                        full-stack systems with databases moves you directly into Stage 6 (Interview Prep).
                     </p>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.825rem;">
                         <div>1. Focus on depth over tutorial accumulation.</div>
@@ -108,16 +123,20 @@
                 <div class="card">
                     <h4 style="margin-bottom: 0.75rem;">Direct Actions</h4>
                     <div style="display: flex; flex-direction: column; gap: 0.6rem;">
-                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-outline btn-sm" style="justify-content: flex-start;">
+                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-outline btn-sm"
+                            style="justify-content: flex-start;">
                             <span>📄 Update &amp; Scan Resume</span>
                         </a>
-                        <a href="{{ url_for('main.skill_gap') }}" class="btn btn-outline btn-sm" style="justify-content: flex-start;">
+                        <a href="{{ url_for('main.skill_gap') }}" class="btn btn-outline btn-sm"
+                            style="justify-content: flex-start;">
                             <span>🔍 Audit Target Skill Gaps</span>
                         </a>
-                        <a href="{{ url_for('main.jobs') }}" class="btn btn-terracotta btn-sm" style="justify-content: flex-start;">
+                        <a href="{{ url_for('main.jobs') }}" class="btn btn-terracotta btn-sm"
+                            style="justify-content: flex-start;">
                             <span>💼 Browse Compatible Jobs</span>
                         </a>
-                        <a href="{{ url_for('main.assistant') }}" class="btn btn-primary btn-sm" style="justify-content: flex-start;">
+                        <a href="{{ url_for('main.assistant') }}" class="btn btn-primary btn-sm"
+                            style="justify-content: flex-start;">
                             <span>🤖 Ask CareerMate AI</span>
                         </a>
                     </div>
@@ -125,10 +144,12 @@
 
                 <!-- Quote Box -->
                 <div class="card card-forest" style="padding: 1.5rem;">
-                    <p style="font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--color-ivory); line-height: 1.5; margin-bottom: 0.5rem;">
+                    <p
+                        style="font-family: var(--font-serif); font-size: 1.05rem; font-style: italic; color: var(--color-ivory); line-height: 1.5; margin-bottom: 0.5rem;">
                         &ldquo;Understand your skills. Find your fit. Build what's next.&rdquo;
                     </p>
-                    <span style="font-size: 0.75rem; color: rgba(244, 239, 227, 0.7);">CareerMate Platform Directive</span>
+                    <span style="font-size: 0.75rem; color: rgba(244, 239, 227, 0.7);">CareerMate Platform
+                        Directive</span>
                 </div>
 
             </div>

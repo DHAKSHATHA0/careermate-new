@@ -21,7 +21,8 @@ class RegisterForm(FlaskForm):
     
     def validate_email(self, email):
         """Check if email already exists"""
-        user = User.query.filter_by(email=email.data).first()
+        norm_email = (email.data or '').strip().lower()
+        user = User.query.filter_by(email=norm_email).first()
         if user:
             raise ValidationError('Email already registered. Please log in.')
 
@@ -29,7 +30,8 @@ class ProfileCompletionForm(FlaskForm):
     """Step 2: Profile Completion (optional at signup, can be skipped)"""
     college_name = StringField('College/University', validators=[Optional(), Length(max=150)])
     degree = StringField('Degree & Branch', validators=[Optional(), Length(max=100)])
-    graduation_year = SelectField('Graduation Year', validators=[Optional()], coerce=int)
+    graduation_start_year = SelectField('From (Start Year)', validators=[Optional()], coerce=int)
+    graduation_year = SelectField('To (Graduation Year)', validators=[Optional()], coerce=int)
     domain = SelectField('Preferred Domain', choices=[
         ('', '-- Select Domain --'),
         ('web_dev', 'Web Development'),
@@ -49,11 +51,14 @@ class ProfileCompletionForm(FlaskForm):
     
     def __init__(self, *args, **kwargs):
         super(ProfileCompletionForm, self).__init__(*args, **kwargs)
-        # Populate graduation year dropdown (current year to 10 years ago)
+        # Populate graduation start and end year dropdowns
         from datetime import datetime
         current_year = datetime.now().year
-        self.graduation_year.choices = [
-            (year, str(year)) for year in range(current_year + 5, current_year - 10, -1)
+        self.graduation_start_year.choices = [(0, '-- From (Start Year) --')] + [
+            (year, str(year)) for year in range(current_year + 2, current_year - 20, -1)
+        ]
+        self.graduation_year.choices = [(0, '-- To (Graduation Year) --')] + [
+            (year, str(year)) for year in range(current_year + 6, current_year - 15, -1)
         ]
         
         # Populate skills from database

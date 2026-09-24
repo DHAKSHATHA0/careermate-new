@@ -1,195 +1,1124 @@
 {% extends "base.html" %}
 
-{% block title %}CareerMate AI — Personal Career Intelligence Assistant{% endblock %}
+{% block title %}CareerMate AI — Full-Page Career Intelligence Workspace{% endblock %}
 
 {% block extra_css %}
 <!-- Include marked.js for markdown rendering -->
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+    /* Full-page workspace layout */
+    .ai-workspace {
+        display: flex;
+        height: calc(100vh - 72px);
+        min-height: 600px;
+        background-color: var(--color-ivory);
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Left Conversation Sidebar */
+    .ai-sidebar {
+        width: 290px;
+        flex-shrink: 0;
+        background: #1e3229;
+        color: var(--color-ivory);
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(244, 239, 227, 0.1);
+        transition: transform 0.25s ease, width 0.25s ease;
+        z-index: 40;
+    }
+
+    .ai-sidebar.collapsed {
+        transform: translateX(-100%);
+        width: 0;
+        margin-left: 0;
+        border-right: none;
+    }
+
+    .sidebar-header {
+        padding: 1.15rem 1rem 0.85rem;
+        border-bottom: 1px solid rgba(244, 239, 227, 0.08);
+    }
+
+    .btn-new-chat {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        background: var(--color-terracotta);
+        color: #ffffff;
+        border: none;
+        border-radius: var(--radius-md);
+        padding: 0.65rem 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .btn-new-chat:hover {
+        background: #b15d3f;
+        transform: translateY(-1px);
+    }
+
+    .sidebar-search-box {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid rgba(244, 239, 227, 0.08);
+    }
+
+    .sidebar-search-input {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(244, 239, 227, 0.15);
+        color: var(--color-ivory);
+        padding: 0.45rem 0.75rem;
+        font-size: 0.85rem;
+        border-radius: var(--radius-sm);
+        outline: none;
+        transition: border-color 0.15s ease;
+    }
+
+    .sidebar-search-input:focus {
+        border-color: var(--color-terracotta);
+    }
+
+    .sidebar-conversations {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.75rem 0.5rem;
+    }
+
+    .history-group-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-sage);
+        padding: 0.6rem 0.6rem 0.3rem;
+    }
+
+    .conversation-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 0.65rem;
+        border-radius: var(--radius-sm);
+        font-size: 0.875rem;
+        color: rgba(244, 239, 227, 0.9);
+        cursor: pointer;
+        transition: background 0.15s ease;
+        margin-bottom: 0.15rem;
+        text-decoration: none;
+        position: relative;
+    }
+
+    .conversation-item:hover {
+        background: rgba(244, 239, 227, 0.08);
+        color: #ffffff;
+    }
+
+    .conversation-item.active {
+        background: rgba(197, 107, 75, 0.25);
+        color: #ffffff;
+        font-weight: 600;
+        border-left: 3px solid var(--color-terracotta);
+    }
+
+    .conversation-title-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+    }
+
+    .conversation-item-actions {
+        display: none;
+        gap: 0.25rem;
+    }
+
+    .conversation-item:hover .conversation-item-actions {
+        display: flex;
+    }
+
+    .item-action-btn {
+        background: transparent;
+        border: none;
+        color: rgba(244, 239, 227, 0.6);
+        cursor: pointer;
+        padding: 0.15rem 0.3rem;
+        font-size: 0.8rem;
+        border-radius: 3px;
+    }
+
+    .item-action-btn:hover {
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Main Chat Stream Container */
+    .ai-main-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        background: var(--color-ivory);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-top-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.25rem;
+        background: #ffffff;
+        border-bottom: 1px solid var(--border-color);
+        z-index: 10;
+    }
+
+    .ai-thread-title {
+        font-family: var(--font-heading);
+        font-size: 1.15rem;
+        color: var(--color-forest);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .chat-scroll-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.5rem 1rem 1rem;
+        display: flex;
+        flex-direction: column;
+        scroll-behavior: smooth;
+    }
+
+    .chat-inner-width {
+        width: 100%;
+        max-width: 860px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    /* Welcome / Zero State */
+    .ai-welcome-state {
+        text-align: center;
+        padding: 2.5rem 1rem 1rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .welcome-avatar {
+        width: 56px;
+        height: 56px;
+        background: var(--color-forest);
+        color: var(--color-ivory);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-heading);
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .prompt-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 0.75rem;
+        margin-top: 1.75rem;
+        text-align: left;
+    }
+
+    .prompt-card {
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 0.85rem 1rem;
+        cursor: pointer;
+        transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .prompt-card:hover {
+        transform: translateY(-2px);
+        border-color: var(--color-terracotta);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .prompt-card-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: var(--color-forest);
+        margin-bottom: 0.2rem;
+    }
+
+    .prompt-card-desc {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+    }
+
+    /* Messages */
+    .msg-row {
+        display: flex;
+        gap: 0.85rem;
+        width: 100%;
+    }
+
+    .msg-row.user-row {
+        justify-content: flex-end;
+    }
+
+    .msg-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .msg-avatar-ai {
+        background: var(--color-forest);
+        color: var(--color-ivory);
+    }
+
+    .msg-avatar-user {
+        background: var(--color-terracotta);
+        color: #ffffff;
+    }
+
+    .msg-content-wrapper {
+        max-width: 82%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .msg-bubble {
+        padding: 0.9rem 1.15rem;
+        border-radius: var(--radius-md);
+        font-size: 0.935rem;
+        line-height: 1.6;
+        word-break: break-word;
+    }
+
+    .msg-bubble-user {
+        background: var(--color-forest);
+        color: var(--color-ivory);
+        border-top-right-radius: 2px;
+    }
+
+    .msg-bubble-ai {
+        background: #ffffff;
+        color: var(--color-dark-brown);
+        border: 1px solid var(--border-color);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        border-top-left-radius: 2px;
+    }
+
+    .msg-bubble-ai h3, .msg-bubble-ai h4 {
+        font-family: var(--font-heading);
+        color: var(--color-forest);
+        margin-top: 0.75rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .msg-bubble-ai ul, .msg-bubble-ai ol {
+        margin-left: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .msg-bubble-ai li {
+        margin-bottom: 0.25rem;
+    }
+
+    .msg-bubble-ai a {
+        color: var(--color-terracotta);
+        font-weight: 600;
+        text-decoration: underline;
+    }
+
+    .msg-actions-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.35rem;
+        padding-left: 0.25rem;
+    }
+
+    .btn-msg-action {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        padding: 0.2rem 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.15s ease;
+    }
+
+    .btn-msg-action:hover {
+        background: #ffffff;
+        color: var(--color-forest);
+        border-color: var(--color-forest);
+    }
+
+    .msg-image-preview {
+        max-width: 280px;
+        max-height: 200px;
+        border-radius: var(--radius-sm);
+        margin-bottom: 0.5rem;
+        border: 1px solid rgba(255,255,255,0.2);
+        object-fit: cover;
+    }
+
+    /* Composer */
+    .ai-composer-wrapper {
+        padding: 0.75rem 1rem 1.25rem;
+        background: linear-gradient(180deg, rgba(244, 239, 227, 0) 0%, var(--color-ivory) 40%);
+        z-index: 20;
+    }
+
+    .composer-inner {
+        max-width: 860px;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .staged-attachment-bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #ffffff;
+        border: 1px solid var(--border-color);
+        border-bottom: none;
+        border-top-left-radius: var(--radius-md);
+        border-top-right-radius: var(--radius-md);
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+        color: var(--color-forest);
+    }
+
+    .composer-box {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        border: 1.5px solid rgba(38, 61, 50, 0.2);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        padding: 0.45rem 0.65rem;
+        gap: 0.5rem;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .composer-box:focus-within {
+        border-color: var(--color-forest);
+        box-shadow: 0 4px 16px rgba(38, 61, 50, 0.12);
+    }
+
+    .composer-input {
+        flex: 1;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.95rem;
+        color: var(--color-dark-brown);
+        padding: 0.4rem 0.25rem;
+    }
+
+    .composer-btn {
+        background: transparent;
+        border: none;
+        color: var(--color-forest);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+        flex-shrink: 0;
+    }
+
+    .composer-btn:hover {
+        background: rgba(38, 61, 50, 0.08);
+    }
+
+    .btn-send-active {
+        background: var(--color-forest);
+        color: var(--color-ivory);
+    }
+
+    .btn-send-active:hover {
+        background: #1b2d24;
+        color: #ffffff;
+    }
+
+    .composer-btn.recording {
+        background: var(--color-terracotta);
+        color: #ffffff;
+        animation: pulseRecord 1.2s infinite;
+    }
+
+    @keyframes pulseRecord {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    /* Mobile drawer overlay */
+    @media (max-width: 768px) {
+        .ai-sidebar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<section class="section" style="padding: 2rem 0 4.5rem;">
-    <div class="container" style="max-width: 1060px;">
-        
-        <!-- Header -->
-        <div style="margin-bottom: 1.5rem; text-align: center;">
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                <span class="badge badge-terracotta" style="font-size: 0.85rem;">Intelligence Assistant</span>
-            </div>
-            <h1 style="font-size: 2.4rem; color: var(--color-forest); margin-bottom: 0.25rem;">CareerMate AI</h1>
-            <p style="font-size: 1.05rem; color: var(--text-secondary);">Your personal career intelligence assistant.</p>
+<div class="ai-workspace">
+
+    <!-- 1. LEFT CONVERSATION SIDEBAR -->
+    <aside class="ai-sidebar" id="ai-sidebar">
+        <!-- New Chat Button -->
+        <div class="sidebar-header">
+            <button type="button" class="btn-new-chat" onclick="startNewConversation()">
+                <span>+</span>
+                <span>New Chat</span>
+            </button>
         </div>
 
-        <!-- Chat Workbench Container -->
-        <div class="chat-container">
-            
-            <!-- Chat Header -->
-            <div class="chat-header">
-                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                    <span class="brand-badge" style="background: var(--color-terracotta); font-size: 0.95rem;">AI</span>
-                    <div>
-                        <div style="font-weight: 700; font-size: 1rem; color: var(--color-ivory);">CareerMate Intelligence Engine</div>
-                        <div style="font-size: 0.75rem; color: rgba(244, 239, 227, 0.75);">Grounded in real company data, NLP parsing, &amp; ATS criteria</div>
-                    </div>
+        <!-- Search input -->
+        <div class="sidebar-search-box">
+            <input type="text" id="sidebar-search" class="sidebar-search-input" placeholder="Search conversations..." oninput="handleSearchConversations(this.value)">
+        </div>
+
+        <!-- Categorized History List -->
+        <div class="sidebar-conversations" id="sidebar-conversations-list">
+            <div style="padding: 1.5rem 0.5rem; text-align: center; color: rgba(244,239,227,0.5); font-size: 0.85rem;">
+                Loading conversations...
+            </div>
+        </div>
+    </aside>
+
+    <!-- 2. MAIN CHAT WORKSPACE -->
+    <main class="ai-main-area">
+
+        <!-- Top Controls Bar -->
+        <header class="ai-top-bar">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toggleSidebar()" title="Toggle Sidebar" style="padding: 0.35rem 0.5rem;">
+                    <span>☰</span>
+                </button>
+                <div class="ai-thread-title">
+                    <span id="current-thread-title">Career Intelligence Assistant</span>
+                    <button type="button" class="item-action-btn" onclick="renameCurrentConversation()" title="Rename Chat" style="color: var(--text-secondary); font-size: 0.85rem;">✏️</button>
                 </div>
-                <div>
-                    <button type="button" class="btn btn-ghost btn-sm" style="color: var(--color-ivory); font-size: 0.8rem;" onclick="clearChat()">
-                        <span>Clear Chat</span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="toggleVoiceMode()" id="voice-mode-toggle-btn" style="font-size: 0.8rem; color: var(--color-forest);">
+                    <span>🎤 Voice Mode</span>
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="deleteCurrentConversation()" style="font-size: 0.8rem; color: var(--color-terracotta);">
+                    <span>Delete</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Messages Stream Scroll Area -->
+        <div class="chat-scroll-container" id="chat-scroll-container">
+            <div class="chat-inner-width" id="messages-stream">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Staged Image Attachment Preview Bar -->
+        <div class="ai-composer-wrapper">
+            <div class="composer-inner">
+                <div id="staged-attachment" class="staged-attachment-bar" style="display: none;">
+                    <span>📎 Staged Image:</span>
+                    <strong id="staged-filename">screenshot.png</strong>
+                    <button type="button" class="item-action-btn" onclick="clearStagedImage()" style="margin-left: auto; color: var(--color-terracotta);">✕ Remove</button>
+                </div>
+
+                <!-- Input Box -->
+                <div class="composer-box">
+                    <!-- Image Upload Trigger -->
+                    <input type="file" id="image-file-input" accept="image/png,image/jpeg,image/jpg,image/webp" style="display: none;" onchange="handleImageFileSelected(this)">
+                    <button type="button" class="composer-btn" onclick="document.getElementById('image-file-input').click()" title="Upload Screenshot / Document (PNG, JPG, WEBP)">
+                        <span style="font-size: 1.25rem;">+</span>
+                    </button>
+
+                    <!-- Text input -->
+                    <input type="text" id="chat-input" class="composer-input" placeholder="Ask CareerMate anything about your career, profile, or upload a job screenshot..." onkeydown="handleInputKeyDown(event)">
+
+                    <!-- Mic Voice Input -->
+                    <button type="button" class="composer-btn" id="mic-btn" onclick="toggleVoiceRecording()" title="Speak to CareerMate">
+                        <span style="font-size: 1.05rem;">🎤</span>
+                    </button>
+
+                    <!-- Send Button -->
+                    <button type="button" class="composer-btn btn-send-active" id="send-btn" onclick="sendActiveMessage()" title="Send message">
+                        <span>&rarr;</span>
                     </button>
                 </div>
             </div>
-
-            <!-- Messages Stream Area -->
-            <div class="chat-messages" id="chat-messages">
-                <!-- Welcome Assistant Message -->
-                <div class="chat-bubble chat-bubble-ai">
-                    <p style="font-weight: 600; color: var(--color-forest); margin-bottom: 0.5rem;">
-                        Hello {{ current_user.name.split()[0] if current_user.name else 'there' }}! 👋
-                    </p>
-                    <p style="font-size: 0.925rem; line-height: 1.6; color: var(--color-dark-brown);">
-                        I'm <strong>CareerMate AI</strong>, your personal career intelligence assistant. I can analyze your job readiness, explain your skill gaps, guide your resume optimization, and answer questions about top hiring companies like Google, TCS, and Infosys.
-                    </p>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
-                        Click any prompt below or type your question to get started.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Suggested Questions Prompt Bar -->
-            <div class="chat-prompts-bar">
-                <div class="chat-prompt-chip" onclick="sendPrompt('I want to become an ML Engineer. What should I do?')">
-                    🤖 Path to ML Engineer
-                </div>
-                <div class="chat-prompt-chip" onclick="sendPrompt('Why is my ATS score low and how can I improve it?')">
-                    📄 Why is my ATS score low?
-                </div>
-                <div class="chat-prompt-chip" onclick="sendPrompt('Which skills am I missing for Full Stack roles?')">
-                    🔍 Which skills am I missing?
-                </div>
-                <div class="chat-prompt-chip" onclick="sendPrompt('Am I ready for this job?')">
-                    🎯 Am I ready for this job?
-                </div>
-                <div class="chat-prompt-chip" onclick="sendPrompt('Which course should I take next?')">
-                    📚 Which course should I take?
-                </div>
-                <div class="chat-prompt-chip" onclick="sendPrompt('Prepare me for Google software engineer interview.')">
-                    🏢 Prepare me for Google
-                </div>
-                <div class="chat-prompt-chip" onclick="sendPrompt('What DSA topics should I study this week?')">
-                    💻 What DSA should I study?
-                </div>
-            </div>
-
-            <!-- Chat Input Bar -->
-            <div class="chat-input-bar">
-                <input type="text" id="chat-input" class="form-control" placeholder="Ask about job readiness, company criteria, skill gaps, or resume advice..." onkeydown="handleKeyDown(event)">
-                <button type="button" class="btn btn-primary" id="chat-send-btn" onclick="sendMessage()">
-                    <span>Send</span>
-                    <span>&rarr;</span>
-                </button>
-            </div>
-
         </div>
 
-    </div>
-</section>
+    </main>
+
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-// Load chat history on mount
-window.addEventListener('DOMContentLoaded', () => {
-    fetch('{{ url_for("chatbot.get_history") }}')
-        .then(res => res.json())
-        .then(history => {
-            if (history && history.length > 0) {
-                history.forEach(item => {
-                    appendMessage(item.message, 'user');
-                    appendMessage(item.response, 'ai');
+    // State management
+    let currentConversationId = null;
+    let stagedImageUrl = null;
+    let stagedImageName = null;
+    let isRecording = false;
+    let recognition = null;
+    let voiceModeActive = false;
+
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        loadConversationsList();
+        initSpeechRecognition();
+    });
+
+    // Sidebar toggle
+    function toggleSidebar() {
+        const sidebar = document.getElementById('ai-sidebar');
+        sidebar.classList.toggle('collapsed');
+    }
+
+    // Load conversations list
+    function loadConversationsList(query = '') {
+        const url = query ? `/api/assistant/conversations?q=${encodeURIComponent(query)}` : '/api/assistant/conversations';
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                renderSidebarConversations(data.categorized);
+                // If conversations exist and none selected, open the first
+                if (!currentConversationId && data.conversations && data.conversations.length > 0) {
+                    selectConversation(data.conversations[0].id);
+                } else if (!currentConversationId) {
+                    renderWelcomeZeroState();
+                }
+            })
+            .catch(err => console.error('Error loading conversations:', err));
+    }
+
+    // Search conversations
+    function handleSearchConversations(val) {
+        loadConversationsList(val.trim());
+    }
+
+    // Render sidebar groups
+    function renderSidebarConversations(categorized) {
+        const container = document.getElementById('sidebar-conversations-list');
+        if (!categorized) {
+            container.innerHTML = '<div style="padding: 1rem; color: rgba(244,239,227,0.5); font-size: 0.85rem;">No conversations found.</div>';
+            return;
+        }
+
+        let html = '';
+        const groups = [
+            { key: 'today', title: 'Today' },
+            { key: 'yesterday', title: 'Yesterday' },
+            { key: 'previous_7_days', title: 'Previous 7 Days' },
+            { key: 'older', title: 'Older' }
+        ];
+
+        let totalRendered = 0;
+        groups.forEach(g => {
+            const list = categorized[g.key] || [];
+            if (list.length > 0) {
+                html += `<div class="history-group-label">${g.title}</div>`;
+                list.forEach(c => {
+                    const isActive = c.id === currentConversationId ? 'active' : '';
+                    html += `
+                        <div class="conversation-item ${isActive}" onclick="selectConversation(${c.id})">
+                            <span class="conversation-title-text" title="${c.title}">${c.title}</span>
+                            <div class="conversation-item-actions">
+                                <button type="button" class="item-action-btn" onclick="event.stopPropagation(); renameConversationItem(${c.id}, '${c.title.replace(/'/g, "\\'")}')" title="Rename">✏️</button>
+                                <button type="button" class="item-action-btn" onclick="event.stopPropagation(); deleteConversationItem(${c.id})" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                    totalRendered++;
                 });
             }
-        })
-        .catch(err => console.log('No previous history loaded'));
-});
+        });
 
-function appendMessage(text, sender) {
-    const container = document.getElementById('chat-messages');
-    const bubble = document.createElement('div');
-    bubble.className = `chat-bubble chat-bubble-${sender}`;
-    
-    if (sender === 'ai') {
+        if (totalRendered === 0) {
+            html = '<div style="padding: 1.5rem 0.5rem; text-align: center; color: rgba(244,239,227,0.5); font-size: 0.85rem;">No conversations yet.<br>Click <strong>+ New Chat</strong> to begin.</div>';
+        }
+
+        container.innerHTML = html;
+    }
+
+    // Start New Conversation
+    function startNewConversation() {
+        currentConversationId = null;
+        document.getElementById('current-thread-title').innerText = 'New Conversation';
+        renderWelcomeZeroState();
+        document.getElementById('chat-input').focus();
+    }
+
+    // Select Conversation
+    function selectConversation(id) {
+        currentConversationId = id;
+        fetch(`/api/assistant/conversations/${id}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    startNewConversation();
+                    return;
+                }
+                document.getElementById('current-thread-title').innerText = data.conversation.title;
+                renderMessagesStream(data.messages);
+                loadConversationsList(); // refresh active highlights
+            })
+            .catch(err => console.error('Error fetching conversation:', err));
+    }
+
+    // Render Welcome Zero State
+    function renderWelcomeZeroState() {
+        const stream = document.getElementById('messages-stream');
+        const userFirstName = "{{ current_user.name.split()[0] if current_user.name else 'there' }}";
+        stream.innerHTML = `
+            <div class="ai-welcome-state">
+                <div class="welcome-avatar">CM</div>
+                <h2 style="font-size: 1.75rem; color: var(--color-forest); margin-bottom: 0.35rem;">CareerMate AI</h2>
+                <p style="font-size: 1rem; color: var(--text-secondary); max-width: 540px; margin: 0 auto;">
+                    Welcome back, ${userFirstName}. Ask about your career readiness, active applications, skill gaps, or upload a job description screenshot.
+                </p>
+
+                <div class="prompt-grid">
+                    <div class="prompt-card" onclick="sendQuickPrompt('What is my current career status?')">
+                        <div class="prompt-card-title">👤 Career Status Overview</div>
+                        <div class="prompt-card-desc">Review profile strength, target domain, and active credentials.</div>
+                    </div>
+                    <div class="prompt-card" onclick="sendQuickPrompt('How many jobs have I applied for and what is active?')">
+                        <div class="prompt-card-title">📊 Application Pipeline</div>
+                        <div class="prompt-card-desc">Get breakdown of applied, interview, and active roles.</div>
+                    </div>
+                    <div class="prompt-card" onclick="sendQuickPrompt('Which jobs currently match my profile?')">
+                        <div class="prompt-card-title">💼 Recommended Jobs</div>
+                        <div class="prompt-card-desc">Calculated by real CareerMate Recommendation Engine.</div>
+                    </div>
+                    <div class="prompt-card" onclick="sendQuickPrompt('What skills am I missing for my target role?')">
+                        <div class="prompt-card-title">🔍 Skill Gap Priorities</div>
+                        <div class="prompt-card-desc">Identify missing technical keywords and matching courses.</div>
+                    </div>
+                    <div class="prompt-card" onclick="sendQuickPrompt('What should I prepare next?')">
+                        <div class="prompt-card-title">⚡ Next Best Actions</div>
+                        <div class="prompt-card-desc">Actionable tasks tailored to your current profile state.</div>
+                    </div>
+                    <div class="prompt-card" onclick="sendQuickPrompt('I want to become a Data Scientist. Give me my complete roadmap.')">
+                        <div class="prompt-card-title">🗺️ Career Roadmap</div>
+                        <div class="prompt-card-desc">7-stage progressive roadmap from gaps to offer.</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Render Messages Stream
+    function renderMessagesStream(messages) {
+        const stream = document.getElementById('messages-stream');
+        if (!messages || messages.length === 0) {
+            renderWelcomeZeroState();
+            return;
+        }
+
+        let html = '';
+        messages.forEach(m => {
+            if (m.role === 'user') {
+                html += `
+                    <div class="msg-row user-row">
+                        <div class="msg-content-wrapper" style="align-items: flex-end;">
+                            ${m.image_url ? `<img src="${m.image_url}" class="msg-image-preview" alt="Uploaded Document" onclick="window.open('${m.image_url}', '_blank')">` : ''}
+                            <div class="msg-bubble msg-bubble-user">
+                                ${escapeHtml(m.content)}
+                            </div>
+                        </div>
+                        <div class="msg-avatar msg-avatar-user">You</div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="msg-row ai-row">
+                        <div class="msg-avatar msg-avatar-ai">AI</div>
+                        <div class="msg-content-wrapper">
+                            <div class="msg-bubble msg-bubble-ai">
+                                ${marked.parse(m.content)}
+                            </div>
+                            <div class="msg-actions-toolbar">
+                                <button type="button" class="btn-msg-action" onclick="speakText('${escapeForJs(m.content)}')">🔊 Listen</button>
+                                <button type="button" class="btn-msg-action" onclick="copyToClipboard('${escapeForJs(m.content)}')">📋 Copy</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        stream.innerHTML = html;
+        scrollChatToBottom();
+    }
+
+    // Send Quick Prompt
+    function sendQuickPrompt(promptText) {
+        document.getElementById('chat-input').value = promptText;
+        sendActiveMessage();
+    }
+
+    // Handle Input Enter Key
+    function handleInputKeyDown(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendActiveMessage();
+        }
+    }
+
+    // Send Message
+    async function sendActiveMessage() {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        const imageUrl = stagedImageUrl;
+
+        if (!text && !imageUrl) return;
+
+        // Reset input immediately
+        input.value = '';
+        clearStagedImage();
+
+        // If no active conversation, create one first
+        if (!currentConversationId) {
+            try {
+                const createRes = await fetch('/api/assistant/conversations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: text.slice(0, 30) || 'New Conversation' })
+                });
+                const createData = await createRes.json();
+                currentConversationId = createData.conversation.id;
+            } catch (e) {
+                console.error('Failed to init conversation:', e);
+                return;
+            }
+        }
+
+        // Append user bubble to UI
+        const stream = document.getElementById('messages-stream');
+        if (stream.querySelector('.ai-welcome-state')) {
+            stream.innerHTML = '';
+        }
+
+        const userRow = document.createElement('div');
+        userRow.className = 'msg-row user-row';
+        userRow.innerHTML = `
+            <div class="msg-content-wrapper" style="align-items: flex-end;">
+                ${imageUrl ? `<img src="${imageUrl}" class="msg-image-preview" alt="Uploaded Document">` : ''}
+                <div class="msg-bubble msg-bubble-user">${escapeHtml(text || 'Uploaded image')}</div>
+            </div>
+            <div class="msg-avatar msg-avatar-user">You</div>
+        `;
+        stream.appendChild(userRow);
+
+        // Show thinking indicator
+        const aiRow = document.createElement('div');
+        aiRow.className = 'msg-row ai-row';
+        aiRow.id = 'active-ai-row';
+        aiRow.innerHTML = `
+            <div class="msg-avatar msg-avatar-ai">AI</div>
+            <div class="msg-content-wrapper">
+                <div class="msg-bubble msg-bubble-ai" id="active-ai-bubble">
+                    <em>CareerMate is analyzing career intelligence...</em>
+                </div>
+            </div>
+        `;
+        stream.appendChild(aiRow);
+        scrollChatToBottom();
+
+        // Send to backend endpoint
         try {
-            bubble.innerHTML = marked.parse(text);
-        } catch (e) {
-            bubble.innerText = text;
+            const resp = await fetch(`/api/assistant/conversations/${currentConversationId}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: text, image_url: imageUrl })
+            });
+            const data = await resp.json();
+
+            const bubble = document.getElementById('active-ai-bubble');
+            if (data.error) {
+                bubble.innerHTML = `<span style="color: var(--color-terracotta);">Error: ${escapeHtml(data.error)}</span>`;
+            } else {
+                const responseContent = data.assistant_message.content;
+                bubble.innerHTML = marked.parse(responseContent);
+
+                // Add action toolbar
+                const wrapper = bubble.parentElement;
+                const toolbar = document.createElement('div');
+                toolbar.className = 'msg-actions-toolbar';
+                toolbar.innerHTML = `
+                    <button type="button" class="btn-msg-action" onclick="speakText('${escapeForJs(responseContent)}')">🔊 Listen</button>
+                    <button type="button" class="btn-msg-action" onclick="copyToClipboard('${escapeForJs(responseContent)}')">📋 Copy</button>
+                `;
+                wrapper.appendChild(toolbar);
+
+                // If voice mode is active, speak response aloud
+                if (voiceModeActive) {
+                    speakText(responseContent);
+                }
+            }
+
+            // Clean id
+            aiRow.removeAttribute('id');
+            scrollChatToBottom();
+            loadConversationsList(); // refresh title & order in sidebar
+        } catch (err) {
+            const bubble = document.getElementById('active-ai-bubble');
+            if (bubble) {
+                bubble.innerHTML = "CareerMate AI is temporarily unavailable. Your CareerMate data and other features are still available.";
+            }
         }
-    } else {
-        bubble.innerText = text;
     }
 
-    container.appendChild(bubble);
-    container.scrollTop = container.scrollHeight;
-}
+    // Image Upload Handler
+    function handleImageFileSelected(input) {
+        if (!input.files || !input.files[0]) return;
+        const file = input.files[0];
+        
+        const formData = new FormData();
+        formData.append('file', file);
 
-function sendPrompt(promptText) {
-    document.getElementById('chat-input').value = promptText;
-    sendMessage();
-}
+        // Show staging indicator
+        const stagedBar = document.getElementById('staged-attachment');
+        const stagedName = document.getElementById('staged-filename');
+        stagedName.innerText = `Uploading & analyzing ${file.name}...`;
+        stagedBar.style.display = 'flex';
 
-function handleKeyDown(event) {
-    if (event.key === 'Enter') {
-        sendMessage();
+        fetch('/api/assistant/upload-image', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    clearStagedImage();
+                } else {
+                    stagedImageUrl = data.image_url;
+                    stagedImageName = file.name;
+                    stagedName.innerText = `${file.name} (OCR: ${data.doc_type || 'Document'})`;
+                    document.getElementById('chat-input').focus();
+                }
+            })
+            .catch(err => {
+                alert('Image upload failed. Please try again.');
+                clearStagedImage();
+            });
     }
-}
 
-function sendMessage() {
-    const input = document.getElementById('chat-input');
-    const message = input.value.trim();
-    if (!message) return;
+    function clearStagedImage() {
+        stagedImageUrl = null;
+        stagedImageName = null;
+        document.getElementById('staged-attachment').style.display = 'none';
+        document.getElementById('image-file-input').value = '';
+    }
 
-    appendMessage(message, 'user');
-    input.value = '';
+    // Voice Speech Recognition
+    function initSpeechRecognition() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
 
-    // Show loading typing indicator
-    const container = document.getElementById('chat-messages');
-    const typingBubble = document.createElement('div');
-    typingBubble.className = 'chat-bubble chat-bubble-ai';
-    typingBubble.id = 'typing-indicator';
-    typingBubble.innerText = 'Analyzing career intelligence...';
-    container.appendChild(typingBubble);
-    container.scrollTop = container.scrollHeight;
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('chat-input').value = transcript;
+                stopVoiceRecording();
+                sendActiveMessage();
+            };
 
-    fetch('{{ url_for("chatbot.send_message") }}', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: message })
-    })
-    .then(res => res.json())
-    .then(data => {
-        const ind = document.getElementById('typing-indicator');
-        if (ind) ind.remove();
+            recognition.onerror = (event) => {
+                console.log('Speech recognition error:', event.error);
+                stopVoiceRecording();
+            };
 
-        if (data.error) {
-            appendMessage(`Error: ${data.error}`, 'ai');
+            recognition.onend = () => {
+                stopVoiceRecording();
+            };
+        }
+    }
+
+    function toggleVoiceRecording() {
+        if (!recognition) {
+            alert('Speech recognition is not supported in this browser. Please use text input.');
+            return;
+        }
+
+        if (isRecording) {
+            recognition.stop();
+            stopVoiceRecording();
         } else {
-            appendMessage(data.response, 'ai');
+            try {
+                recognition.start();
+                isRecording = true;
+                const micBtn = document.getElementById('mic-btn');
+                micBtn.classList.add('recording');
+                document.getElementById('chat-input').placeholder = 'Listening... Speak now';
+            } catch (e) {
+                console.error(e);
+            }
         }
-    })
-    .catch(err => {
-        const ind = document.getElementById('typing-indicator');
-        if (ind) ind.remove();
-        appendMessage("Unable to reach assistant right now. Please verify your connection.", 'ai');
-    });
-}
+    }
 
-function clearChat() {
-    const container = document.getElementById('chat-messages');
-    container.innerHTML = `
-        <div class="chat-bubble chat-bubble-ai">
-            <p style="font-weight: 600; color: var(--color-forest); margin-bottom: 0.5rem;">Chat cleared.</p>
-            <p style="font-size: 0.925rem;">How can CareerMate assist your career journey today?</p>
-        </div>
-    `;
-}
+    function stopVoiceRecording() {
+        isRecording = false;
+        const micBtn = document.getElementById('mic-btn');
+        if (micBtn) micBtn.classList.remove('recording');
+        document.getElementById('chat-input').placeholder = 'Ask CareerMate anything about your career, profile, or upload a job screenshot...';
+    }
+
+    function toggleVoiceMode() {
+        voiceModeActive = !voiceModeActive;
+        const btn = document.getElementById('voice-mode-toggle-btn');
+        if (voiceModeActive) {
+            btn.style.color = 'var(--color-terracotta)';
+            btn.innerHTML = '<span>🔊 Voice Active</span>';
+            toggleVoiceRecording();
+        } else {
+            btn.style.color = 'var(--color-forest)';
+            btn.innerHTML = '<span>🎤 Voice Mode</span>';
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    // Text to Speech
+    function speakText(rawText) {
+        if (!('speechSynthesis' in window)) {
+            alert('Text-to-speech is not supported in this browser.');
+            return;
+        }
+
+        window.speechSynthesis.cancel(); // stop any prior audio
+        const cleanText = rawText.replace(/[#*`_\[\]()]/g, '').replace(/https?:\/\/[^\s]+/g, '');
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // Rename Conversation
+    function renameCurrentConversation() {
+        if (!currentConversationId) return;
+        const currentTitle = document.getElementById('current-thread-title').innerText;
+        const newTitle = prompt('Rename conversation:', currentTitle);
+        if (newTitle && newTitle.trim() && newTitle.trim() !== currentTitle) {
+            fetch(`/api/assistant/conversations/${currentConversationId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: newTitle.trim() })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('current-thread-title').innerText = data.conversation.title;
+                    loadConversationsList();
+                });
+        }
+    }
+
+    function renameConversationItem(id, currentTitle) {
+        const newTitle = prompt('Rename conversation:', currentTitle);
+        if (newTitle && newTitle.trim() && newTitle.trim() !== currentTitle) {
+            fetch(`/api/assistant/conversations/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: newTitle.trim() })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    loadConversationsList();
+                    if (currentConversationId === id) {
+                        document.getElementById('current-thread-title').innerText = newTitle.trim();
+                    }
+                });
+        }
+    }
+
+    // Delete Conversation
+    function deleteCurrentConversation() {
+        if (!currentConversationId) return;
+        if (confirm('Delete this conversation history? Your profile and career records will not be affected.')) {
+            fetch(`/api/assistant/conversations/${currentConversationId}`, {
+                method: 'DELETE'
+            })
+                .then(res => res.json())
+                .then(() => {
+                    startNewConversation();
+                    loadConversationsList();
+                });
+        }
+    }
+
+    function deleteConversationItem(id) {
+        if (confirm('Delete this conversation history?')) {
+            fetch(`/api/assistant/conversations/${id}`, {
+                method: 'DELETE'
+            })
+                .then(res => res.json())
+                .then(() => {
+                    if (currentConversationId === id) {
+                        startNewConversation();
+                    }
+                    loadConversationsList();
+                });
+        }
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Response copied to clipboard.');
+        });
+    }
+
+    function scrollChatToBottom() {
+        const c = document.getElementById('chat-scroll-container');
+        c.scrollTop = c.scrollHeight;
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function escapeForJs(str) {
+        if (!str) return '';
+        return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    }
 </script>
 {% endblock %}

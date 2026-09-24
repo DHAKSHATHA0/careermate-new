@@ -6,12 +6,14 @@
 <section class="section" style="padding: 2.5rem 0 5rem;">
     <div class="container">
         <!-- Page Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.25rem; flex-wrap: wrap; gap: 1.5rem;">
+        <div
+            style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.25rem; flex-wrap: wrap; gap: 1.5rem;">
             <div>
                 <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Verified Learning Directory</span>
                 <h1 style="font-size: 2.3rem; margin-bottom: 0.35rem;">Courses &amp; Learning Paths</h1>
                 <p style="color: var(--text-secondary); max-width: 600px;">
-                    Official documentation, interactive tracks, and verified high-impact learning resources mapped directly to industry skill gaps.
+                    Official documentation, interactive tracks, and verified high-impact learning resources mapped
+                    directly to industry skill gaps.
                 </p>
             </div>
             <div style="display: flex; gap: 0.75rem;">
@@ -24,16 +26,18 @@
 
         <!-- Filter Bar -->
         <div class="card" style="background: #FFFFFF; padding: 1.5rem; margin-bottom: 2rem;">
-            <form method="GET" action="{{ url_for('main.courses') }}" style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+            <form method="GET" action="{{ url_for('main.courses') }}"
+                style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
                 <div style="flex: 2; min-width: 240px;">
-                    <input type="text" name="q" value="{{ search_q }}" class="form-control" placeholder="Search courses, skills, or providers (e.g. Python, AWS, Scikit-learn)...">
+                    <input type="text" name="q" value="{{ search_q }}" class="form-control"
+                        placeholder="Search courses, skills, or providers (e.g. Python, AWS, Scikit-learn)...">
                 </div>
-                
+
                 <div style="flex: 1; min-width: 180px;">
                     <select name="skill" class="form-control" onchange="this.form.submit()">
                         <option value="">All Skills</option>
                         {% for s in all_skills %}
-                        <option value="{{ s }}" {% if skill_filter == s %}selected{% endif %}>{{ s }}</option>
+                        <option value="{{ s }}" {% if skill_filter==s %}selected{% endif %}>{{ s }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -47,12 +51,14 @@
             </form>
 
             <!-- Quick Filter Chips -->
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); align-items: center;">
+            <div
+                style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color); align-items: center;">
                 <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Popular Skills:</span>
-                {% for quick_skill in ['Python', 'SQL', 'React', 'Docker', 'Machine Learning', 'AWS', 'System Design'] %}
-                <a href="{{ url_for('main.courses') }}?skill={{ quick_skill }}" 
-                   class="badge {% if skill_filter == quick_skill %}badge-terracotta{% else %}badge-forest{% endif %}"
-                   style="font-size: 0.8rem; text-decoration: none;">
+                {% for quick_skill in ['Python', 'SQL', 'React', 'Docker', 'Machine Learning', 'AWS', 'System Design']
+                %}
+                <a href="{{ url_for('main.courses') }}?skill={{ quick_skill }}"
+                    class="badge {% if skill_filter == quick_skill %}badge-terracotta{% else %}badge-forest{% endif %}"
+                    style="font-size: 0.8rem; text-decoration: none;">
                     {{ quick_skill }}
                 </a>
                 {% endfor %}
@@ -63,16 +69,20 @@
         {% if courses %}
         <div class="grid grid-cols-3" style="gap: 1.5rem;">
             {% for c in courses %}
-            <div class="card" style="background: #FFFFFF; padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border-color); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+            <div class="card"
+                style="background: #FFFFFF; padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--border-color); transition: transform 0.2s ease, box-shadow 0.2s ease;">
                 <div>
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                         <span class="badge badge-forest" style="font-size: 0.75rem;">{{ c.skill }}</span>
-                        <span class="difficulty-badge difficulty-{{ 'easy' if 'Beginner' in c.difficulty else 'hard' if 'Advanced' in c.difficulty else 'medium' }}">
+                        <span
+                            class="difficulty-badge difficulty-{{ 'easy' if 'Beginner' in c.difficulty else 'hard' if 'Advanced' in c.difficulty else 'medium' }}">
                             {{ c.difficulty }}
                         </span>
                     </div>
 
-                    <h3 style="font-size: 1.25rem; color: var(--color-forest); margin-bottom: 0.5rem; line-height: 1.35;">
+                    <h3
+                        style="font-size: 1.25rem; color: var(--color-forest); margin-bottom: 0.5rem; line-height: 1.35;">
                         {{ c.title }}
                     </h3>
 
@@ -81,19 +91,24 @@
                     </div>
 
                     <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.25rem;">
-                        Focuses on {{ c.impact }}. Recommended for strengthening interview qualifications and closing core gaps.
+                        Focuses on {{ c.impact }}. Recommended for strengthening interview qualifications and closing
+                        core gaps.
                     </p>
                 </div>
 
-                <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
-                    <span style="font-size: 0.825rem; color: var(--color-sage); font-weight: 600;">⏱️ {{ c.time }}</span>
+                <div
+                    style="border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="font-size: 0.825rem; color: var(--color-sage); font-weight: 600;">⏱️ {{ c.time
+                        }}</span>
                     <div style="display: flex; gap: 0.5rem;">
                         {% if not c.enrollment %}
-                        <button type="button" class="btn btn-outline btn-sm" onclick="enrollInCourse('{{ c.skill }}', '{{ c.title }}', '{{ c.provider }}', '{{ c.url }}', this)">
+                        <button type="button" class="btn btn-outline btn-sm"
+                            onclick="enrollInCourse('{{ c.skill }}', '{{ c.title }}', '{{ c.provider }}', '{{ c.url }}', this)">
                             <span>Enroll Track</span>
                         </button>
                         {% endif %}
-                        <a href="{{ c.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm" onclick="autoEnroll('{{ c.skill }}', '{{ c.title }}', '{{ c.provider }}', '{{ c.url }}')">
+                        <a href="{{ c.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm"
+                            onclick="autoEnroll('{{ c.skill }}', '{{ c.title }}', '{{ c.provider }}', '{{ c.url }}')">
                             <span>Open Course</span>
                             <span>&nearr;</span>
                         </a>
@@ -107,37 +122,38 @@
             <div class="empty-state-icon">📚</div>
             <h3>No courses found matching your filter</h3>
             <p>Try searching for a different technology or clear the active filter to view all learning resources.</p>
-            <a href="{{ url_for('main.courses') }}" class="btn btn-outline" style="margin-top: 1rem;">Reset Course Filters</a>
+            <a href="{{ url_for('main.courses') }}" class="btn btn-outline" style="margin-top: 1rem;">Reset Course
+                Filters</a>
         </div>
         {% endif %}
     </div>
 </section>
 
 <script>
-function enrollInCourse(skill, title, provider, url, btn) {
-    fetch('/api/courses/enroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skill: skill, title: title, provider: provider, url: url })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success && btn) {
-            btn.textContent = 'Enrolled ✓';
-            btn.classList.remove('btn-outline');
-            btn.classList.add('btn-ghost');
-            btn.disabled = true;
-        }
-    })
-    .catch(err => console.error(err));
-}
+    function enrollInCourse(skill, title, provider, url, btn) {
+        fetch('/api/courses/enroll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ skill: skill, title: title, provider: provider, url: url })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && btn) {
+                    btn.textContent = 'Enrolled ✓';
+                    btn.classList.remove('btn-outline');
+                    btn.classList.add('btn-ghost');
+                    btn.disabled = true;
+                }
+            })
+            .catch(err => console.error(err));
+    }
 
-function autoEnroll(skill, title, provider, url) {
-    fetch('/api/courses/enroll', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ skill: skill, title: title, provider: provider, url: url })
-    }).catch(err => console.error(err));
-}
+    function autoEnroll(skill, title, provider, url) {
+        fetch('/api/courses/enroll', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ skill: skill, title: title, provider: provider, url: url })
+        }).catch(err => console.error(err));
+    }
 </script>
 {% endblock %}

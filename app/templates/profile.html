@@ -101,10 +101,55 @@
                         </div>
 
                         <div class="grid grid-cols-2" style="gap: 1.25rem;">
+                            <!-- Education Period (From - To) with Calendar -->
                             <div class="form-group">
-                                <label class="form-label" for="graduation_year">Graduation Year</label>
-                                <input type="number" id="graduation_year" name="graduation_year" class="form-control"
-                                    value="{{ user.graduation_year or '' }}" placeholder="e.g. 2026">
+                                <label class="form-label"
+                                    style="display: flex; align-items: center; justify-content: space-between;">
+                                    <span>📅 Education Period (From &mdash; To)</span>
+                                    <span
+                                        style="font-size: 0.75rem; color: var(--color-forest); font-weight: 600;">Calendar
+                                        Duration</span>
+                                </label>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                                    <div>
+                                        <label class="form-label" for="graduation_start_year"
+                                            style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.3rem;">From
+                                            (Start Year)</label>
+                                        <div style="position: relative; display: flex; align-items: center;">
+                                            <input type="number" id="graduation_start_year" name="graduation_start_year"
+                                                class="form-control" value="{{ user.graduation_start_year or '' }}"
+                                                placeholder="e.g. 2024" min="1970" max="2040"
+                                                style="padding-left: 2.25rem;" onchange="validateYearRange()">
+                                            <span
+                                                style="position: absolute; left: 0.75rem; color: var(--text-secondary); pointer-events: none; font-size: 0.95rem;">🗓️</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="form-label" for="graduation_year"
+                                            style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.3rem;">To
+                                            (Graduation Year)</label>
+                                        <div style="position: relative; display: flex; align-items: center;">
+                                            <input type="number" id="graduation_year" name="graduation_year"
+                                                class="form-control" value="{{ user.graduation_year or '' }}"
+                                                placeholder="e.g. 2028" min="1970" max="2040"
+                                                style="padding-left: 2.25rem;" onchange="validateYearRange()">
+                                            <span
+                                                style="position: absolute; left: 0.75rem; color: var(--text-secondary); pointer-events: none; font-size: 0.95rem;">🎓</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="display: flex; gap: 0.4rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">Quick Preset:</span>
+                                    <button type="button" class="badge badge-ivory"
+                                        style="cursor: pointer; border: 1px solid var(--color-ivory-border); font-size: 0.72rem; padding: 0.15rem 0.45rem;"
+                                        onclick="setDegreeYears(4)">4-Yr B.E/B.Tech</button>
+                                    <button type="button" class="badge badge-ivory"
+                                        style="cursor: pointer; border: 1px solid var(--color-ivory-border); font-size: 0.72rem; padding: 0.15rem 0.45rem;"
+                                        onclick="setDegreeYears(3)">3-Yr B.Sc/BCA</button>
+                                    <button type="button" class="badge badge-ivory"
+                                        style="cursor: pointer; border: 1px solid var(--color-ivory-border); font-size: 0.72rem; padding: 0.15rem 0.45rem;"
+                                        onclick="setDegreeYears(2)">2-Yr M.Tech/MBA</button>
+                                </div>
                             </div>
 
                             <div class="form-group">
@@ -113,6 +158,8 @@
                                 <input type="text" id="current_company" name="current_company" class="form-control"
                                     value="{{ user.current_company or '' }}"
                                     placeholder="e.g. Acme Corp or Self-Employed">
+                                <div class="form-hint" style="margin-top: 0.5rem;">For students/freshers, leave blank or
+                                    specify internships.</div>
                             </div>
                         </div>
                     </div>
@@ -246,4 +293,31 @@
 
     </div>
 </section>
+
+<script>
+    function setDegreeYears(duration) {
+        const startInput = document.getElementById('graduation_start_year');
+        const endInput = document.getElementById('graduation_year');
+        const currYear = new Date().getFullYear();
+        let start = parseInt(startInput.value, 10);
+        if (!start || isNaN(start)) {
+            start = currYear;
+            startInput.value = currYear;
+        }
+        endInput.value = start + duration;
+        validateYearRange();
+    }
+
+    function validateYearRange() {
+        const startInput = document.getElementById('graduation_start_year');
+        const endInput = document.getElementById('graduation_year');
+        const start = parseInt(startInput.value, 10);
+        const end = parseInt(endInput.value, 10);
+        if (start && end && start > end) {
+            endInput.setCustomValidity('Graduation year must be greater than or equal to start year');
+        } else {
+            endInput.setCustomValidity('');
+        }
+    }
+</script>
 {% endblock %}

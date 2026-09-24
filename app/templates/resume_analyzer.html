@@ -5,18 +5,21 @@
 {% block content %}
 <section class="section" style="padding: 2.5rem 0 5rem;">
     <div class="container">
-        
+
         <!-- Header -->
-        <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
+        <div
+            style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem;">
             <div>
                 <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Resume Intelligence Workbench</span>
                 <h1 style="font-size: 2.3rem; margin-bottom: 0.35rem;">Resume Analyzer &amp; ATS Score</h1>
                 <p style="font-size: 1rem; color: var(--text-secondary); max-width: 680px;">
-                    Upload your PDF or DOCX resume for real NLP skill extraction, formatting checks, grammar pattern detection, and ATS compatibility scoring.
+                    Upload your PDF or DOCX resume for real NLP skill extraction, formatting checks, grammar pattern
+                    detection, and ATS compatibility scoring.
                 </p>
             </div>
             <div style="display: flex; gap: 0.75rem;">
-                <button type="button" class="btn btn-terracotta" onclick="document.getElementById('resume-file-input').click()">
+                <button type="button" class="btn btn-terracotta"
+                    onclick="document.getElementById('resume-file-input').click()">
                     <span>+ Upload Resume</span>
                 </button>
             </div>
@@ -24,7 +27,8 @@
 
         <!-- Hidden upload form -->
         <form id="resume-upload-form" enctype="multipart/form-data" style="display: none;">
-            <input type="file" id="resume-file-input" name="file" accept=".pdf,.docx" onchange="handleFileSelected(this)">
+            <input type="file" id="resume-file-input" name="file" accept=".pdf,.docx"
+                onchange="handleFileSelected(this)">
         </form>
 
         <!-- Navigation Tabs -->
@@ -44,119 +48,151 @@
         </div>
 
         <!-- Upload Status Banner -->
-        <div id="upload-status" style="margin-bottom: 1.5rem; display: none; padding: 1rem; border-radius: var(--radius-md);" class="alert alert-info"></div>
+        <div id="upload-status"
+            style="margin-bottom: 1.5rem; display: none; padding: 1rem; border-radius: var(--radius-md);"
+            class="alert alert-info"></div>
 
         <!-- TAB 1: ATS ANALYZER -->
         <div class="tab-pane active" id="tab-pane-analyzer">
             {% if not latest_resume and not initial_analysis %}
-                <!-- Upload Dropzone Card when no resume exists -->
-                <div class="card" style="margin-bottom: 2.5rem; background: #FFFFFF; border: 2px dashed var(--border-color); text-align: center; padding: 3.5rem 2rem;">
-                    <div style="max-width: 520px; margin: 0 auto;">
-                        <div style="width: 64px; height: 64px; margin: 0 auto 1.25rem; border-radius: 50%; background: var(--color-forest-muted); color: var(--color-forest); display: flex; align-items: center; justify-content: center; font-size: 1.75rem;">
-                            📄
-                        </div>
-                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-forest);">Upload Resume for ATS Parsing</h3>
-                        <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.75rem;">
-                            Supports PDF and DOCX documents. Our NLP engine extracts technical keywords, checks structure, and calculates ATS compatibility without fabricated estimates.
-                        </p>
-                        <button type="button" class="btn btn-primary btn-lg" onclick="document.getElementById('resume-file-input').click()">
-                            <span>Choose Document (PDF / DOCX)</span>
-                            <span>&uarr;</span>
-                        </button>
+            <!-- Upload Dropzone Card when no resume exists -->
+            <div class="card"
+                style="margin-bottom: 2.5rem; background: #FFFFFF; border: 2px dashed var(--border-color); text-align: center; padding: 3.5rem 2rem;">
+                <div style="max-width: 520px; margin: 0 auto;">
+                    <div
+                        style="width: 64px; height: 64px; margin: 0 auto 1.25rem; border-radius: 50%; background: var(--color-forest-muted); color: var(--color-forest); display: flex; align-items: center; justify-content: center; font-size: 1.75rem;">
+                        📄
                     </div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--color-forest);">Upload Resume for
+                        ATS Parsing</h3>
+                    <p style="font-size: 0.925rem; color: var(--text-secondary); margin-bottom: 1.75rem;">
+                        Supports PDF and DOCX documents. Our NLP engine extracts technical keywords, checks structure,
+                        and calculates ATS compatibility without fabricated estimates.
+                    </p>
+                    <button type="button" class="btn btn-primary btn-lg"
+                        onclick="document.getElementById('resume-file-input').click()">
+                        <span>Choose Document (PDF / DOCX)</span>
+                        <span>&uarr;</span>
+                    </button>
                 </div>
+            </div>
             {% else %}
-                <!-- Live / Initial Analysis Display Container -->
-                <div id="analysis-container">
-                    <!-- Results Header Metrics Grid -->
-                    <div class="grid grid-cols-4" style="gap: 1.5rem; margin-bottom: 2rem;">
-                        
-                        <!-- 1. Overall ATS Score -->
-                        <div class="card" style="background: #FFFFFF; display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem;">
-                            <div class="score-circle" style="--score: {{ initial_analysis.ats_score if initial_analysis else 75 }}; width: 76px; height: 76px;">
-                                <div class="score-circle-inner">
-                                    <span class="score-value" id="disp-ats-score" style="font-size: 1.35rem;">{{ initial_analysis.ats_score if initial_analysis else '--' }}%</span>
-                                </div>
-                            </div>
-                            <div>
-                                <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">ATS Rating</div>
-                                <h4 style="font-size: 1.1rem; color: var(--color-forest);" id="disp-ats-rating">
-                                    {% if initial_analysis %}
-                                        {{ 'Strong Fit' if initial_analysis.ats_score >= 75 else 'Moderate' if initial_analysis.ats_score >= 50 else 'Needs Work' }}
-                                    {% else %}
-                                        Active
-                                    {% endif %}
-                                </h4>
-                                <div style="font-size: 0.75rem; color: var(--text-secondary);">Out of 100 points</div>
+            <!-- Live / Initial Analysis Display Container -->
+            <div id="analysis-container">
+                <!-- Results Header Metrics Grid -->
+                <div class="grid grid-cols-4" style="gap: 1.5rem; margin-bottom: 2rem;">
+
+                    <!-- 1. Overall ATS Score -->
+                    <div class="card"
+                        style="background: #FFFFFF; display: flex; align-items: center; gap: 1.25rem; padding: 1.5rem;">
+                        <div class="score-circle"
+                            style="--score: {{ initial_analysis.ats_score if initial_analysis else 75 }}; width: 76px; height: 76px;">
+                            <div class="score-circle-inner">
+                                <span class="score-value" id="disp-ats-score" style="font-size: 1.35rem;">{{
+                                    initial_analysis.ats_score if initial_analysis else '--' }}%</span>
                             </div>
                         </div>
-
-                        <!-- 2. Skills Extracted -->
-                        <div class="card" style="background: #FFFFFF; padding: 1.5rem;">
-                            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Keywords Extracted</div>
-                            <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--color-forest); margin: 0.25rem 0;" id="disp-keywords-count">
-                                {{ initial_analysis.keywords|length if initial_analysis else 0 }}
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Verified technical terms</div>
-                        </div>
-
-                        <!-- 3. Word Count -->
-                        <div class="card" style="background: #FFFFFF; padding: 1.5rem;">
-                            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Word Count</div>
-                            <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--color-terracotta); margin: 0.25rem 0;" id="disp-word-count">
-                                {{ initial_analysis.word_count if initial_analysis else 0 }}
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Optimal range: 450-800</div>
-                        </div>
-
-                        <!-- 4. Formatting Issues -->
-                        <div class="card" style="background: #FFFFFF; padding: 1.5rem;">
-                            <div style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">Formatting Checks</div>
-                            <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: {% if initial_analysis and initial_analysis.formatting_issues %}var(--color-terracotta){% else %}var(--color-forest){% endif %}; margin: 0.25rem 0;" id="disp-formatting-count">
-                                {{ initial_analysis.formatting_issues|length if initial_analysis else 0 }}
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Structural alerts</div>
+                        <div>
+                            <div
+                                style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">
+                                ATS Rating</div>
+                            <h4 style="font-size: 1.1rem; color: var(--color-forest);" id="disp-ats-rating">
+                                {% if initial_analysis %}
+                                {{ 'Strong Fit' if initial_analysis.ats_score >= 75 else 'Moderate' if
+                                initial_analysis.ats_score >= 50 else 'Needs Work' }}
+                                {% else %}
+                                Active
+                                {% endif %}
+                            </h4>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary);">Out of 100 points</div>
                         </div>
                     </div>
 
-                    <!-- Keywords & Detailed Findings -->
-                    <div class="grid grid-cols-2" style="gap: 1.5rem; margin-bottom: 2rem;">
-                        <div class="card" style="background: #FFFFFF; padding: 2rem;">
-                            <h3 style="color: var(--color-forest); margin-bottom: 1rem;">Extracted Technical Keywords</h3>
-                            <div id="keywords-tags-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                                {% if initial_analysis and initial_analysis.keywords %}
-                                    {% for kw in initial_analysis.keywords %}
-                                        <span class="badge badge-forest" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">{{ kw }}</span>
-                                    {% endfor %}
-                                {% else %}
-                                    <span style="color: var(--text-secondary); font-size: 0.9rem;">Upload a resume to inspect extracted keywords.</span>
-                                {% endif %}
-                            </div>
+                    <!-- 2. Skills Extracted -->
+                    <div class="card" style="background: #FFFFFF; padding: 1.5rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">
+                            Keywords Extracted</div>
+                        <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--color-forest); margin: 0.25rem 0;"
+                            id="disp-keywords-count">
+                            {{ initial_analysis.keywords|length if initial_analysis else 0 }}
                         </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Verified technical terms</div>
+                    </div>
 
-                        <div class="card" style="background: #FFFFFF; padding: 2rem;">
-                            <h3 style="color: var(--color-forest); margin-bottom: 1rem;">ATS Improvement Recommendations</h3>
-                            <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.9rem;">
-                                <div style="padding: 0.75rem; background: var(--color-ivory-light); border-left: 3px solid var(--color-forest); border-radius: var(--radius-sm);">
-                                    <strong>Keyword Placement:</strong> Ensure essential tools (e.g. Python, SQL, Git) appear under both Skills and Project bullet points.
-                                </div>
-                                <div style="padding: 0.75rem; background: var(--color-ivory-light); border-left: 3px solid var(--color-terracotta); border-radius: var(--radius-sm);">
-                                    <strong>Quantifiable Metrics:</strong> Include measurable results in work experience (e.g., "Reduced latency by 25%").
-                                </div>
-                                <div style="padding: 0.75rem; background: var(--color-ivory-light); border-left: 3px solid var(--color-forest); border-radius: var(--radius-sm);">
-                                    <strong>Single Column Layout:</strong> ATS parsers read clean vertical hierarchies more accurately than multi-column tables.
-                                </div>
+                    <!-- 3. Word Count -->
+                    <div class="card" style="background: #FFFFFF; padding: 1.5rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">
+                            Word Count</div>
+                        <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: var(--color-terracotta); margin: 0.25rem 0;"
+                            id="disp-word-count">
+                            {{ initial_analysis.word_count if initial_analysis else 0 }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Optimal range: 450-800</div>
+                    </div>
+
+                    <!-- 4. Formatting Issues -->
+                    <div class="card" style="background: #FFFFFF; padding: 1.5rem;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--text-secondary);">
+                            Formatting Checks</div>
+                        <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; color: {% if initial_analysis and initial_analysis.formatting_issues %}var(--color-terracotta){% else %}var(--color-forest){% endif %}; margin: 0.25rem 0;"
+                            id="disp-formatting-count">
+                            {{ initial_analysis.formatting_issues|length if initial_analysis else 0 }}
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-secondary);">Structural alerts</div>
+                    </div>
+                </div>
+
+                <!-- Keywords & Detailed Findings -->
+                <div class="grid grid-cols-2" style="gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                        <h3 style="color: var(--color-forest); margin-bottom: 1rem;">Extracted Technical Keywords</h3>
+                        <div id="keywords-tags-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            {% if initial_analysis and initial_analysis.keywords %}
+                            {% for kw in initial_analysis.keywords %}
+                            <span class="badge badge-forest" style="font-size: 0.85rem; padding: 0.35rem 0.75rem;">{{ kw
+                                }}</span>
+                            {% endfor %}
+                            {% else %}
+                            <span style="color: var(--text-secondary); font-size: 0.9rem;">Upload a resume to inspect
+                                extracted keywords.</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="card" style="background: #FFFFFF; padding: 2rem;">
+                        <h3 style="color: var(--color-forest); margin-bottom: 1rem;">ATS Improvement Recommendations
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 0.85rem; font-size: 0.9rem;">
+                            <div
+                                style="padding: 0.75rem; background: var(--color-ivory-light); border-left: 3px solid var(--color-forest); border-radius: var(--radius-sm);">
+                                <strong>Keyword Placement:</strong> Ensure essential tools (e.g. Python, SQL, Git)
+                                appear under both Skills and Project bullet points.
+                            </div>
+                            <div
+                                style="padding: 0.75rem; background: var(--color-ivory-light); border-left: 3px solid var(--color-terracotta); border-radius: var(--radius-sm);">
+                                <strong>Quantifiable Metrics:</strong> Include measurable results in work experience
+                                (e.g., "Reduced latency by 25%").
+                            </div>
+                            <div
+                                style="padding: 0.75rem; background: var(--color-ivory-light); border-left: 3px solid var(--color-forest); border-radius: var(--radius-sm);">
+                                <strong>Single Column Layout:</strong> ATS parsers read clean vertical hierarchies more
+                                accurately than multi-column tables.
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
             {% endif %}
         </div>
 
         <!-- TAB 2: JOB DESCRIPTION MATCHING -->
         <div class="tab-pane" id="tab-pane-matching">
             <div class="card" style="background: #FFFFFF; padding: 2rem; margin-bottom: 2rem;">
-                <h3 style="color: var(--color-forest); margin-bottom: 0.5rem;">Match Resume Against Specific Job Description</h3>
+                <h3 style="color: var(--color-forest); margin-bottom: 0.5rem;">Match Resume Against Specific Job
+                    Description</h3>
                 <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
                     Compare your uploaded resume against target job requirements to identify keyword alignment and gaps.
                 </p>
@@ -172,57 +208,73 @@
         <!-- TAB 3: RESUME OPTIMIZATION & TEMPLATES -->
         <div class="tab-pane" id="tab-pane-optimization">
             <div style="margin-bottom: 2rem;">
-                <h3 style="color: var(--color-forest); font-size: 1.4rem; margin-bottom: 0.25rem;">Standard ATS Templates &amp; Content Optimization</h3>
+                <h3 style="color: var(--color-forest); font-size: 1.4rem; margin-bottom: 0.25rem;">Standard ATS
+                    Templates &amp; Content Optimization</h3>
                 <p style="font-size: 0.9rem; color: var(--text-secondary);">
-                    Select an ATS-tested format and review structural phrasing suggestions. CareerMate improves phrasing and clarity without inventing false experiences.
+                    Select an ATS-tested format and review structural phrasing suggestions. CareerMate improves phrasing
+                    and clarity without inventing false experiences.
                 </p>
             </div>
 
             <div class="grid grid-cols-3" style="gap: 1.5rem; margin-bottom: 2.5rem;">
                 <div class="resume-template-card active" onclick="selectTemplate(this, 'ATS Professional')">
-                    <span class="badge badge-forest" style="margin-bottom: 0.5rem; font-size: 0.75rem;">Recommended</span>
+                    <span class="badge badge-forest"
+                        style="margin-bottom: 0.5rem; font-size: 0.75rem;">Recommended</span>
                     <h4 style="color: var(--color-forest); margin-bottom: 0.35rem;">ATS Professional</h4>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                        Clean single-column serif/sans layout designed for highest parsing accuracy across Workday, Taleo, and Greenhouse.
+                        Clean single-column serif/sans layout designed for highest parsing accuracy across Workday,
+                        Taleo, and Greenhouse.
                     </p>
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">ATS Compatibility: 98%</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">ATS
+                        Compatibility: 98%</span>
                 </div>
 
                 <div class="resume-template-card" onclick="selectTemplate(this, 'Modern Technical')">
-                    <span class="badge badge-terracotta" style="margin-bottom: 0.5rem; font-size: 0.75rem;">Tech Focused</span>
+                    <span class="badge badge-terracotta" style="margin-bottom: 0.5rem; font-size: 0.75rem;">Tech
+                        Focused</span>
                     <h4 style="color: var(--color-forest); margin-bottom: 0.35rem;">Modern Technical</h4>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                        Emphasizes GitHub repositories, technical projects, programming languages, and system architecture skills.
+                        Emphasizes GitHub repositories, technical projects, programming languages, and system
+                        architecture skills.
                     </p>
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">ATS Compatibility: 95%</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">ATS
+                        Compatibility: 95%</span>
                 </div>
 
                 <div class="resume-template-card" onclick="selectTemplate(this, 'Minimal Graduate')">
-                    <span class="badge badge-forest" style="margin-bottom: 0.5rem; font-size: 0.75rem;">Campus / Fresher</span>
+                    <span class="badge badge-forest" style="margin-bottom: 0.5rem; font-size: 0.75rem;">Campus /
+                        Fresher</span>
                     <h4 style="color: var(--color-forest); margin-bottom: 0.35rem;">Minimal Graduate</h4>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
-                        Tailored for college students and freshers. Prioritizes education, academic projects, certifications, and internships.
+                        Tailored for college students and freshers. Prioritizes education, academic projects,
+                        certifications, and internships.
                     </p>
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">ATS Compatibility: 96%</span>
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-terracotta);">ATS
+                        Compatibility: 96%</span>
                 </div>
             </div>
 
             <!-- Phrasing & Structural Diff Preview -->
             <div class="card" style="background: #FFFFFF; padding: 2rem;">
-                <h3 style="color: var(--color-forest); font-size: 1.25rem; margin-bottom: 0.75rem;">Bullet Point Phrasing Optimizer (Sample Comparison)</h3>
+                <h3 style="color: var(--color-forest); font-size: 1.25rem; margin-bottom: 0.75rem;">Bullet Point
+                    Phrasing Optimizer (Sample Comparison)</h3>
                 <p style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
                     How phrasing is transformed to follow the Action Verb + Context + Measurable Result standard:
                 </p>
 
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
                     <div class="diff-box">
-                        <div style="margin-bottom: 0.5rem;"><span class="diff-del">Before: Worked on backend database queries and fixed some slow endpoints.</span></div>
-                        <div><span class="diff-add">After: Optimized PostgreSQL queries and added B-Tree indexing, reducing database latency by 35% across core REST API endpoints.</span></div>
+                        <div style="margin-bottom: 0.5rem;"><span class="diff-del">Before: Worked on backend database
+                                queries and fixed some slow endpoints.</span></div>
+                        <div><span class="diff-add">After: Optimized PostgreSQL queries and added B-Tree indexing,
+                                reducing database latency by 35% across core REST API endpoints.</span></div>
                     </div>
 
                     <div class="diff-box">
-                        <div style="margin-bottom: 0.5rem;"><span class="diff-del">Before: Built machine learning model for user classification.</span></div>
-                        <div><span class="diff-add">After: Developed and deployed a Random Forest classifier in Python with Scikit-learn, achieving 91% F1-score on validation datasets.</span></div>
+                        <div style="margin-bottom: 0.5rem;"><span class="diff-del">Before: Built machine learning model
+                                for user classification.</span></div>
+                        <div><span class="diff-add">After: Developed and deployed a Random Forest classifier in Python
+                                with Scikit-learn, achieving 91% F1-score on validation datasets.</span></div>
                     </div>
                 </div>
             </div>
@@ -233,46 +285,49 @@
             <div class="card" style="background: #FFFFFF; padding: 2rem; border: 1px solid var(--border-color);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h3 style="color: var(--color-forest); font-size: 1.3rem;">Uploaded Resume Versions</h3>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('resume-file-input').click()">+ Upload New Version</button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                        onclick="document.getElementById('resume-file-input').click()">+ Upload New Version</button>
                 </div>
 
                 {% if resumes %}
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
-                            <thead>
-                                <tr style="border-bottom: 2px solid var(--border-color); color: var(--color-forest);">
-                                    <th style="padding: 0.75rem 1rem;">Document</th>
-                                    <th style="padding: 0.75rem 1rem;">Uploaded Date</th>
-                                    <th style="padding: 0.75rem 1rem;">ATS Score</th>
-                                    <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for r in resumes %}
-                                <tr style="border-bottom: 1px solid var(--border-color);">
-                                    <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">
-                                        📄 Resume #{{ r.resume_id }}
-                                    </td>
-                                    <td style="padding: 1rem; color: var(--text-secondary);">
-                                        {{ r.uploaded_at.strftime('%b %d, %Y - %H:%M') if r.uploaded_at else 'Recent' }}
-                                    </td>
-                                    <td style="padding: 1rem;">
-                                        <span class="badge badge-forest" style="font-size: 0.8rem; font-weight: 700;">{{ r.ats_score or 75 }}%</span>
-                                    </td>
-                                    <td style="padding: 1rem; text-align: right;">
-                                        <a href="{{ url_for('resume.download_resume', resume_id=r.resume_id) }}" class="btn btn-outline btn-sm">Download</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color); color: var(--color-forest);">
+                                <th style="padding: 0.75rem 1rem;">Document</th>
+                                <th style="padding: 0.75rem 1rem;">Uploaded Date</th>
+                                <th style="padding: 0.75rem 1rem;">ATS Score</th>
+                                <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in resumes %}
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">
+                                    📄 Resume #{{ r.resume_id }}
+                                </td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">
+                                    {{ r.uploaded_at.strftime('%b %d, %Y - %H:%M') if r.uploaded_at else 'Recent' }}
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <span class="badge badge-forest" style="font-size: 0.8rem; font-weight: 700;">{{
+                                        r.ats_score or 75 }}%</span>
+                                </td>
+                                <td style="padding: 1rem; text-align: right;">
+                                    <a href="{{ url_for('resume.download_resume', resume_id=r.resume_id) }}"
+                                        class="btn btn-outline btn-sm">Download</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% else %}
-                    <div class="empty-state">
-                        <div class="empty-state-icon">📄</div>
-                        <h3>No Resumes Uploaded Yet</h3>
-                        <p>Upload your first resume version to track your ATS improvement over time.</p>
-                    </div>
+                <div class="empty-state">
+                    <div class="empty-state-icon">📄</div>
+                    <h3>No Resumes Uploaded Yet</h3>
+                    <p>Upload your first resume version to track your ATS improvement over time.</p>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -281,57 +336,57 @@
 </section>
 
 <script>
-function switchResumeTab(tabName, evt) {
-    document.querySelectorAll('#resume-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-    
-    const targetPane = document.getElementById('tab-pane-' + tabName);
-    if (targetPane) {
-        targetPane.classList.add('active');
-    }
-    if (evt && evt.currentTarget) {
-        evt.currentTarget.classList.add('active');
-    }
-}
+    function switchResumeTab(tabName, evt) {
+        document.querySelectorAll('#resume-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
 
-function selectTemplate(el, name) {
-    document.querySelectorAll('.resume-template-card').forEach(card => card.classList.remove('active'));
-    el.classList.add('active');
-}
-
-async function handleFileSelected(input) {
-    if (!input.files || input.files.length === 0) return;
-    const file = input.files[0];
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const statusBanner = document.getElementById('upload-status');
-    statusBanner.style.display = 'block';
-    statusBanner.className = 'alert alert-info';
-    statusBanner.innerText = `Uploading and parsing ${file.name} with NLP analyzer...`;
-
-    try {
-        const response = await fetch('/resume/api/upload', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            statusBanner.className = 'alert alert-success';
-            statusBanner.innerText = `Analysis complete! ATS score: ${data.analysis.ats_score}%. Refreshing analysis...`;
-            setTimeout(() => {
-                window.location.reload();
-            }, 1200);
-        } else {
-            statusBanner.className = 'alert alert-danger';
-            statusBanner.innerText = data.error || 'Upload failed. Please try a valid PDF/DOCX file.';
+        const targetPane = document.getElementById('tab-pane-' + tabName);
+        if (targetPane) {
+            targetPane.classList.add('active');
         }
-    } catch (err) {
-        console.error(err);
-        statusBanner.className = 'alert alert-danger';
-        statusBanner.innerText = 'Upload failed due to connection error. Please try again.';
+        if (evt && evt.currentTarget) {
+            evt.currentTarget.classList.add('active');
+        }
     }
-}
+
+    function selectTemplate(el, name) {
+        document.querySelectorAll('.resume-template-card').forEach(card => card.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    async function handleFileSelected(input) {
+        if (!input.files || input.files.length === 0) return;
+        const file = input.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const statusBanner = document.getElementById('upload-status');
+        statusBanner.style.display = 'block';
+        statusBanner.className = 'alert alert-info';
+        statusBanner.innerText = `Uploading and parsing ${file.name} with NLP analyzer...`;
+
+        try {
+            const response = await fetch('/resume/api/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                statusBanner.className = 'alert alert-success';
+                statusBanner.innerText = `Analysis complete! ATS score: ${data.analysis.ats_score}%. Refreshing analysis...`;
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1200);
+            } else {
+                statusBanner.className = 'alert alert-danger';
+                statusBanner.innerText = data.error || 'Upload failed. Please try a valid PDF/DOCX file.';
+            }
+        } catch (err) {
+            console.error(err);
+            statusBanner.className = 'alert alert-danger';
+            statusBanner.innerText = 'Upload failed due to connection error. Please try again.';
+        }
+    }
 </script>
 {% endblock %}

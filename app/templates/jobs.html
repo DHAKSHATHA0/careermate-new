@@ -5,60 +5,70 @@
 {% block content %}
 <section class="section" style="padding: 2.5rem 0 5rem;">
     <div class="container">
-        
+
         <!-- Hero Header -->
         <div style="margin-bottom: 2.5rem; text-align: left;">
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                <span class="badge badge-forest" style="font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase;">
+                <span class="badge badge-forest"
+                    style="font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase;">
                     Verified Opportunities &amp; Career Intelligence
                 </span>
                 <span class="freshness-badge">
                     <span>⚡</span> Live Verified Feed
                 </span>
             </div>
-            <h1 style="font-size: 2.6rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 0.5rem; line-height: 1.2;">
+            <h1
+                style="font-size: 2.6rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 0.5rem; line-height: 1.2;">
                 Find where your skills can take you.
             </h1>
             <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 780px; line-height: 1.6;">
-                Explore real opportunities from companies you're interested in and discover roles that match your profile.
+                Explore real opportunities from companies you're interested in and discover roles that match your
+                profile.
             </p>
         </div>
 
         <!-- Navigation Tabs -->
         <div class="tabs-nav" id="jobs-tabs" style="margin-bottom: 2rem;">
-            <button class="tab-btn {% if active_tab == 'all' or not active_tab %}active{% endif %}" onclick="switchJobsTab('all', event)" id="tab-btn-all">
+            <button class="tab-btn {% if active_tab == 'all' or not active_tab %}active{% endif %}"
+                onclick="switchJobsTab('all', event)" id="tab-btn-all">
                 <span>🌐 All Openings ({{ paginated_jobs.total if paginated_jobs else jobs|length }})</span>
             </button>
-            <button class="tab-btn {% if active_tab == 'recommended' %}active{% endif %}" onclick="switchJobsTab('recommended', event)" id="tab-btn-recommended">
+            <button class="tab-btn {% if active_tab == 'recommended' %}active{% endif %}"
+                onclick="switchJobsTab('recommended', event)" id="tab-btn-recommended">
                 <span>⭐ Recommended For You</span>
             </button>
-            <button class="tab-btn {% if active_tab == 'companies' %}active{% endif %}" onclick="switchJobsTab('companies', event)" id="tab-btn-companies">
+            <button class="tab-btn {% if active_tab == 'companies' %}active{% endif %}"
+                onclick="switchJobsTab('companies', event)" id="tab-btn-companies">
                 <span>🏛️ Company Directory ({{ companies|length }})</span>
             </button>
-            <button class="tab-btn {% if active_tab == 'tracker' %}active{% endif %}" onclick="switchJobsTab('tracker', event)" id="tab-btn-tracker">
+            <button class="tab-btn {% if active_tab == 'tracker' %}active{% endif %}"
+                onclick="switchJobsTab('tracker', event)" id="tab-btn-tracker">
                 <span>📊 Application Tracker ({{ applications|length }})</span>
             </button>
         </div>
 
         <!-- Search & Advanced Filter Controls -->
-        <div class="card" style="margin-bottom: 2.25rem; background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
+        <div class="card"
+            style="margin-bottom: 2.25rem; background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm);">
             <form method="GET" action="{{ url_for('main.jobs') }}" id="jobs-filter-form">
                 <input type="hidden" name="tab" id="active-tab-input" value="{{ active_tab }}">
-                
+
                 <!-- Main Search Bar -->
                 <div style="display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 280px; position: relative;">
-                        <input type="text" name="q" id="search-input" class="form-control" 
-                               placeholder="Search jobs, companies, skills, keywords..." 
-                               value="{{ search_query }}"
-                               style="height: 48px; padding-left: 1.25rem; font-size: 0.975rem;">
+                        <input type="text" name="q" id="search-input" class="form-control"
+                            placeholder="Search jobs, companies, skills, keywords..." value="{{ search_query }}"
+                            style="height: 48px; padding-left: 1.25rem; font-size: 0.975rem;">
                     </div>
                     <div style="display: flex; gap: 0.5rem;">
-                        <button type="submit" class="btn btn-primary" style="height: 48px; padding: 0 1.5rem; justify-content: center;">
+                        <button type="submit" class="btn btn-primary"
+                            style="height: 48px; padding: 0 1.5rem; justify-content: center;">
                             <span>Search</span>
                         </button>
-                        {% if search_query or company_filter or role_filter or location_filter or exp_filter or emp_type_filter or work_mode_filter or skill_filter or industry_filter or posted_date_filter %}
-                        <a href="{{ url_for('main.jobs') }}?tab={{ active_tab }}" class="btn btn-ghost" style="height: 48px; display: inline-flex; align-items: center;">Reset Filters</a>
+                        {% if search_query or company_filter or role_filter or location_filter or exp_filter or
+                        emp_type_filter or work_mode_filter or skill_filter or industry_filter or posted_date_filter %}
+                        <a href="{{ url_for('main.jobs') }}?tab={{ active_tab }}" class="btn btn-ghost"
+                            style="height: 48px; display: inline-flex; align-items: center;">Reset Filters</a>
                         {% endif %}
                     </div>
                 </div>
@@ -68,12 +78,14 @@
                     <!-- Company Filter -->
                     <div>
                         <label class="form-label" style="font-size: 0.8rem; margin-bottom: 0.35rem;">Company</label>
-                        <select name="company" class="form-control" onchange="this.form.submit()" style="font-size: 0.875rem; height: 40px;">
+                        <select name="company" class="form-control" onchange="this.form.submit()"
+                            style="font-size: 0.875rem; height: 40px;">
                             <option value="">All Companies</option>
                             {% for c in companies %}
-                                <option value="{{ c.company_id }}" {% if company_filter == c.company_id|string or company_filter == c.company_name %}selected{% endif %}>
-                                    {{ c.company_name }}
-                                </option>
+                            <option value="{{ c.company_id }}" {% if company_filter==c.company_id|string or
+                                company_filter==c.company_name %}selected{% endif %}>
+                                {{ c.company_name }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -81,10 +93,11 @@
                     <!-- Role / Career Area Filter -->
                     <div>
                         <label class="form-label" style="font-size: 0.8rem; margin-bottom: 0.35rem;">Career Area</label>
-                        <select name="role" class="form-control" onchange="this.form.submit()" style="font-size: 0.875rem; height: 40px;">
+                        <select name="role" class="form-control" onchange="this.form.submit()"
+                            style="font-size: 0.875rem; height: 40px;">
                             <option value="">All Career Areas</option>
                             {% for area in career_areas %}
-                                <option value="{{ area }}" {% if role_filter == area %}selected{% endif %}>{{ area }}</option>
+                            <option value="{{ area }}" {% if role_filter==area %}selected{% endif %}>{{ area }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -92,35 +105,53 @@
                     <!-- Work Mode Filter -->
                     <div>
                         <label class="form-label" style="font-size: 0.8rem; margin-bottom: 0.35rem;">Work Mode</label>
-                        <select name="work_mode" class="form-control" onchange="this.form.submit()" style="font-size: 0.875rem; height: 40px;">
+                        <select name="work_mode" class="form-control" onchange="this.form.submit()"
+                            style="font-size: 0.875rem; height: 40px;">
                             <option value="">All Modes</option>
-                            <option value="Remote" {% if work_mode_filter == 'Remote' %}selected{% endif %}>Remote</option>
-                            <option value="Hybrid" {% if work_mode_filter == 'Hybrid' %}selected{% endif %}>Hybrid</option>
-                            <option value="On-site" {% if work_mode_filter == 'On-site' %}selected{% endif %}>On-site</option>
+                            <option value="Remote" {% if work_mode_filter=='Remote' %}selected{% endif %}>Remote
+                            </option>
+                            <option value="Hybrid" {% if work_mode_filter=='Hybrid' %}selected{% endif %}>Hybrid
+                            </option>
+                            <option value="On-site" {% if work_mode_filter=='On-site' %}selected{% endif %}>On-site
+                            </option>
                         </select>
                     </div>
 
                     <!-- Employment Type Filter -->
                     <div>
-                        <label class="form-label" style="font-size: 0.8rem; margin-bottom: 0.35rem;">Employment Type</label>
-                        <select name="employment_type" class="form-control" onchange="this.form.submit()" style="font-size: 0.875rem; height: 40px;">
+                        <label class="form-label" style="font-size: 0.8rem; margin-bottom: 0.35rem;">Employment
+                            Type</label>
+                        <select name="employment_type" class="form-control" onchange="this.form.submit()"
+                            style="font-size: 0.875rem; height: 40px;">
                             <option value="">All Types</option>
-                            <option value="Full-time" {% if emp_type_filter == 'Full-time' %}selected{% endif %}>Full-time</option>
-                            <option value="Contract" {% if emp_type_filter == 'Contract' %}selected{% endif %}>Contract</option>
-                            <option value="Part-time" {% if emp_type_filter == 'Part-time' %}selected{% endif %}>Part-time</option>
-                            <option value="Internship" {% if emp_type_filter == 'Internship' %}selected{% endif %}>Internship</option>
+                            <option value="Full-time" {% if emp_type_filter=='Full-time' %}selected{% endif %}>Full-time
+                            </option>
+                            <option value="Contract" {% if emp_type_filter=='Contract' %}selected{% endif %}>Contract
+                            </option>
+                            <option value="Part-time" {% if emp_type_filter=='Part-time' %}selected{% endif %}>Part-time
+                            </option>
+                            <option value="Internship" {% if emp_type_filter=='Internship' %}selected{% endif %}>
+                                Internship</option>
                         </select>
                     </div>
                 </div>
 
                 <!-- Secondary Filters Toggle -->
-                <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div
+                    style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
                     <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.825rem;">
                         <span style="color: var(--text-secondary); font-weight: 600;">Experience:</span>
-                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='') }}" class="badge {% if not exp_filter %}badge-forest{% else %}badge-ivory{% endif %}">All</a>
-                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='fresher') }}" class="badge {% if exp_filter == 'fresher' %}badge-forest{% else %}badge-ivory{% endif %}">Fresher / 0-2 yrs</a>
-                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='mid') }}" class="badge {% if exp_filter == 'mid' %}badge-forest{% else %}badge-ivory{% endif %}">Mid / 3-5 yrs</a>
-                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='senior') }}" class="badge {% if exp_filter == 'senior' %}badge-forest{% else %}badge-ivory{% endif %}">Senior / 5+ yrs</a>
+                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='') }}"
+                            class="badge {% if not exp_filter %}badge-forest{% else %}badge-ivory{% endif %}">All</a>
+                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='fresher') }}"
+                            class="badge {% if exp_filter == 'fresher' %}badge-forest{% else %}badge-ivory{% endif %}">Fresher
+                            / 0-2 yrs</a>
+                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='mid') }}"
+                            class="badge {% if exp_filter == 'mid' %}badge-forest{% else %}badge-ivory{% endif %}">Mid /
+                            3-5 yrs</a>
+                        <a href="{{ url_for('main.jobs', tab=active_tab, experience='senior') }}"
+                            class="badge {% if exp_filter == 'senior' %}badge-forest{% else %}badge-ivory{% endif %}">Senior
+                            / 5+ yrs</a>
                     </div>
                     <div>
                         <span style="font-size: 0.825rem; color: var(--text-secondary);">
@@ -136,129 +167,146 @@
         <!-- ================================================================= -->
         <div class="tab-pane {% if active_tab == 'all' or not active_tab %}active{% endif %}" id="tab-pane-all">
             {% if jobs %}
-                <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-                    {% for job in jobs %}
-                        <div class="card job-card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); transition: all var(--transition-base);">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1rem;">
-                                <div style="flex: 1; min-width: 280px;">
-                                    <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
-                                        <h3 style="font-size: 1.35rem; color: var(--color-forest); margin: 0;">
-                                            <a href="{{ url_for('main.job_detail', job_id=job.id) }}" style="color: inherit; text-decoration: none;">
-                                                {{ job.title }}
-                                            </a>
-                                        </h3>
-                                        <span class="badge badge-ivory" style="border: 1px solid var(--color-ivory-border); font-size: 0.775rem;">
-                                            {{ job.career_area or 'Software Engineering' }}
-                                        </span>
-                                        {% if job.work_mode %}
-                                            <span class="badge badge-forest" style="font-size: 0.775rem;">{{ job.work_mode }}</span>
-                                        {% endif %}
-                                    </div>
-                                    <div style="display: flex; align-items: center; gap: 0.85rem; font-size: 0.925rem; color: var(--color-dark-brown-light); margin-bottom: 0.6rem; flex-wrap: wrap;">
-                                        <strong style="color: var(--color-forest);">
-                                            <a href="{{ url_for('company.detail', company_id=job.company.slug or job.company.company_id) }}" style="color: inherit; text-decoration: none;">
-                                                🏛️ {{ job.company.company_name }}
-                                            </a>
-                                        </strong>
-                                        <span>&bull;</span>
-                                        <span>📍 {{ job.location }}</span>
-                                        {% if job.salary_display %}
-                                            <span>&bull;</span>
-                                            <span style="color: var(--color-forest); font-weight: 600;">💰 {{ job.salary_display }}</span>
-                                        {% endif %}
-                                        <span>&bull;</span>
-                                        <span>⏳ {{ job.experience_display }}</span>
-                                    </div>
-                                    <p style="font-size: 0.9rem; color: var(--text-secondary); max-width: 780px; line-height: 1.55; margin-bottom: 0.75rem;">
-                                        {{ (job.description or 'Explore full responsibilities, eligibility and requirements.')[:220] }}{% if job.description and job.description|length > 220 %}...{% endif %}
-                                    </p>
-                                </div>
-
-                                <!-- Source & Verification Meta -->
-                                <div style="text-align: right; min-width: 180px;">
-                                    <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
-                                        Source: <strong style="color: var(--color-forest);">{{ job.source_platform }}</strong>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: var(--color-sage); font-weight: 600;">
-                                        ✓ {{ job.freshness_label }}
-                                    </div>
-                                </div>
+            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                {% for job in jobs %}
+                <div class="card job-card"
+                    style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); transition: all var(--transition-base);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1rem;">
+                        <div style="flex: 1; min-width: 280px;">
+                            <div
+                                style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                <h3 style="font-size: 1.35rem; color: var(--color-forest); margin: 0;">
+                                    <a href="{{ url_for('main.job_detail', job_id=job.id) }}"
+                                        style="color: inherit; text-decoration: none;">
+                                        {{ job.title }}
+                                    </a>
+                                </h3>
+                                <span class="badge badge-ivory"
+                                    style="border: 1px solid var(--color-ivory-border); font-size: 0.775rem;">
+                                    {{ job.career_area or 'Software Engineering' }}
+                                </span>
+                                {% if job.work_mode %}
+                                <span class="badge badge-forest" style="font-size: 0.775rem;">{{ job.work_mode }}</span>
+                                {% endif %}
                             </div>
-
-                            <!-- Skills Tags & Action Bar -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                                <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
-                                    {% if job.skills %}
-                                        <span style="font-size: 0.775rem; font-weight: 600; color: var(--text-secondary); margin-right: 0.25rem;">Skills:</span>
-                                        {% for s in job.skills[:5] %}
-                                            <span class="badge badge-ivory" style="font-size: 0.75rem; border: 1px solid var(--color-ivory-border);">{{ s }}</span>
-                                        {% endfor %}
-                                    {% endif %}
-                                </div>
-
-                                <div style="display: flex; gap: 0.6rem; align-items: center;">
-                                    <!-- Save Button -->
-                                    <button type="button" class="btn btn-outline btn-sm save-job-btn" 
-                                            onclick="toggleSaveJob({{ job.id }}, this)" 
-                                            title="Save Opportunity"
-                                            style="{% if job.id in saved_job_ids %}background: var(--color-forest-muted); color: var(--color-forest); font-weight: 600;{% endif %}">
-                                        <span>{% if job.id in saved_job_ids %}★ Saved{% else %}☆ Save{% endif %}</span>
-                                    </button>
-
-                                    <!-- Analyze Fit Button -->
-                                    <a href="{{ url_for('main.job_fit', job_id=job.id) }}" class="btn btn-outline btn-sm">
-                                        <span>Analyze Fit</span>
+                            <div
+                                style="display: flex; align-items: center; gap: 0.85rem; font-size: 0.925rem; color: var(--color-dark-brown-light); margin-bottom: 0.6rem; flex-wrap: wrap;">
+                                <strong style="color: var(--color-forest);">
+                                    <a href="{{ url_for('company.detail', company_id=job.company.slug or job.company.company_id) }}"
+                                        style="color: inherit; text-decoration: none;">
+                                        🏛️ {{ job.company.company_name }}
                                     </a>
+                                </strong>
+                                <span>&bull;</span>
+                                <span>📍 {{ job.location }}</span>
+                                {% if job.salary_display %}
+                                <span>&bull;</span>
+                                <span style="color: var(--color-forest); font-weight: 600;">💰 {{ job.salary_display
+                                    }}</span>
+                                {% endif %}
+                                <span>&bull;</span>
+                                <span>⏳ {{ job.experience_display }}</span>
+                            </div>
+                            <p
+                                style="font-size: 0.9rem; color: var(--text-secondary); max-width: 780px; line-height: 1.55; margin-bottom: 0.75rem;">
+                                {{ (job.description or 'Explore full responsibilities, eligibility and
+                                requirements.')[:220] }}{% if job.description and job.description|length > 220 %}...{%
+                                endif %}
+                            </p>
+                        </div>
 
-                                    <!-- View Details Button -->
-                                    <a href="{{ url_for('main.job_detail', job_id=job.id) }}" class="btn btn-terracotta btn-sm">
-                                        <span>View Details &rarr;</span>
-                                    </a>
-
-                                    <!-- Apply Button (Direct external link) -->
-                                    <a href="{{ job.application_url }}" target="_blank" rel="noopener noreferrer" 
-                                       class="btn btn-primary btn-sm"
-                                       onclick="promptTrackApplication({{ job.id }}, '{{ job.company.company_name }}', '{{ job.title }}')">
-                                        <span>Apply ↗</span>
-                                    </a>
-                                </div>
+                        <!-- Source & Verification Meta -->
+                        <div style="text-align: right; min-width: 180px;">
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">
+                                Source: <strong style="color: var(--color-forest);">{{ job.source_platform }}</strong>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--color-sage); font-weight: 600;">
+                                ✓ {{ job.freshness_label }}
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
+                    </div>
 
-                <!-- Pagination Controls -->
-                {% if paginated_jobs.pages > 1 %}
-                <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2.5rem;">
-                    {% if paginated_jobs.has_prev %}
-                        <a href="{{ url_for('main.jobs', page=paginated_jobs.prev_num, q=search_q, company=company_filter, role=role_filter, location=location_filter, work_mode=work_mode_filter, employment_type=emp_type_filter, tab='all') }}" class="btn btn-outline btn-sm">&larr; Previous</a>
-                    {% endif %}
-                    
-                    <span style="font-size: 0.9rem; color: var(--text-secondary); padding: 0 0.75rem;">
-                        Page {{ paginated_jobs.page }} of {{ paginated_jobs.pages }}
-                    </span>
-                    
-                    {% if paginated_jobs.has_next %}
-                        <a href="{{ url_for('main.jobs', page=paginated_jobs.next_num, q=search_q, company=company_filter, role=role_filter, location=location_filter, work_mode=work_mode_filter, employment_type=emp_type_filter, tab='all') }}" class="btn btn-outline btn-sm">Next &rarr;</a>
-                    {% endif %}
-                </div>
-                {% endif %}
-            {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon">💼</div>
-                    <h3>No current openings found</h3>
-                    <p style="margin-top: 0.5rem; color: var(--text-secondary);">
-                        {% if search_query or company_filter or role_filter %}
-                            No jobs currently match your selected filters. Try resetting search criteria or explore verified company career portals.
-                        {% else %}
-                            Live job openings are currently being synchronized from verified employer feeds.
-                        {% endif %}
-                    </p>
-                    <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.25rem;">
-                        <a href="{{ url_for('main.jobs') }}" class="btn btn-outline btn-sm">Reset Filters</a>
-                        <button type="button" class="btn btn-primary btn-sm" onclick="triggerJobSync()">Sync Live Feeds</button>
+                    <!-- Skills Tags & Action Bar -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+                            {% if job.skills %}
+                            <span
+                                style="font-size: 0.775rem; font-weight: 600; color: var(--text-secondary); margin-right: 0.25rem;">Skills:</span>
+                            {% for s in job.skills[:5] %}
+                            <span class="badge badge-ivory"
+                                style="font-size: 0.75rem; border: 1px solid var(--color-ivory-border);">{{ s }}</span>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        <div style="display: flex; gap: 0.6rem; align-items: center;">
+                            <!-- Save Button -->
+                            <button type="button" class="btn btn-outline btn-sm save-job-btn"
+                                onclick="toggleSaveJob({{ job.id }}, this)" title="Save Opportunity"
+                                style="{% if job.id in saved_job_ids %}background: var(--color-forest-muted); color: var(--color-forest); font-weight: 600;{% endif %}">
+                                <span>{% if job.id in saved_job_ids %}★ Saved{% else %}☆ Save{% endif %}</span>
+                            </button>
+
+                            <!-- Analyze Fit Button -->
+                            <a href="{{ url_for('main.job_fit', job_id=job.id) }}" class="btn btn-outline btn-sm">
+                                <span>Analyze Fit</span>
+                            </a>
+
+                            <!-- View Details Button -->
+                            <a href="{{ url_for('main.job_detail', job_id=job.id) }}" class="btn btn-terracotta btn-sm">
+                                <span>View Details &rarr;</span>
+                            </a>
+
+                            <!-- Apply Button (Direct external link) -->
+                            <a href="{{ job.application_url }}" target="_blank" rel="noopener noreferrer"
+                                class="btn btn-primary btn-sm"
+                                onclick="promptTrackApplication({{ job.id }}, '{{ job.company.company_name }}', '{{ job.title }}')">
+                                <span>Apply ↗</span>
+                            </a>
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
+            </div>
+
+            <!-- Pagination Controls -->
+            {% if paginated_jobs.pages > 1 %}
+            <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2.5rem;">
+                {% if paginated_jobs.has_prev %}
+                <a href="{{ url_for('main.jobs', page=paginated_jobs.prev_num, q=search_q, company=company_filter, role=role_filter, location=location_filter, work_mode=work_mode_filter, employment_type=emp_type_filter, tab='all') }}"
+                    class="btn btn-outline btn-sm">&larr; Previous</a>
+                {% endif %}
+
+                <span style="font-size: 0.9rem; color: var(--text-secondary); padding: 0 0.75rem;">
+                    Page {{ paginated_jobs.page }} of {{ paginated_jobs.pages }}
+                </span>
+
+                {% if paginated_jobs.has_next %}
+                <a href="{{ url_for('main.jobs', page=paginated_jobs.next_num, q=search_q, company=company_filter, role=role_filter, location=location_filter, work_mode=work_mode_filter, employment_type=emp_type_filter, tab='all') }}"
+                    class="btn btn-outline btn-sm">Next &rarr;</a>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">💼</div>
+                <h3>No current openings found</h3>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary);">
+                    {% if search_query or company_filter or role_filter %}
+                    No jobs currently match your selected filters. Try resetting search criteria or explore verified
+                    company career portals.
+                    {% else %}
+                    Live job openings are currently being synchronized from verified employer feeds.
+                    {% endif %}
+                </p>
+                <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.25rem;">
+                    <a href="{{ url_for('main.jobs') }}" class="btn btn-outline btn-sm">Reset Filters</a>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="triggerJobSync()">Sync Live
+                        Feeds</button>
+                </div>
+            </div>
             {% endif %}
         </div>
 
@@ -267,102 +315,123 @@
         <!-- ================================================================= -->
         <div class="tab-pane {% if active_tab == 'recommended' %}active{% endif %}" id="tab-pane-recommended">
             {% if recommendations.has_matches and recommendations.recommendations %}
-                <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-                    <div>
-                        <h2 style="font-size: 1.5rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 0.25rem;">
-                            Personalized Opportunities Ranked For You
-                        </h2>
-                        <span style="font-size: 0.875rem; color: var(--text-secondary);">
-                            {{ recommendations.source_label or 'Deterministic alignment based on profile & resume keywords' }}
-                        </span>
-                    </div>
+            <div
+                style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2
+                        style="font-size: 1.5rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 0.25rem;">
+                        Personalized Opportunities Ranked For You
+                    </h2>
+                    <span style="font-size: 0.875rem; color: var(--text-secondary);">
+                        {{ recommendations.source_label or 'Deterministic alignment based on profile & resume keywords'
+                        }}
+                    </span>
                 </div>
+            </div>
 
-                <div style="display: flex; flex-direction: column; gap: 1.5rem;">
-                    {% for item in recommendations.recommendations %}
-                        <div class="card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); position: relative;">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.25rem;">
-                                <div style="flex: 1; min-width: 280px;">
-                                    <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
-                                        <h3 style="font-size: 1.4rem; color: var(--color-forest); margin: 0;">
-                                            {{ item.company_name }}
-                                        </h3>
-                                        <span class="badge badge-forest" style="font-size: 0.8rem;">{{ item.target_role }}</span>
-                                        {% if item.salary %}
-                                            <span class="badge badge-ivory" style="border: 1px solid var(--color-ivory-border);">💰 {{ item.salary }}</span>
-                                        {% endif %}
-                                    </div>
-                                    <div class="why-matches-box" style="margin: 0.75rem 0;">
-                                        <strong style="color: var(--color-forest);">Why this matches you:</strong> {{ item.explanation }}
-                                    </div>
-                                </div>
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                {% for item in recommendations.recommendations %}
+                <div class="card"
+                    style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); position: relative;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.25rem;">
+                        <div style="flex: 1; min-width: 280px;">
+                            <div
+                                style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 0.4rem;">
+                                <h3 style="font-size: 1.4rem; color: var(--color-forest); margin: 0;">
+                                    {{ item.company_name }}
+                                </h3>
+                                <span class="badge badge-forest" style="font-size: 0.8rem;">{{ item.target_role
+                                    }}</span>
+                                {% if item.salary %}
+                                <span class="badge badge-ivory" style="border: 1px solid var(--color-ivory-border);">💰
+                                    {{ item.salary }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="why-matches-box" style="margin: 0.75rem 0;">
+                                <strong style="color: var(--color-forest);">Why this matches you:</strong> {{
+                                item.explanation }}
+                            </div>
+                        </div>
 
-                                <!-- Fit Score Gauge -->
-                                <div style="display: flex; align-items: center; gap: 1.25rem; background: var(--color-ivory-light); padding: 0.75rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                                    <div class="score-circle" style="--score: {{ item.match_score }}; width: 58px; height: 58px;">
-                                        <div class="score-circle-inner">
-                                            <span class="score-value" style="font-size: 1rem;">{{ item.match_score }}%</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700;">Fit Score</div>
-                                        <div style="font-size: 0.875rem; font-weight: 600; color: var(--color-forest);">
-                                            {{ 'Strong Fit' if item.match_score >= 70 else 'Moderate' if item.match_score >= 40 else 'Upskill First' }}
-                                        </div>
-                                    </div>
+                        <!-- Fit Score Gauge -->
+                        <div
+                            style="display: flex; align-items: center; gap: 1.25rem; background: var(--color-ivory-light); padding: 0.75rem 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                            <div class="score-circle"
+                                style="--score: {{ item.match_score }}; width: 58px; height: 58px;">
+                                <div class="score-circle-inner">
+                                    <span class="score-value" style="font-size: 1rem;">{{ item.match_score }}%</span>
                                 </div>
                             </div>
-
-                            <!-- Matching Skills & Actions -->
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
-                                <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
-                                    {% if item.matching_skills %}
-                                        <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
-                                            <span style="font-size: 0.775rem; font-weight: 600; color: var(--color-forest);">Matching:</span>
-                                            {% for s in item.matching_skills %}
-                                                <span class="badge badge-forest" style="font-size: 0.75rem;">{{ s }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    {% if item.missing_skills %}
-                                        <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
-                                            <span style="font-size: 0.775rem; font-weight: 600; color: var(--color-terracotta);">Gaps:</span>
-                                            {% for s in item.missing_skills %}
-                                                <a href="{{ url_for('main.courses') }}?q={{ s }}" class="badge badge-terracotta" style="font-size: 0.75rem; text-decoration: none;" title="Learn {{ s }} in Courses">
-                                                    {{ s }} ↗
-                                                </a>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-
-                                <div style="display: flex; gap: 0.6rem; align-items: center;">
-                                    {% if item.job_id %}
-                                        <a href="{{ url_for('main.job_detail', job_id=item.job_id) }}" class="btn btn-terracotta btn-sm">
-                                            <span>View Opportunity &rarr;</span>
-                                        </a>
-                                    {% elif item.company_id %}
-                                        <a href="{{ url_for('company.detail', company_id=item.company_id) }}" class="btn btn-outline btn-sm">
-                                            <span>Explore Company &rarr;</span>
-                                        </a>
-                                    {% endif %}
+                            <div>
+                                <div
+                                    style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-secondary); font-weight: 700;">
+                                    Fit Score</div>
+                                <div style="font-size: 0.875rem; font-weight: 600; color: var(--color-forest);">
+                                    {{ 'Strong Fit' if item.match_score >= 70 else 'Moderate' if item.match_score >= 40
+                                    else 'Upskill First' }}
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="empty-state">
-                    <div class="empty-state-icon">🎯</div>
-                    <h3>Unlock Personalized Recommendations</h3>
-                    <p style="margin-top: 0.5rem; color: var(--text-secondary); max-width: 540px;">
-                        Complete your career profile or upload your resume to calculate genuine match scores and receive verified recommendations tailored to your background.
-                    </p>
-                    <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.25rem;">
-                        <a href="{{ url_for('resume.analyzer') }}" class="btn btn-primary btn-sm">Upload Resume</a>
-                        <a href="{{ url_for('main.profile') }}" class="btn btn-outline btn-sm">Complete Profile</a>
+                    </div>
+
+                    <!-- Matching Skills & Actions -->
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                            {% if item.matching_skills %}
+                            <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                                <span
+                                    style="font-size: 0.775rem; font-weight: 600; color: var(--color-forest);">Matching:</span>
+                                {% for s in item.matching_skills %}
+                                <span class="badge badge-forest" style="font-size: 0.75rem;">{{ s }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            {% if item.missing_skills %}
+                            <div style="display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap;">
+                                <span
+                                    style="font-size: 0.775rem; font-weight: 600; color: var(--color-terracotta);">Gaps:</span>
+                                {% for s in item.missing_skills %}
+                                <a href="{{ url_for('main.courses') }}?q={{ s }}" class="badge badge-terracotta"
+                                    style="font-size: 0.75rem; text-decoration: none;" title="Learn {{ s }} in Courses">
+                                    {{ s }} ↗
+                                </a>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div style="display: flex; gap: 0.6rem; align-items: center;">
+                            {% if item.job_id %}
+                            <a href="{{ url_for('main.job_detail', job_id=item.job_id) }}"
+                                class="btn btn-terracotta btn-sm">
+                                <span>View Opportunity &rarr;</span>
+                            </a>
+                            {% elif item.company_id %}
+                            <a href="{{ url_for('company.detail', company_id=item.company_id) }}"
+                                class="btn btn-outline btn-sm">
+                                <span>Explore Company &rarr;</span>
+                            </a>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🎯</div>
+                <h3>Unlock Personalized Recommendations</h3>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary); max-width: 540px;">
+                    Complete your career profile or upload your resume to calculate genuine match scores and receive
+                    verified recommendations tailored to your background.
+                </p>
+                <div style="display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.25rem;">
+                    <a href="{{ url_for('resume.analyzer') }}" class="btn btn-primary btn-sm">Upload Resume</a>
+                    <a href="{{ url_for('main.profile') }}" class="btn btn-outline btn-sm">Complete Profile</a>
+                </div>
+            </div>
             {% endif %}
         </div>
 
@@ -371,58 +440,69 @@
         <!-- ================================================================= -->
         <div class="tab-pane {% if active_tab == 'companies' %}active{% endif %}" id="tab-pane-companies">
             {% if companies %}
-                <div class="grid grid-cols-3" style="gap: 1.75rem;">
-                    {% for comp in companies %}
-                        <div class="card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: space-between;">
+            <div class="grid grid-cols-3" style="gap: 1.75rem;">
+                {% for comp in companies %}
+                <div class="card"
+                    style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                             <div>
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                                    <div>
-                                        <h3 style="font-size: 1.35rem; color: var(--color-forest); margin-bottom: 0.25rem;">
-                                            {{ comp.company_name }}
-                                        </h3>
-                                        <span class="badge badge-ivory" style="font-size: 0.75rem;">{{ comp.industry or 'Technology' }}</span>
-                                    </div>
-                                    {% if comp.active_jobs_count > 0 %}
-                                        <span class="badge badge-forest" style="font-weight: 700;">
-                                            {{ comp.active_jobs_count }} {{ 'Opening' if comp.active_jobs_count == 1 else 'Openings' }}
-                                        </span>
-                                    {% endif %}
-                                </div>
-
-                                <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0.85rem 0; line-height: 1.55;">
-                                    {{ (comp.description or 'Verified employer with active engineering and placement tracks.')[:160] }}...
-                                </p>
-
-                                {% if comp.headquarters %}
-                                    <div style="font-size: 0.8rem; color: var(--color-dark-brown-light); margin-bottom: 0.5rem;">
-                                        📍 <strong>HQ:</strong> {{ comp.headquarters }}
-                                    </div>
-                                {% endif %}
-
-                                {% if comp.career_areas %}
-                                    <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.75rem;">
-                                        {% for area in comp.career_areas[:3] %}
-                                            <span class="badge badge-ivory" style="font-size: 0.725rem; border: 1px solid var(--color-ivory-border);">{{ area }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
+                                <h3 style="font-size: 1.35rem; color: var(--color-forest); margin-bottom: 0.25rem;">
+                                    {{ comp.company_name }}
+                                </h3>
+                                <span class="badge badge-ivory" style="font-size: 0.75rem;">{{ comp.industry or
+                                    'Technology' }}</span>
                             </div>
-
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.25rem; border-top: 1px solid var(--border-color); margin-top: 1.25rem;">
-                                <a href="{{ comp.official_careers_url or '#' }}" target="_blank" rel="noopener noreferrer" style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: underline;">
-                                    Official Careers ↗
-                                </a>
-                                <a href="{{ url_for('company.detail', company_id=comp.slug or comp.company_id) }}" class="btn btn-terracotta btn-sm">
-                                    <span>Explore &rarr;</span>
-                                </a>
-                            </div>
+                            {% if comp.active_jobs_count > 0 %}
+                            <span class="badge badge-forest" style="font-weight: 700;">
+                                {{ comp.active_jobs_count }} {{ 'Opening' if comp.active_jobs_count == 1 else 'Openings'
+                                }}
+                            </span>
+                            {% endif %}
                         </div>
-                    {% endfor %}
+
+                        <p
+                            style="font-size: 0.875rem; color: var(--text-secondary); margin: 0.85rem 0; line-height: 1.55;">
+                            {{ (comp.description or 'Verified employer with active engineering and placement
+                            tracks.')[:160] }}...
+                        </p>
+
+                        {% if comp.headquarters %}
+                        <div style="font-size: 0.8rem; color: var(--color-dark-brown-light); margin-bottom: 0.5rem;">
+                            📍 <strong>HQ:</strong> {{ comp.headquarters }}
+                        </div>
+                        {% endif %}
+
+                        {% if comp.career_areas %}
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.75rem;">
+                            {% for area in comp.career_areas[:3] %}
+                            <span class="badge badge-ivory"
+                                style="font-size: 0.725rem; border: 1px solid var(--color-ivory-border);">{{ area
+                                }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.25rem; border-top: 1px solid var(--border-color); margin-top: 1.25rem;">
+                        <a href="{{ comp.official_careers_url or '#' }}" target="_blank" rel="noopener noreferrer"
+                            style="font-size: 0.8rem; color: var(--text-secondary); text-decoration: underline;">
+                            Official Careers ↗
+                        </a>
+                        <a href="{{ url_for('company.detail', company_id=comp.slug or comp.company_id) }}"
+                            class="btn btn-terracotta btn-sm">
+                            <span>Explore &rarr;</span>
+                        </a>
+                    </div>
                 </div>
+                {% endfor %}
+            </div>
             {% else %}
-                <div class="empty-state">
-                    <p>No companies available yet.</p>
-                </div>
+            <div class="empty-state">
+                <p>No companies available yet.</p>
+            </div>
             {% endif %}
         </div>
 
@@ -430,10 +510,13 @@
         <!-- TAB 4: APPLICATION TRACKER PIPELINE -->
         <!-- ================================================================= -->
         <div class="tab-pane {% if active_tab == 'tracker' %}active{% endif %}" id="tab-pane-tracker">
-            <div class="card" style="background: #FFFFFF; padding: 2rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div class="card"
+                style="background: #FFFFFF; padding: 2rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 2rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <div>
-                        <h3 style="color: var(--color-forest); font-size: 1.4rem; font-family: var(--font-serif); margin-bottom: 0.25rem;">
+                        <h3
+                            style="color: var(--color-forest); font-size: 1.4rem; font-family: var(--font-serif); margin-bottom: 0.25rem;">
                             Application Pipeline &amp; Status Tracker
                         </h3>
                         <p style="font-size: 0.9rem; color: var(--text-secondary);">
@@ -446,65 +529,71 @@
                 </div>
 
                 {% if applications %}
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
-                            <thead>
-                                <tr style="border-bottom: 2px solid var(--border-color); color: var(--color-forest);">
-                                    <th style="padding: 0.85rem 1rem;">Company</th>
-                                    <th style="padding: 0.85rem 1rem;">Target Role</th>
-                                    <th style="padding: 0.85rem 1rem;">Status</th>
-                                    <th style="padding: 0.85rem 1rem;">Date Applied</th>
-                                    <th style="padding: 0.85rem 1rem;">Interview / Notes</th>
-                                    <th style="padding: 0.85rem 1rem; text-align: right;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tracker-table-body">
-                                {% for app in applications %}
-                                    <tr style="border-bottom: 1px solid var(--border-color);" id="app-row-{{ app.id }}">
-                                        <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">
-                                            {{ app.company_name }}
-                                        </td>
-                                        <td style="padding: 1rem; color: var(--text-secondary);">
-                                            {% if app.job_id %}
-                                                <a href="{{ url_for('main.job_detail', job_id=app.job_id) }}" style="color: var(--color-forest); text-decoration: none; font-weight: 500;">
-                                                    {{ app.job_title }} ↗
-                                                </a>
-                                            {% else %}
-                                                {{ app.job_title }}
-                                            {% endif %}
-                                        </td>
-                                        <td style="padding: 1rem;">
-                                            <select class="form-control" style="font-size: 0.825rem; padding: 0.35rem 0.5rem; height: 32px; width: auto;" 
-                                                    onchange="updateAppStatus({{ app.id }}, this.value)">
-                                                {% for st in application_statuses %}
-                                                    <option value="{{ st }}" {% if app.status == st %}selected{% endif %}>{{ st }}</option>
-                                                {% endfor %}
-                                            </select>
-                                        </td>
-                                        <td style="padding: 1rem; color: var(--text-secondary); font-size: 0.85rem;">
-                                            {{ app.applied_at.strftime('%b %d, %Y') if app.applied_at else '—' }}
-                                        </td>
-                                        <td style="padding: 1rem; color: var(--text-secondary); font-size: 0.85rem; max-width: 240px;">
-                                            {{ app.notes or 'No notes added' }}
-                                        </td>
-                                        <td style="padding: 1rem; text-align: right;">
-                                            <button type="button" class="btn btn-ghost btn-sm" onclick="deleteApp({{ app.id }})" style="color: var(--color-terracotta);">
-                                                Remove
-                                            </button>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color); color: var(--color-forest);">
+                                <th style="padding: 0.85rem 1rem;">Company</th>
+                                <th style="padding: 0.85rem 1rem;">Target Role</th>
+                                <th style="padding: 0.85rem 1rem;">Status</th>
+                                <th style="padding: 0.85rem 1rem;">Date Applied</th>
+                                <th style="padding: 0.85rem 1rem;">Interview / Notes</th>
+                                <th style="padding: 0.85rem 1rem; text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tracker-table-body">
+                            {% for app in applications %}
+                            <tr style="border-bottom: 1px solid var(--border-color);" id="app-row-{{ app.id }}">
+                                <td style="padding: 1rem; font-weight: 600; color: var(--color-dark-brown);">
+                                    {{ app.company_name }}
+                                </td>
+                                <td style="padding: 1rem; color: var(--text-secondary);">
+                                    {% if app.job_id %}
+                                    <a href="{{ url_for('main.job_detail', job_id=app.job_id) }}"
+                                        style="color: var(--color-forest); text-decoration: none; font-weight: 500;">
+                                        {{ app.job_title }} ↗
+                                    </a>
+                                    {% else %}
+                                    {{ app.job_title }}
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem;">
+                                    <select class="form-control"
+                                        style="font-size: 0.825rem; padding: 0.35rem 0.5rem; height: 32px; width: auto;"
+                                        onchange="updateAppStatus({{ app.id }}, this.value)">
+                                        {% for st in application_statuses %}
+                                        <option value="{{ st }}" {% if app.status==st %}selected{% endif %}>{{ st }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td style="padding: 1rem; color: var(--text-secondary); font-size: 0.85rem;">
+                                    {{ app.applied_at.strftime('%b %d, %Y') if app.applied_at else '—' }}
+                                </td>
+                                <td
+                                    style="padding: 1rem; color: var(--text-secondary); font-size: 0.85rem; max-width: 240px;">
+                                    {{ app.notes or 'No notes added' }}
+                                </td>
+                                <td style="padding: 1rem; text-align: right;">
+                                    <button type="button" class="btn btn-ghost btn-sm" onclick="deleteApp({{ app.id }})"
+                                        style="color: var(--color-terracotta);">
+                                        Remove
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 {% else %}
-                    <div class="empty-state" style="padding: 2.5rem 1rem;">
-                        <div class="empty-state-icon">📋</div>
-                        <h4>No applications tracked yet</h4>
-                        <p style="color: var(--text-secondary); margin-top: 0.35rem; font-size: 0.875rem;">
-                            When you apply to jobs, click "I Applied" or use "+ Track Application" to organize your pipeline.
-                        </p>
-                    </div>
+                <div class="empty-state" style="padding: 2.5rem 1rem;">
+                    <div class="empty-state-icon">📋</div>
+                    <h4>No applications tracked yet</h4>
+                    <p style="color: var(--text-secondary); margin-top: 0.35rem; font-size: 0.875rem;">
+                        When you apply to jobs, click "I Applied" or use "+ Track Application" to organize your
+                        pipeline.
+                    </p>
+                </div>
                 {% endif %}
             </div>
         </div>
@@ -513,29 +602,35 @@
 </section>
 
 <!-- Track New Application Modal -->
-<div id="new-app-modal" style="display: none; position: fixed; inset: 0; background: rgba(39, 35, 31, 0.6); z-index: 9999; align-items: center; justify-content: center;">
-    <div class="card" style="background: #FFFFFF; width: 90%; max-width: 480px; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
-        <h3 style="color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 1.25rem;">Track New Application</h3>
+<div id="new-app-modal"
+    style="display: none; position: fixed; inset: 0; background: rgba(39, 35, 31, 0.6); z-index: 9999; align-items: center; justify-content: center;">
+    <div class="card"
+        style="background: #FFFFFF; width: 90%; max-width: 480px; padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <h3 style="color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 1.25rem;">Track New
+            Application</h3>
         <form onsubmit="submitNewApplication(event)">
             <div style="margin-bottom: 1rem;">
                 <label class="form-label">Company Name *</label>
-                <input type="text" id="modal-company" class="form-control" required placeholder="e.g., Google, Stripe, TCS">
+                <input type="text" id="modal-company" class="form-control" required
+                    placeholder="e.g., Google, Stripe, TCS">
             </div>
             <div style="margin-bottom: 1rem;">
                 <label class="form-label">Job Title *</label>
-                <input type="text" id="modal-title" class="form-control" required placeholder="e.g., Full Stack Engineer">
+                <input type="text" id="modal-title" class="form-control" required
+                    placeholder="e.g., Full Stack Engineer">
             </div>
             <div style="margin-bottom: 1rem;">
                 <label class="form-label">Status</label>
                 <select id="modal-status" class="form-control">
                     {% for st in application_statuses %}
-                        <option value="{{ st }}" {% if st == 'Applied' %}selected{% endif %}>{{ st }}</option>
+                    <option value="{{ st }}" {% if st=='Applied' %}selected{% endif %}>{{ st }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div style="margin-bottom: 1.5rem;">
                 <label class="form-label">Notes / Follow-up Details</label>
-                <textarea id="modal-notes" class="form-control" rows="3" placeholder="Applied through company career portal, round 1 prep..."></textarea>
+                <textarea id="modal-notes" class="form-control" rows="3"
+                    placeholder="Applied through company career portal, round 1 prep..."></textarea>
             </div>
             <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
                 <button type="button" class="btn btn-ghost" onclick="closeNewApplicationModal()">Cancel</button>
@@ -546,136 +641,136 @@
 </div>
 
 <script>
-function switchJobsTab(tabName, evt) {
-    document.querySelectorAll('#jobs-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
-    
-    const targetPane = document.getElementById(`tab-pane-${tabName}`);
-    if (targetPane) targetPane.classList.add('active');
-    
-    if (evt && evt.currentTarget) {
-        evt.currentTarget.classList.add('active');
-    }
-    
-    const tabInput = document.getElementById('active-tab-input');
-    if (tabInput) tabInput.value = tabName;
-}
+    function switchJobsTab(tabName, evt) {
+        document.querySelectorAll('#jobs-tabs .tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
 
-function toggleSaveJob(jobId, btn) {
-    fetch(`/api/jobs/${jobId}/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            if (data.saved) {
-                btn.innerHTML = '<span>★ Saved</span>';
-                btn.style.background = 'var(--color-forest-muted)';
-                btn.style.color = 'var(--color-forest)';
-                btn.style.fontWeight = '600';
-            } else {
-                btn.innerHTML = '<span>☆ Save</span>';
-                btn.style.background = '';
-                btn.style.color = '';
-                btn.style.fontWeight = '';
-            }
+        const targetPane = document.getElementById(`tab-pane-${tabName}`);
+        if (targetPane) targetPane.classList.add('active');
+
+        if (evt && evt.currentTarget) {
+            evt.currentTarget.classList.add('active');
         }
-    })
-    .catch(err => console.error('Save error:', err));
-}
 
-function promptTrackApplication(jobId, company, title) {
-    setTimeout(() => {
-        if (confirm(`Did you apply for ${title} at ${company}? Click OK to add to your CareerMate Application Tracker.`)) {
-            fetch(`/api/jobs/${jobId}/apply`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ notes: `Applied on ${new Date().toLocaleDateString()}` })
-            })
+        const tabInput = document.getElementById('active-tab-input');
+        if (tabInput) tabInput.value = tabName;
+    }
+
+    function toggleSaveJob(jobId, btn) {
+        fetch(`/api/jobs/${jobId}/save`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        })
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert('Application recorded in your Tracker pipeline!');
+                    if (data.saved) {
+                        btn.innerHTML = '<span>★ Saved</span>';
+                        btn.style.background = 'var(--color-forest-muted)';
+                        btn.style.color = 'var(--color-forest)';
+                        btn.style.fontWeight = '600';
+                    } else {
+                        btn.innerHTML = '<span>☆ Save</span>';
+                        btn.style.background = '';
+                        btn.style.color = '';
+                        btn.style.fontWeight = '';
+                    }
+                }
+            })
+            .catch(err => console.error('Save error:', err));
+    }
+
+    function promptTrackApplication(jobId, company, title) {
+        setTimeout(() => {
+            if (confirm(`Did you apply for ${title} at ${company}? Click OK to add to your CareerMate Application Tracker.`)) {
+                fetch(`/api/jobs/${jobId}/apply`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes: `Applied on ${new Date().toLocaleDateString()}` })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Application recorded in your Tracker pipeline!');
+                        }
+                    });
+            }
+        }, 1500);
+    }
+
+    function updateAppStatus(appId, newStatus) {
+        fetch('/api/applications/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: appId, status: newStatus })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    console.log('Status updated to', newStatus);
                 }
             });
-        }
-    }, 1500);
-}
-
-function updateAppStatus(appId, newStatus) {
-    fetch('/api/applications/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: appId, status: newStatus })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Status updated to', newStatus);
-        }
-    });
-}
-
-function deleteApp(appId) {
-    if (confirm('Remove this application from tracker?')) {
-        fetch(`/api/applications/${appId}/delete`, { method: 'POST' })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const row = document.getElementById(`app-row-${appId}`);
-                if (row) row.remove();
-            }
-        });
     }
-}
 
-function openNewApplicationModal() {
-    const modal = document.getElementById('new-app-modal');
-    if (modal) modal.style.display = 'flex';
-}
-
-function closeNewApplicationModal() {
-    const modal = document.getElementById('new-app-modal');
-    if (modal) modal.style.display = 'none';
-}
-
-function submitNewApplication(evt) {
-    evt.preventDefault();
-    const company = document.getElementById('modal-company').value.trim();
-    const title = document.getElementById('modal-title').value.trim();
-    const status = document.getElementById('modal-status').value;
-    const notes = document.getElementById('modal-notes').value.trim();
-    
-    fetch('/api/applications/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ company_name: company, job_title: title, status: status, notes: notes })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            closeNewApplicationModal();
-            window.location.href = "{{ url_for('main.jobs') }}?tab=tracker";
+    function deleteApp(appId) {
+        if (confirm('Remove this application from tracker?')) {
+            fetch(`/api/applications/${appId}/delete`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const row = document.getElementById(`app-row-${appId}`);
+                        if (row) row.remove();
+                    }
+                });
         }
-    });
-}
+    }
 
-function triggerJobSync() {
-    const btn = event.target;
-    btn.disabled = true;
-    btn.innerText = "Synchronizing...";
-    fetch('/api/jobs/sync', { method: 'POST' })
-    .then(res => res.json())
-    .then(data => {
-        alert(data.message || 'Synchronization complete.');
-        window.location.reload();
-    })
-    .catch(() => {
-        alert('Failed to sync feeds. Please try again.');
-        btn.disabled = false;
-        btn.innerText = "Sync Live Feeds";
-    });
-}
+    function openNewApplicationModal() {
+        const modal = document.getElementById('new-app-modal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeNewApplicationModal() {
+        const modal = document.getElementById('new-app-modal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    function submitNewApplication(evt) {
+        evt.preventDefault();
+        const company = document.getElementById('modal-company').value.trim();
+        const title = document.getElementById('modal-title').value.trim();
+        const status = document.getElementById('modal-status').value;
+        const notes = document.getElementById('modal-notes').value.trim();
+
+        fetch('/api/applications/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ company_name: company, job_title: title, status: status, notes: notes })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    closeNewApplicationModal();
+                    window.location.href = "{{ url_for('main.jobs') }}?tab=tracker";
+                }
+            });
+    }
+
+    function triggerJobSync() {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.innerText = "Synchronizing...";
+        fetch('/api/jobs/sync', { method: 'POST' })
+            .then(res => res.json())
+            .then(data => {
+                alert(data.message || 'Synchronization complete.');
+                window.location.reload();
+            })
+            .catch(() => {
+                alert('Failed to sync feeds. Please try again.');
+                btn.disabled = false;
+                btn.innerText = "Sync Live Feeds";
+            });
+    }
 </script>
 {% endblock %}

@@ -5,94 +5,106 @@
 {% block content %}
 <section class="section" style="padding: 2.5rem 0 5rem;">
     <div class="container">
-        
+
         <!-- Header -->
         <div style="margin-bottom: 2.5rem;">
             <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem;">
                 <span class="badge badge-forest">Company Directory</span>
                 <span class="freshness-badge"><span>⚡</span> Verified Profiles</span>
             </div>
-            <h1 style="font-size: 2.5rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 0.5rem;">
+            <h1
+                style="font-size: 2.5rem; color: var(--color-forest); font-family: var(--font-serif); margin-bottom: 0.5rem;">
                 Explore Companies &amp; Selection Criteria
             </h1>
             <p style="font-size: 1.05rem; color: var(--text-secondary); max-width: 720px; line-height: 1.6;">
-                Review hiring eligibility, salary benchmarks, selection processes, active openings, and practice interview questions from top technology employers.
+                Review hiring eligibility, salary benchmarks, selection processes, active openings, and practice
+                interview questions from top technology employers.
             </p>
         </div>
 
         <!-- Search & Filter Bar -->
-        <div class="card" style="background: #FFFFFF; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 2.25rem;">
+        <div class="card"
+            style="background: #FFFFFF; padding: 1.5rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); margin-bottom: 2.25rem;">
             <form method="GET" action="{{ url_for('company.list') }}">
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 260px;">
-                        <input type="text" name="q" class="form-control" placeholder="Search company by name, industry, or description..." value="{{ search_q }}">
+                        <input type="text" name="q" class="form-control"
+                            placeholder="Search company by name, industry, or description..." value="{{ search_q }}">
                     </div>
                     {% if industries %}
                     <div style="min-width: 200px;">
                         <select name="industry" class="form-control" onchange="this.form.submit()">
                             <option value="">All Industries</option>
                             {% for ind in industries %}
-                                <option value="{{ ind }}" {% if industry_filter == ind %}selected{% endif %}>{{ ind }}</option>
+                            <option value="{{ ind }}" {% if industry_filter==ind %}selected{% endif %}>{{ ind }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
                     {% endif %}
                     <button type="submit" class="btn btn-primary">Search</button>
                     {% if search_q or industry_filter %}
-                        <a href="{{ url_for('company.list') }}" class="btn btn-ghost">Reset</a>
+                    <a href="{{ url_for('company.list') }}" class="btn btn-ghost">Reset</a>
                     {% endif %}
                 </div>
             </form>
         </div>
 
         {% if companies %}
-            <div class="grid grid-cols-3" style="gap: 1.75rem;">
-                {% for comp in companies %}
-                    <div class="card" style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="grid grid-cols-3" style="gap: 1.75rem;">
+            {% for comp in companies %}
+            <div class="card"
+                style="background: #FFFFFF; padding: 1.75rem; border: 1px solid var(--border-color); border-radius: var(--radius-lg); display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
                         <div>
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
-                                <div>
-                                    <h3 style="font-size: 1.35rem; color: var(--color-forest); margin-bottom: 0.25rem;">
-                                        {{ comp.company_name }}
-                                    </h3>
-                                    <span class="badge badge-ivory" style="font-size: 0.75rem;">{{ comp.industry or 'Technology' }}</span>
-                                </div>
-                                {% if comp.active_jobs_count > 0 %}
-                                    <span class="badge badge-forest" style="font-weight: 700; font-size: 0.775rem;">
-                                        {{ comp.active_jobs_count }} {{ 'Role' if comp.active_jobs_count == 1 else 'Roles' }}
-                                    </span>
-                                {% elif comp.salary %}
-                                    <span class="badge badge-forest" style="font-size: 0.75rem;">{{ comp.salary }}</span>
-                                {% endif %}
-                            </div>
-
-                            <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0.85rem 0; line-height: 1.55;">
-                                {{ (comp.description or 'Technology engineering and consulting organization.')[:160] }}...
-                            </p>
-
-                            {% if comp.eligibility %}
-                                <div style="font-size: 0.8rem; margin-bottom: 0.75rem; padding: 0.6rem 0.8rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
-                                    <strong>Eligibility:</strong> {{ comp.eligibility[:90] }}...
-                                </div>
-                            {% endif %}
+                            <h3 style="font-size: 1.35rem; color: var(--color-forest); margin-bottom: 0.25rem;">
+                                {{ comp.company_name }}
+                            </h3>
+                            <span class="badge badge-ivory" style="font-size: 0.75rem;">{{ comp.industry or 'Technology'
+                                }}</span>
                         </div>
-
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
-                            <span class="badge badge-ivory" style="font-size: 0.75rem;">
-                                {{ comp.questions|length }} Questions
-                            </span>
-                            <a href="{{ url_for('company.detail', company_id=comp.slug or comp.company_id) }}" class="btn btn-terracotta btn-sm">
-                                <span>Explore &rarr;</span>
-                            </a>
-                        </div>
+                        {% if comp.active_jobs_count > 0 %}
+                        <span class="badge badge-forest" style="font-weight: 700; font-size: 0.775rem;">
+                            {{ comp.active_jobs_count }} {{ 'Role' if comp.active_jobs_count == 1 else 'Roles' }}
+                        </span>
+                        {% elif comp.salary %}
+                        <span class="badge badge-forest" style="font-size: 0.75rem;">{{ comp.salary }}</span>
+                        {% endif %}
                     </div>
-                {% endfor %}
+
+                    <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0.85rem 0; line-height: 1.55;">
+                        {{ (comp.description or 'Technology engineering and consulting organization.')[:160] }}...
+                    </p>
+
+                    {% if comp.eligibility %}
+                    <div
+                        style="font-size: 0.8rem; margin-bottom: 0.75rem; padding: 0.6rem 0.8rem; background: var(--bg-surface-warm); border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                        <strong>Eligibility:</strong> {{ comp.eligibility[:90] }}...
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border-color); margin-top: 1rem;">
+                    <span class="badge badge-ivory" style="font-size: 0.75rem;">
+                        {{ comp.questions|length }} Questions
+                    </span>
+                    <a href="{{ url_for('company.detail', company_id=comp.slug or comp.company_id) }}"
+                        class="btn btn-terracotta btn-sm">
+                        <span>Explore &rarr;</span>
+                    </a>
+                </div>
             </div>
+            {% endfor %}
+        </div>
         {% else %}
-            <div class="empty-state">
-                <p>No companies available yet.</p>
-                <a href="{{ url_for('company.list') }}" class="btn btn-outline btn-sm" style="margin-top: 1rem;">Reset Search</a>
-            </div>
+        <div class="empty-state">
+            <p>No companies available yet.</p>
+            <a href="{{ url_for('company.list') }}" class="btn btn-outline btn-sm" style="margin-top: 1rem;">Reset
+                Search</a>
+        </div>
         {% endif %}
 
     </div>

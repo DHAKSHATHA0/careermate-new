@@ -10,7 +10,8 @@
                 <span class="badge badge-forest" style="margin-bottom: 0.5rem;">Step 2 of 2</span>
                 <h2>Complete Your Career Profile</h2>
                 <p style="margin-top: 0.5rem;">
-                    Help CareerMate understand your background to calculate accurate job fit and skill gap recommendations.
+                    Help CareerMate understand your background to calculate accurate job fit and skill gap
+                    recommendations.
                 </p>
             </div>
 
@@ -20,7 +21,8 @@
                 <div class="grid grid-cols-2" style="gap: 1.25rem;">
                     <div class="form-group">
                         <label class="form-label" for="college_name">College / University</label>
-                        {{ form.college_name(class="form-control", placeholder="e.g. Anna University", id="college_name") }}
+                        {{ form.college_name(class="form-control", placeholder="e.g. Anna University",
+                        id="college_name") }}
                     </div>
 
                     <div class="form-group">
@@ -31,8 +33,21 @@
 
                 <div class="grid grid-cols-2" style="gap: 1.25rem;">
                     <div class="form-group">
-                        <label class="form-label" for="graduation_year">Graduation Year</label>
-                        {{ form.graduation_year(class="form-control", id="graduation_year") }}
+                        <label class="form-label">📅 Education Period (From &mdash; To)</label>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                            <div>
+                                <label class="form-label" for="graduation_start_year"
+                                    style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">From
+                                    (Start Year)</label>
+                                {{ form.graduation_start_year(class="form-control", id="graduation_start_year") }}
+                            </div>
+                            <div>
+                                <label class="form-label" for="graduation_year"
+                                    style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.25rem;">To
+                                    (Graduation Year)</label>
+                                {{ form.graduation_year(class="form-control", id="graduation_year") }}
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -49,7 +64,8 @@
                 <div class="form-group">
                     <label class="form-label">Current Technical Skills (Hold Ctrl/Cmd to multi-select)</label>
                     {{ form.skills(class="form-control", style="height: 160px;", id="skills") }}
-                    <div class="form-hint">Select the technologies and programming languages you have experience with.</div>
+                    <div class="form-hint">Select the technologies and programming languages you have experience with.
+                    </div>
                 </div>
 
                 <div style="display: flex; gap: 1rem; margin-top: 2rem;">
@@ -57,7 +73,8 @@
                         <span>Save &amp; Enter Dashboard</span>
                         <span>&rarr;</span>
                     </button>
-                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline btn-lg" style="flex: 1; justify-content: center;">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline btn-lg"
+                        style="flex: 1; justify-content: center;">
                         <span>Skip for now</span>
                     </a>
                 </div>

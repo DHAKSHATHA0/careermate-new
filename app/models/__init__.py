@@ -12,6 +12,7 @@ from app.models.job import Job
 from app.models.job_source import JobSource
 from app.models.saved_job import SavedJob
 from app.models.job_application import JobApplication, APPLICATION_STATUSES
+from app.models.conversation import Conversation, ConversationMessage
 
 __all__ = [
     'User',
@@ -28,5 +29,7 @@ __all__ = [
     'JobSource',
     'SavedJob',
     'JobApplication',
-    'APPLICATION_STATUSES'
+    'APPLICATION_STATUSES',
+    'Conversation',
+    'ConversationMessage'
 ]
