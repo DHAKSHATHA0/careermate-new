@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}CareerMate AI — Full-Page Career Intelligence Workspace{% endblock %}
+{% block title %}CareerMate AI — Career Intelligence Workspace{% endblock %}
 
 {% block extra_css %}
 <!-- Include marked.js for markdown rendering -->
@@ -18,7 +18,7 @@
 
     /* Left Conversation Sidebar */
     .ai-sidebar {
-        width: 290px;
+        width: 270px;
         flex-shrink: 0;
         background: #1e3229;
         color: var(--color-ivory);
@@ -191,7 +191,7 @@
     .chat-scroll-container {
         flex: 1;
         overflow-y: auto;
-        padding: 1.5rem 1rem 1rem;
+        padding: 1.75rem 1.25rem 1rem;
         display: flex;
         flex-direction: column;
         scroll-behavior: smooth;
@@ -203,7 +203,7 @@
         margin: 0 auto;
         display: flex;
         flex-direction: column;
-        gap: 1.25rem;
+        gap: 1.5rem;
     }
 
     /* Welcome / Zero State */
@@ -264,11 +264,12 @@
         color: var(--text-secondary);
     }
 
-    /* Messages */
+    /* Message Rows */
     .msg-row {
         display: flex;
-        gap: 0.85rem;
+        gap: 1rem;
         width: 100%;
+        animation: fadeIn 0.2s ease;
     }
 
     .msg-row.user-row {
@@ -276,8 +277,8 @@
     }
 
     .msg-avatar {
-        width: 34px;
-        height: 34px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -290,6 +291,7 @@
     .msg-avatar-ai {
         background: var(--color-forest);
         color: var(--color-ivory);
+        box-shadow: 0 2px 5px rgba(30, 50, 41, 0.2);
     }
 
     .msg-avatar-user {
@@ -298,81 +300,179 @@
     }
 
     .msg-content-wrapper {
-        max-width: 82%;
+        flex: 1;
+        max-width: calc(100% - 50px);
         display: flex;
         flex-direction: column;
     }
 
-    .msg-bubble {
-        padding: 0.9rem 1.15rem;
-        border-radius: var(--radius-md);
-        font-size: 0.935rem;
+    .user-row .msg-content-wrapper {
+        max-width: 80%;
+        align-items: flex-end;
+    }
+
+    /* User Message Bubble */
+    .msg-bubble-user {
+        background: var(--color-forest);
+        color: #ffffff;
+        padding: 0.85rem 1.25rem;
+        border-radius: 16px;
+        border-bottom-right-radius: 4px;
+        font-size: 1rem;
         line-height: 1.6;
+        word-break: break-word;
+        box-shadow: 0 2px 6px rgba(30, 50, 41, 0.12);
+    }
+
+    /* Assistant Message - Clean Canvas (No White Box) */
+    .msg-bubble-ai {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0.15rem 0 0.25rem;
+        color: var(--color-dark-brown, #1e3229);
+        font-size: 1.025rem;
+        line-height: 1.72;
         word-break: break-word;
     }
 
-    .msg-bubble-user {
-        background: var(--color-forest);
-        color: var(--color-ivory);
-        border-top-right-radius: 2px;
+    .msg-bubble-ai p {
+        margin: 0 0 0.95rem 0;
+        font-size: 1.025rem;
+        line-height: 1.72;
     }
 
-    .msg-bubble-ai {
-        background: #ffffff;
-        color: var(--color-dark-brown);
-        border: 1px solid var(--border-color);
-        box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-        border-top-left-radius: 2px;
+    .msg-bubble-ai p:last-child {
+        margin-bottom: 0.25rem;
     }
 
-    .msg-bubble-ai h3, .msg-bubble-ai h4 {
+    .msg-bubble-ai h2, 
+    .msg-bubble-ai h3, 
+    .msg-bubble-ai h4 {
         font-family: var(--font-heading);
         color: var(--color-forest);
-        margin-top: 0.75rem;
-        margin-bottom: 0.4rem;
+        font-weight: 700;
+        margin-top: 1.35rem;
+        margin-bottom: 0.5rem;
+        line-height: 1.35;
     }
 
-    .msg-bubble-ai ul, .msg-bubble-ai ol {
-        margin-left: 1.2rem;
-        margin-bottom: 0.5rem;
+    .msg-bubble-ai h2 { font-size: 1.3rem; }
+    .msg-bubble-ai h3 { font-size: 1.18rem; }
+    .msg-bubble-ai h4 { font-size: 1.05rem; }
+
+    .msg-bubble-ai h2:first-child,
+    .msg-bubble-ai h3:first-child,
+    .msg-bubble-ai h4:first-child {
+        margin-top: 0.15rem;
+    }
+
+    .msg-bubble-ai ul, 
+    .msg-bubble-ai ol {
+        margin: 0.5rem 0 1rem 1.4rem;
+        padding: 0;
     }
 
     .msg-bubble-ai li {
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.45rem;
+        line-height: 1.65;
+    }
+
+    .msg-bubble-ai li:last-child {
+        margin-bottom: 0;
     }
 
     .msg-bubble-ai a {
         color: var(--color-terracotta);
         font-weight: 600;
-        text-decoration: underline;
+        text-decoration: none;
+        border-bottom: 1.5px solid rgba(197, 107, 75, 0.35);
+        transition: border-color 0.15s ease, color 0.15s ease;
     }
 
+    .msg-bubble-ai a:hover {
+        border-bottom-color: var(--color-terracotta);
+        color: #b15d3f;
+    }
+
+    .msg-bubble-ai code {
+        background: rgba(30, 50, 41, 0.08);
+        padding: 0.15rem 0.4rem;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-family: monospace;
+    }
+
+    .msg-bubble-ai strong {
+        color: var(--color-forest);
+        font-weight: 600;
+    }
+
+    /* Actions Toolbar - Subtle & Single Instance */
     .msg-actions-toolbar {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        margin-top: 0.35rem;
-        padding-left: 0.25rem;
+        margin-top: 0.65rem;
+        padding: 0;
     }
 
     .btn-msg-action {
         background: transparent;
-        border: 1px solid var(--border-color);
-        border-radius: var(--radius-sm);
-        padding: 0.2rem 0.5rem;
-        font-size: 0.75rem;
+        border: none;
+        border-radius: 6px;
+        padding: 0.3rem 0.6rem;
+        font-size: 0.82rem;
         color: var(--text-secondary);
         cursor: pointer;
         display: inline-flex;
         align-items: center;
-        gap: 0.3rem;
+        gap: 0.35rem;
+        font-weight: 500;
         transition: all 0.15s ease;
+        user-select: none;
     }
 
     .btn-msg-action:hover {
-        background: #ffffff;
+        background: rgba(30, 50, 41, 0.07);
         color: var(--color-forest);
-        border-color: var(--color-forest);
+    }
+
+    .btn-msg-action.speaking {
+        color: var(--color-terracotta);
+        background: rgba(197, 107, 75, 0.12);
+        font-weight: 600;
+    }
+
+    .btn-msg-action.copied {
+        color: #1e7e34;
+        background: rgba(30, 126, 52, 0.1);
+        font-weight: 600;
+    }
+
+    /* Subtle Inline Thinking Indicator */
+    .ai-thinking-indicator {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        font-style: italic;
+        padding: 0.35rem 0;
+    }
+
+    .thinking-pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--color-terracotta);
+        animation: pulseDot 1.4s infinite ease-in-out;
+        flex-shrink: 0;
+    }
+
+    @keyframes pulseDot {
+        0%, 100% { opacity: 0.3; transform: scale(0.8); }
+        50% { opacity: 1; transform: scale(1.2); }
     }
 
     .msg-image-preview {
@@ -384,7 +484,7 @@
         object-fit: cover;
     }
 
-    /* Composer */
+    /* Composer Area */
     .ai-composer-wrapper {
         padding: 0.75rem 1rem 1.25rem;
         background: linear-gradient(180deg, rgba(244, 239, 227, 0) 0%, var(--color-ivory) 40%);
@@ -479,6 +579,11 @@
         100% { transform: scale(1); }
     }
 
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Mobile drawer overlay */
     @media (max-width: 768px) {
         .ai-sidebar {
@@ -487,6 +592,12 @@
             top: 0;
             bottom: 0;
             box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+        }
+        .chat-scroll-container {
+            padding: 1rem 0.75rem;
+        }
+        .user-row .msg-content-wrapper {
+            max-width: 90%;
         }
     }
 </style>
@@ -598,10 +709,19 @@
     let recognition = null;
     let voiceModeActive = false;
 
+    // Active Speech Synthesis State
+    let activeSpeechMessageId = null;
+    let activeUtterance = null;
+
     // Initialize on page load
     window.addEventListener('DOMContentLoaded', () => {
         loadConversationsList();
         initSpeechRecognition();
+    });
+
+    // Cancel speech on page unload
+    window.addEventListener('beforeunload', () => {
+        stopSpeech();
     });
 
     // Sidebar toggle
@@ -657,9 +777,9 @@
                     const isActive = c.id === currentConversationId ? 'active' : '';
                     html += `
                         <div class="conversation-item ${isActive}" onclick="selectConversation(${c.id})">
-                            <span class="conversation-title-text" title="${c.title}">${c.title}</span>
+                            <span class="conversation-title-text" title="${escapeHtml(c.title)}">${escapeHtml(c.title)}</span>
                             <div class="conversation-item-actions">
-                                <button type="button" class="item-action-btn" onclick="event.stopPropagation(); renameConversationItem(${c.id}, '${c.title.replace(/'/g, "\\'")}')" title="Rename">✏️</button>
+                                <button type="button" class="item-action-btn" onclick="event.stopPropagation(); renameConversationItem(${c.id}, '${escapeForJs(c.title)}')" title="Rename">✏️</button>
                                 <button type="button" class="item-action-btn" onclick="event.stopPropagation(); deleteConversationItem(${c.id})" title="Delete">🗑️</button>
                             </div>
                         </div>
@@ -678,6 +798,7 @@
 
     // Start New Conversation
     function startNewConversation() {
+        stopSpeech();
         currentConversationId = null;
         document.getElementById('current-thread-title').innerText = 'New Conversation';
         renderWelcomeZeroState();
@@ -686,6 +807,7 @@
 
     // Select Conversation
     function selectConversation(id) {
+        stopSpeech();
         currentConversationId = id;
         fetch(`/api/assistant/conversations/${id}`)
             .then(res => res.json())
@@ -715,35 +837,35 @@
 
                 <div class="prompt-grid">
                     <div class="prompt-card" onclick="sendQuickPrompt('What is my current career status?')">
-                        <div class="prompt-card-title">👤 Career Status Overview</div>
+                        <div class="prompt-card-title">Career Status Overview</div>
                         <div class="prompt-card-desc">Review profile strength, target domain, and active credentials.</div>
                     </div>
                     <div class="prompt-card" onclick="sendQuickPrompt('How many jobs have I applied for and what is active?')">
-                        <div class="prompt-card-title">📊 Application Pipeline</div>
+                        <div class="prompt-card-title">Application Pipeline</div>
                         <div class="prompt-card-desc">Get breakdown of applied, interview, and active roles.</div>
                     </div>
                     <div class="prompt-card" onclick="sendQuickPrompt('Which jobs currently match my profile?')">
-                        <div class="prompt-card-title">💼 Recommended Jobs</div>
+                        <div class="prompt-card-title">Recommended Jobs</div>
                         <div class="prompt-card-desc">Calculated by real CareerMate Recommendation Engine.</div>
                     </div>
                     <div class="prompt-card" onclick="sendQuickPrompt('What skills am I missing for my target role?')">
-                        <div class="prompt-card-title">🔍 Skill Gap Priorities</div>
+                        <div class="prompt-card-title">Skill Gap Priorities</div>
                         <div class="prompt-card-desc">Identify missing technical keywords and matching courses.</div>
                     </div>
                     <div class="prompt-card" onclick="sendQuickPrompt('What should I prepare next?')">
-                        <div class="prompt-card-title">⚡ Next Best Actions</div>
+                        <div class="prompt-card-title">Next Best Actions</div>
                         <div class="prompt-card-desc">Actionable tasks tailored to your current profile state.</div>
                     </div>
                     <div class="prompt-card" onclick="sendQuickPrompt('I want to become a Data Scientist. Give me my complete roadmap.')">
-                        <div class="prompt-card-title">🗺️ Career Roadmap</div>
-                        <div class="prompt-card-desc">7-stage progressive roadmap from gaps to offer.</div>
+                        <div class="prompt-card-title">Career Roadmap</div>
+                        <div class="prompt-card-desc">Structured progressive roadmap from gaps to offer.</div>
                     </div>
                 </div>
             </div>
         `;
     }
 
-    // Render Messages Stream
+    // Render Messages Stream from database
     function renderMessagesStream(messages) {
         const stream = document.getElementById('messages-stream');
         if (!messages || messages.length === 0) {
@@ -751,40 +873,84 @@
             return;
         }
 
-        let html = '';
+        stream.innerHTML = '';
         messages.forEach(m => {
+            const msgId = m.id || ('hist-' + Math.random().toString(36).substr(2, 9));
             if (m.role === 'user') {
-                html += `
-                    <div class="msg-row user-row">
-                        <div class="msg-content-wrapper" style="align-items: flex-end;">
-                            ${m.image_url ? `<img src="${m.image_url}" class="msg-image-preview" alt="Uploaded Document" onclick="window.open('${m.image_url}', '_blank')">` : ''}
-                            <div class="msg-bubble msg-bubble-user">
-                                ${escapeHtml(m.content)}
-                            </div>
+                const userRow = document.createElement('div');
+                userRow.className = 'msg-row user-row';
+                userRow.innerHTML = `
+                    <div class="msg-content-wrapper">
+                        ${m.image_url ? `<img src="${m.image_url}" class="msg-image-preview" alt="Uploaded Document" onclick="window.open('${m.image_url}', '_blank')">` : ''}
+                        <div class="msg-bubble msg-bubble-user">
+                            ${escapeHtml(m.content)}
                         </div>
-                        <div class="msg-avatar msg-avatar-user">You</div>
                     </div>
+                    <div class="msg-avatar msg-avatar-user">You</div>
                 `;
+                stream.appendChild(userRow);
             } else {
-                html += `
-                    <div class="msg-row ai-row">
-                        <div class="msg-avatar msg-avatar-ai">AI</div>
-                        <div class="msg-content-wrapper">
-                            <div class="msg-bubble msg-bubble-ai">
-                                ${marked.parse(m.content)}
-                            </div>
-                            <div class="msg-actions-toolbar">
-                                <button type="button" class="btn-msg-action" onclick="speakText('${escapeForJs(m.content)}')">🔊 Listen</button>
-                                <button type="button" class="btn-msg-action" onclick="copyToClipboard('${escapeForJs(m.content)}')">📋 Copy</button>
-                            </div>
+                const aiRow = document.createElement('div');
+                aiRow.className = 'msg-row ai-row';
+                aiRow.setAttribute('data-message-id', msgId);
+                aiRow.innerHTML = `
+                    <div class="msg-avatar msg-avatar-ai">AI</div>
+                    <div class="msg-content-wrapper">
+                        <div class="msg-bubble msg-bubble-ai" id="msg-content-${msgId}">
+                            ${marked.parse(m.content)}
                         </div>
                     </div>
                 `;
+                stream.appendChild(aiRow);
+
+                // Attach action toolbar exactly once
+                ensureMessageToolbar(aiRow, m.content, msgId);
             }
         });
 
-        stream.innerHTML = html;
         scrollChatToBottom();
+    }
+
+    // Attach Exactly One Action Toolbar per Assistant Message
+    function ensureMessageToolbar(aiRowElement, textContent, messageId) {
+        const wrapper = aiRowElement.querySelector('.msg-content-wrapper');
+        if (!wrapper) return;
+
+        // Idempotence check: check whether toolbar already exists
+        if (wrapper.querySelector(`[data-actions-for="${messageId}"]`)) {
+            return;
+        }
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'msg-actions-toolbar';
+        toolbar.setAttribute('data-actions-for', String(messageId));
+
+        // 1. Listen / Stop Toggle Button
+        const listenBtn = document.createElement('button');
+        listenBtn.type = 'button';
+        listenBtn.className = 'btn-msg-action';
+        listenBtn.id = `btn-listen-${messageId}`;
+        listenBtn.setAttribute('aria-label', 'Listen to response');
+        listenBtn.setAttribute('aria-pressed', 'false');
+        listenBtn.innerHTML = '<span>🔊 Listen</span>';
+        listenBtn.addEventListener('click', () => {
+            toggleSpeech(messageId, textContent);
+        });
+
+        // 2. Copy Button
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'btn-msg-action';
+        copyBtn.id = `btn-copy-${messageId}`;
+        copyBtn.setAttribute('aria-label', 'Copy response');
+        copyBtn.innerHTML = '<span>📋 Copy</span>';
+        copyBtn.addEventListener('click', () => {
+            copyMessageText(messageId, textContent, copyBtn);
+        });
+
+        toolbar.appendChild(listenBtn);
+        toolbar.appendChild(copyBtn);
+        wrapper.appendChild(toolbar);
     }
 
     // Send Quick Prompt
@@ -799,6 +965,30 @@
             e.preventDefault();
             sendActiveMessage();
         }
+    }
+
+    // Compute Tool-Aware Thinking Status
+    function getThinkingStatusText(query) {
+        const q = (query || '').toLowerCase();
+        if (q.includes('job') || q.includes('opportunity') || q.includes('recommend')) {
+            return 'Checking opportunities that match your profile...';
+        }
+        if (q.includes('application') || q.includes('applied')) {
+            return 'Checking your applications...';
+        }
+        if (q.includes('resume') || q.includes('ats')) {
+            return 'Reviewing your latest resume analysis...';
+        }
+        if (q.includes('interview')) {
+            return 'Reviewing your interview feedback...';
+        }
+        if (q.includes('course') || q.includes('learn')) {
+            return 'Finding recommended learning tracks...';
+        }
+        if (q.includes('roadmap') || q.includes('become')) {
+            return 'Generating career roadmap...';
+        }
+        return 'CareerMate is thinking...';
     }
 
     // Send Message
@@ -829,16 +1019,17 @@
             }
         }
 
-        // Append user bubble to UI
+        // Clean zero state if present
         const stream = document.getElementById('messages-stream');
         if (stream.querySelector('.ai-welcome-state')) {
             stream.innerHTML = '';
         }
 
+        // Append user message
         const userRow = document.createElement('div');
         userRow.className = 'msg-row user-row';
         userRow.innerHTML = `
-            <div class="msg-content-wrapper" style="align-items: flex-end;">
+            <div class="msg-content-wrapper">
                 ${imageUrl ? `<img src="${imageUrl}" class="msg-image-preview" alt="Uploaded Document">` : ''}
                 <div class="msg-bubble msg-bubble-user">${escapeHtml(text || 'Uploaded image')}</div>
             </div>
@@ -846,15 +1037,21 @@
         `;
         stream.appendChild(userRow);
 
-        // Show thinking indicator
+        // Generate client message ID for assistant row
+        const clientMsgId = 'client-' + Date.now();
+
+        // Show inline subtle thinking indicator (NO rectangular white card)
         const aiRow = document.createElement('div');
         aiRow.className = 'msg-row ai-row';
-        aiRow.id = 'active-ai-row';
+        aiRow.setAttribute('data-message-id', clientMsgId);
         aiRow.innerHTML = `
             <div class="msg-avatar msg-avatar-ai">AI</div>
             <div class="msg-content-wrapper">
-                <div class="msg-bubble msg-bubble-ai" id="active-ai-bubble">
-                    <em>CareerMate is analyzing career intelligence...</em>
+                <div class="msg-bubble msg-bubble-ai" id="msg-content-${clientMsgId}">
+                    <div class="ai-thinking-indicator">
+                        <span class="thinking-pulse"></span>
+                        <span>${escapeHtml(getThinkingStatusText(text))}</span>
+                    </div>
                 </div>
             </div>
         `;
@@ -870,42 +1067,158 @@
             });
             const data = await resp.json();
 
-            const bubble = document.getElementById('active-ai-bubble');
+            const bubble = document.getElementById(`msg-content-${clientMsgId}`);
             if (data.error) {
                 bubble.innerHTML = `<span style="color: var(--color-terracotta);">Error: ${escapeHtml(data.error)}</span>`;
             } else {
                 const responseContent = data.assistant_message.content;
+                const serverMsgId = data.assistant_message.id || clientMsgId;
+                aiRow.setAttribute('data-message-id', serverMsgId);
+                bubble.id = `msg-content-${serverMsgId}`;
                 bubble.innerHTML = marked.parse(responseContent);
 
-                // Add action toolbar
-                const wrapper = bubble.parentElement;
-                const toolbar = document.createElement('div');
-                toolbar.className = 'msg-actions-toolbar';
-                toolbar.innerHTML = `
-                    <button type="button" class="btn-msg-action" onclick="speakText('${escapeForJs(responseContent)}')">🔊 Listen</button>
-                    <button type="button" class="btn-msg-action" onclick="copyToClipboard('${escapeForJs(responseContent)}')">📋 Copy</button>
-                `;
-                wrapper.appendChild(toolbar);
+                // Attach action toolbar exactly once
+                ensureMessageToolbar(aiRow, responseContent, serverMsgId);
 
                 // If voice mode is active, speak response aloud
                 if (voiceModeActive) {
-                    speakText(responseContent);
+                    toggleSpeech(serverMsgId, responseContent);
                 }
             }
 
-            // Clean id
-            aiRow.removeAttribute('id');
             scrollChatToBottom();
-            loadConversationsList(); // refresh title & order in sidebar
+            loadConversationsList(); // refresh sidebar order and title
         } catch (err) {
-            const bubble = document.getElementById('active-ai-bubble');
+            const bubble = document.getElementById(`msg-content-${clientMsgId}`);
             if (bubble) {
-                bubble.innerHTML = "CareerMate AI is temporarily unavailable. Your CareerMate data and other features are still available.";
+                bubble.innerHTML = "CareerMate AI is temporarily unavailable. Your CareerMate data and other features remain fully accessible.";
             }
         }
     }
 
-    // Image Upload Handler
+    // ==========================================
+    // SPEECH SYNTHESIS (TRUE TOGGLE & STATE)
+    // ==========================================
+
+    function toggleSpeech(messageId, rawText) {
+        if (!('speechSynthesis' in window)) {
+            alert('Text-to-speech is not supported in this browser.');
+            return;
+        }
+
+        // If clicking the active message -> STOP
+        if (activeSpeechMessageId === messageId) {
+            stopSpeech();
+            return;
+        }
+
+        // If another message was speaking -> STOP IT FIRST
+        if (activeSpeechMessageId) {
+            stopSpeech();
+        }
+
+        // START speaking this message
+        startSpeech(messageId, rawText);
+    }
+
+    function startSpeech(messageId, rawText) {
+        window.speechSynthesis.cancel(); // ensure clean audio stack
+
+        // Extract clean text (strip markdown symbols and urls)
+        const cleanText = rawText
+            .replace(/https?:\/\/[^\s]+/g, '')
+            .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
+            .replace(/[#*`_~>\-]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        if (!cleanText) return;
+
+        const utterance = new SpeechSynthesisUtterance(cleanText);
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+
+        activeSpeechMessageId = messageId;
+        activeUtterance = utterance;
+
+        // Update button UI to Stop
+        const btn = document.getElementById(`btn-listen-${messageId}`);
+        if (btn) {
+            btn.classList.add('speaking');
+            btn.setAttribute('aria-pressed', 'true');
+            btn.setAttribute('aria-label', 'Stop speaking');
+            btn.innerHTML = '<span>■ Stop</span>';
+        }
+
+        utterance.onend = () => {
+            resetSpeechButton(messageId);
+            activeSpeechMessageId = null;
+            activeUtterance = null;
+        };
+
+        utterance.onerror = () => {
+            resetSpeechButton(messageId);
+            activeSpeechMessageId = null;
+            activeUtterance = null;
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeech() {
+        window.speechSynthesis.cancel();
+        if (activeSpeechMessageId) {
+            resetSpeechButton(activeSpeechMessageId);
+            activeSpeechMessageId = null;
+            activeUtterance = null;
+        }
+    }
+
+    function resetSpeechButton(messageId) {
+        const btn = document.getElementById(`btn-listen-${messageId}`);
+        if (btn) {
+            btn.classList.remove('speaking');
+            btn.setAttribute('aria-pressed', 'false');
+            btn.setAttribute('aria-label', 'Listen to response');
+            btn.innerHTML = '<span>🔊 Listen</span>';
+        }
+    }
+
+    // ==========================================
+    // COPY TO CLIPBOARD
+    // ==========================================
+
+    function copyMessageText(messageId, rawText, btnElement) {
+        // Copy clean plain text
+        const cleanText = rawText.trim();
+        navigator.clipboard.writeText(cleanText).then(() => {
+            if (btnElement) {
+                btnElement.classList.add('copied');
+                btnElement.innerHTML = '<span>✓ Copied</span>';
+                setTimeout(() => {
+                    btnElement.classList.remove('copied');
+                    btnElement.innerHTML = '<span>📋 Copy</span>';
+                }, 2000);
+            }
+        }).catch(() => {
+            // Fallback
+            const bubble = document.getElementById(`msg-content-${messageId}`);
+            if (bubble) {
+                navigator.clipboard.writeText(bubble.innerText);
+                if (btnElement) {
+                    btnElement.innerHTML = '<span>✓ Copied</span>';
+                    setTimeout(() => {
+                        btnElement.innerHTML = '<span>📋 Copy</span>';
+                    }, 2000);
+                }
+            }
+        });
+    }
+
+    // ==========================================
+    // IMAGE ATTACHMENTS & OCR
+    // ==========================================
+
     function handleImageFileSelected(input) {
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
@@ -916,7 +1229,7 @@
         // Show staging indicator
         const stagedBar = document.getElementById('staged-attachment');
         const stagedName = document.getElementById('staged-filename');
-        stagedName.innerText = `Uploading & analyzing ${file.name}...`;
+        stagedName.innerText = `Analyzing ${file.name}...`;
         stagedBar.style.display = 'flex';
 
         fetch('/api/assistant/upload-image', {
@@ -948,7 +1261,10 @@
         document.getElementById('image-file-input').value = '';
     }
 
-    // Voice Speech Recognition
+    // ==========================================
+    // VOICE SPEECH RECOGNITION
+    // ==========================================
+
     function initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
@@ -965,7 +1281,6 @@
             };
 
             recognition.onerror = (event) => {
-                console.log('Speech recognition error:', event.error);
                 stopVoiceRecording();
             };
 
@@ -1014,26 +1329,14 @@
         } else {
             btn.style.color = 'var(--color-forest)';
             btn.innerHTML = '<span>🎤 Voice Mode</span>';
-            window.speechSynthesis.cancel();
+            stopSpeech();
         }
     }
 
-    // Text to Speech
-    function speakText(rawText) {
-        if (!('speechSynthesis' in window)) {
-            alert('Text-to-speech is not supported in this browser.');
-            return;
-        }
+    // ==========================================
+    // CONVERSATION THREAD MANAGEMENT
+    // ==========================================
 
-        window.speechSynthesis.cancel(); // stop any prior audio
-        const cleanText = rawText.replace(/[#*`_\[\]()]/g, '').replace(/https?:\/\/[^\s]+/g, '');
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.rate = 1.0;
-        utterance.pitch = 1.0;
-        window.speechSynthesis.speak(utterance);
-    }
-
-    // Rename Conversation
     function renameCurrentConversation() {
         if (!currentConversationId) return;
         const currentTitle = document.getElementById('current-thread-title').innerText;
@@ -1070,10 +1373,10 @@
         }
     }
 
-    // Delete Conversation
     function deleteCurrentConversation() {
         if (!currentConversationId) return;
         if (confirm('Delete this conversation history? Your profile and career records will not be affected.')) {
+            stopSpeech();
             fetch(`/api/assistant/conversations/${currentConversationId}`, {
                 method: 'DELETE'
             })
@@ -1087,6 +1390,9 @@
 
     function deleteConversationItem(id) {
         if (confirm('Delete this conversation history?')) {
+            if (currentConversationId === id) {
+                stopSpeech();
+            }
             fetch(`/api/assistant/conversations/${id}`, {
                 method: 'DELETE'
             })
@@ -1100,25 +1406,29 @@
         }
     }
 
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Response copied to clipboard.');
-        });
-    }
-
     function scrollChatToBottom() {
         const c = document.getElementById('chat-scroll-container');
-        c.scrollTop = c.scrollHeight;
+        if (c) c.scrollTop = c.scrollHeight;
     }
 
     function escapeHtml(str) {
         if (!str) return '';
-        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 
     function escapeForJs(str) {
         if (!str) return '';
-        return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+        return String(str)
+            .replace(/\\/g, '\\\\')
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, '\\n')
+            .replace(/\r/g, '');
     }
 </script>
 {% endblock %}

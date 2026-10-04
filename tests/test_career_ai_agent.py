@@ -498,3 +498,39 @@ def test_chatbot_legacy_api_routes(client, auth_user, agent_test_data):
     clear_resp = client.post('/chatbot/api/clear')
     assert clear_resp.status_code == 200
     assert clear_resp.get_json()['success'] is True
+
+
+def test_greeting_and_casual_conversation_routing(app, agent_test_data):
+    """Verify that greetings and casual messages do NOT dump career status or invoke DB tools."""
+    with app.app_context():
+        agent = CareerMateAgent()
+        user_a = db.session.get(User, agent_test_data['user_a_id'])
+
+        # 1. "hi"
+        res_hi = agent.process_message(user_a, "hi")
+        assert res_hi['intent'] == 'greeting'
+        assert "Career Status" not in res_hi['response']
+        assert "ATS Compatibility" not in res_hi['response']
+        assert "Hey!" in res_hi['response']
+
+        # 2. "hi bro"
+        res_hibro = agent.process_message(user_a, "hi bro")
+        assert res_hibro['intent'] == 'greeting'
+        assert "Hey bro" in res_hibro['response']
+        assert "Career Status" not in res_hibro['response']
+
+        # 3. "good morning"
+        res_gm = agent.process_message(user_a, "good morning")
+        assert res_gm['intent'] == 'greeting'
+        assert "Good morning" in res_gm['response']
+
+        # 4. "thank you"
+        res_thanks = agent.process_message(user_a, "thank you")
+        assert res_thanks['intent'] == 'casual_conversation'
+        assert "Anytime!" in res_thanks['response']
+
+        # 5. "okay"
+        res_ok = agent.process_message(user_a, "okay")
+        assert res_ok['intent'] == 'casual_conversation'
+        assert "Got it" in res_ok['response']
+
