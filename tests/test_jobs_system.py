@@ -283,3 +283,7 @@ class TestJobsRoutesAndWorkflow:
         assert b"Python" in res.data
         # Missing skills should be displayed with links to courses
         assert b"courses?q=" in res.data
+        res = client.get('/jobs?location=Cologne')
+        assert res.status_code == 200
+        assert b"Audio Systems Engineer" in res.data
+        assert b"Cologne, Germany" in res.data

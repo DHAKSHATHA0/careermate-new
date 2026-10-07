@@ -32,7 +32,7 @@
                         Complete your career profile to unlock comprehensive role matching and personalized
                         recommendations.
                         {% else %}
-                        Your career command center is active. Review your real-time matches and learning steps below.
+                        Explore your career path.
                         {% endif %}
                     </p>
                 </div>
@@ -77,8 +77,7 @@
             <div
                 style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                 <div>
-                    <span class="badge badge-terracotta" style="font-size: 0.75rem; margin-bottom: 0.35rem;">Your Next
-                        Best Move</span>
+    
                     <h3 style="color: var(--color-forest); font-size: 1.35rem; margin-bottom: 0.25rem;">{{
                         next_action.title }}</h3>
                     <p style="font-size: 0.925rem; color: var(--text-secondary); max-width: 700px;">{{ next_action.desc
@@ -121,7 +120,7 @@
                         </h4>
                         <p
                             style="font-size: 0.875rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">
-                            Upload your resume to generate your first ATS analysis and keyword compatibility insights.
+                            Upload your resume to generate your first ATS score.
                         </p>
                         <a href="{{ url_for('resume.analyzer') }}" class="btn btn-terracotta btn-sm">
                             <span>Upload Resume</span>
@@ -136,7 +135,7 @@
                         </h4>
                         <p
                             style="font-size: 0.875rem; color: var(--text-secondary); max-width: 360px; margin: 0 auto 1.25rem;">
-                            Your resume is uploaded but hasn't been evaluated for ATS keyword compatibility yet.
+                            Your resume is uploaded but hasn't been evaluated for ATS Score yet.
                         </p>
                         <a href="{{ url_for('resume.analyzer') }}" class="btn btn-primary btn-sm">
                             <span>Analyze Resume</span>
@@ -496,8 +495,7 @@
                 <div>
                     <h4 style="color: var(--color-forest); margin-bottom: 0.2rem;">Have a question about your interview
                         prep or resume?</h4>
-                    <p style="font-size: 0.875rem; color: var(--text-secondary);">CareerMate AI provides context-aware
-                        guidance tailored to your verified profile.</p>
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Get guidance and suggestions from CareerMate AI.</p>
                 </div>
             </div>
             <a href="{{ url_for('main.assistant') }}" class="btn btn-primary">
